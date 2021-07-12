@@ -17,4 +17,8 @@ npm ci
 ```
 npm start
 ```
+
 # 2021-toyproj-RecordDate
+
+mark@test.com
+fastcampus
