@@ -5,19 +5,26 @@ import { push } from 'connected-react-router';
 // import List from '../components/List';
 import DateList from '../components/DateList';
 import { RootState } from '../redux/modules/rootReducer';
-import { BookResType } from '../types';
+import { DateResType, BookResType } from '../types';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import {
   getBooks as getBooksSaga,
   deleteBook as deleteBookSaga,
 } from '../redux/modules/books';
 
+import {
+  DateListState,
+  getDatelist as getDateListSaga,
+} from '../redux/modules/dateList';
+
 const DateListContainer: React.FC = (props) => {
+  const dateList = useSelector<RootState, DateResType[] | null>(
+    (state) => state.dateList.dateList,
+  );
+  if (dateList) console.log('# dateList: ', dateList);
   const books = useSelector<RootState, BookResType[] | null>(
     (state) => state.books.books,
   );
-
-  console.log('### books: ', books);
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
   );
@@ -27,8 +34,12 @@ const DateListContainer: React.FC = (props) => {
 
   const dispatch = useDispatch();
 
+  const getDateList = useCallback(() => {
+    debugger;
+    dispatch(getDateListSaga());
+  }, [dispatch]);
+
   const getBooks = useCallback(() => {
-    console.log('### getBooks', getBooksSaga);
     dispatch(getBooksSaga());
   }, [dispatch]);
 
@@ -57,9 +68,11 @@ const DateListContainer: React.FC = (props) => {
   return (
     <DateList
       {...props}
+      dateList={dateList}
       books={books}
       loading={loading}
       error={error}
+      getDateList={getDateList}
       getBooks={getBooks}
       deleteBook={deleteBook}
       goAdd={goAdd}

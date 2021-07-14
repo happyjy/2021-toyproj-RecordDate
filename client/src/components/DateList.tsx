@@ -3,13 +3,16 @@ import { Table, PageHeader, Button } from 'antd';
 
 import styles from './List.module.css';
 import Layout from './Layout';
-import { BookResType } from '../types';
+import { BookResType, DateResType } from '../types';
 import Book from './Book';
+import Date from './Date';
 
 interface BooksProps {
+  dateList: DateResType[] | null;
   books: BookResType[] | null;
-  error: Error | null;
   loading: boolean;
+  error: Error | null;
+  getDateList: () => void;
   getBooks: () => void;
   deleteBook: (bookId: number) => void;
   goAdd: () => void;
@@ -18,7 +21,9 @@ interface BooksProps {
 }
 
 const DateList: React.FC<BooksProps> = ({
+  dateList,
   books,
+  getDateList,
   getBooks,
   error,
   loading,
@@ -27,9 +32,12 @@ const DateList: React.FC<BooksProps> = ({
   logout,
   goEdit,
 }) => {
+  // useEffect(() => {
+  //   getBooks();
+  // }, [getBooks]);
   useEffect(() => {
-    getBooks();
-  }, [getBooks]);
+    getDateList();
+  }, [getDateList]);
 
   useEffect(() => {
     if (error) {
@@ -40,7 +48,7 @@ const DateList: React.FC<BooksProps> = ({
   return (
     <Layout>
       <PageHeader
-        title={<div>Book List</div>}
+        title={<div>Date List</div>}
         extra={[
           <Button
             key="2"
@@ -48,7 +56,7 @@ const DateList: React.FC<BooksProps> = ({
             onClick={goAdd}
             className={styles.button}
           >
-            Add Book
+            Add Date
           </Button>,
           <Button
             key="1"
@@ -60,25 +68,33 @@ const DateList: React.FC<BooksProps> = ({
           </Button>,
         ]}
       />
-      <img src="/bg_list.png" style={{ width: '100%' }} alt="books" />
+      <div
+        className="imgContainer"
+        style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+      >
+        <img src="/love.png" style={{ height: '400px' }} alt="books" />
+      </div>
       <Table
-        dataSource={books || []}
+        dataSource={dateList || []}
         columns={[
           {
             title: 'Book',
             dataIndex: 'book',
             key: 'book',
-            render: (text, record) => (
-              <Book
-                {...record}
-                deleteBook={deleteBook}
-                goEdit={goEdit}
-                key={record.bookId}
-              />
-            ),
+            render: (text, record) => {
+              console.log('# record: ', record);
+              return (
+                <Date
+                  {...record}
+                  deleteBook={deleteBook}
+                  goEdit={goEdit}
+                  key={record.dateRecord_id}
+                />
+              );
+            },
           },
         ]}
-        loading={books === null || loading}
+        loading={dateList === null || loading}
         showHeader={false}
         className={styles.table}
         rowKey="bookId"

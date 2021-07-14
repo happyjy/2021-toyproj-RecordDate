@@ -76,6 +76,9 @@ console.log(
 );
 console.log({ addBook, editBook, deleteBook, getBooks });
 
+export const result = createActions({}, 'GET_DATELIST', options);
+console.log('# result: ', result);
+
 export function* sagas() {
   yield takeEvery(`${options.prefix}/GET_BOOKS`, getBooksSaga);
   yield takeEvery(`${options.prefix}/ADD_BOOK`, addBookSaga);
