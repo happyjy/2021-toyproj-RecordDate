@@ -3,12 +3,12 @@ import { Table, PageHeader, Button } from 'antd';
 
 import styles from './List.module.css';
 import Layout from './Layout';
-import { BookResType, DateResType } from '../types';
+import { BookResType, DateResType, dateType } from '../types';
 import Book from './Book';
 import Date from './Date';
 
 interface BooksProps {
-  dateList: DateResType[] | null;
+  dateList: dateType[] | null;
   books: BookResType[] | null;
   loading: boolean;
   error: Error | null;
@@ -70,9 +70,26 @@ const DateList: React.FC<BooksProps> = ({
       />
       <div
         className="imgContainer"
-        style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
+        style={{
+          position: 'relative',
+          width: '100%',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
-        <img src="/love.png" style={{ height: '400px' }} alt="books" />
+        <img src="/love.png" style={{ height: '400px' }} alt="love" />
+        <span
+          style={{
+            position: 'absolute',
+            fontSize: '3rem',
+            color: 'wheat',
+            opacity: 0.5,
+          }}
+        >
+          {' '}
+          지도 영역{' '}
+        </span>
       </div>
       <Table
         dataSource={dateList || []}

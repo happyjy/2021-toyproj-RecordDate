@@ -10,12 +10,14 @@ import { ConnectedRouter } from 'connected-react-router';
 import { history } from './redux/create';
 import Detail from './pages/Detail';
 import Edit from './pages/Edit';
+import DateDetail from './pages/DateDetail';
 
 const App = () => (
   <ErrorBoundary FallbackComponent={Error}>
     <ConnectedRouter history={history}>
       <Switch>
         <Route exact path="/edit/:id" component={Edit} />
+        <Route exact path="/date/:id" component={DateDetail} />
         <Route exact path="/book/:id" component={Detail} />
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/add" component={Add} />

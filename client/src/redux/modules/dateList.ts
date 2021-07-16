@@ -1,10 +1,10 @@
 import { createActions, handleActions } from 'redux-actions';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import DateService from '../../services/DateListService';
-import { DateResType } from '../../types';
+import { DateResType, DateResType2, dateType } from '../../types';
 
 export interface DateListState {
-  dateList: DateResType[] | null;
+  dateList: dateType[] | null;
   loading: boolean;
   error: Error | null;
 }
@@ -37,7 +37,7 @@ const reducer = handleActions<DateListState, any>(
       error: null,
     }),
     SUCCESS: (state, action) => {
-      debugger;
+      // debugger;
       console.log('SUCCESS: ', { state, action });
       return {
         dateList: action.payload.dateList,

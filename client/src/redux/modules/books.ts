@@ -32,8 +32,8 @@ export const { success, pending, fail } = createActions(
   options,
 );
 
-console.log('### books.ts > actions: success, pending, fail');
-console.log({ success, pending, fail });
+// console.log('### books.ts > actions: success, pending, fail');
+// console.log({ success, pending, fail });
 
 const reducer = handleActions<BooksState, any>(
   {
@@ -71,13 +71,13 @@ export const { addBook, editBook, deleteBook, getBooks } = createActions(
   'GET_BOOKS',
   options,
 );
-console.log(
-  '### books.ts > actions: {addBook, editBook, deleteBook, getBooks} ',
-);
-console.log({ addBook, editBook, deleteBook, getBooks });
+// console.log(
+//   '### books.ts > actions: {addBook, editBook, deleteBook, getBooks} ',
+// );
+// console.log({ addBook, editBook, deleteBook, getBooks });
 
 export const result = createActions({}, 'GET_DATELIST', options);
-console.log('# result: ', result);
+// console.log('# result: ', result);
 
 export function* sagas() {
   yield takeEvery(`${options.prefix}/GET_BOOKS`, getBooksSaga);

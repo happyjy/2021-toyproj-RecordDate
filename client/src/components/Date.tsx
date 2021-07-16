@@ -10,14 +10,14 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 import styles from './Book.module.css';
+import { selectPlaceList } from '../types';
 
 interface DateProps {
   dateRecord_id: number;
   title: string;
   description: string;
-  place_name: string;
-  latLong: string;
   created_at: string;
+  selectPlaceList: selectPlaceList[];
   deleteBook: (bookId: number) => void;
   goEdit: (bookId: number) => void;
 }
@@ -27,17 +27,31 @@ const Date: React.FC<DateProps> = React.memo(
     dateRecord_id,
     title,
     description,
-    place_name,
-    latLong,
+    selectPlaceList,
     created_at,
     deleteBook,
     goEdit,
   }) => {
+    console.log({ selectPlaceList });
+    // debugger;
+    const place_name = selectPlaceList.map((v) => {
+      return v.placeName;
+    });
+    console.log('selectPlaceList.map placeNmae: ', place_name.join(', '));
+
+    var result = selectPlaceList.reduce<any>(
+      (acc: any, cur: any) => {
+        return acc.placeName + ', ' + cur.placeName;
+      },
+      { placeName: '' },
+    );
+
+    // console.log(result);
     return (
       <div className={styles.book}>
         <div className={styles.title}>
           <Link
-            to={`/book/${dateRecord_id}`}
+            to={`/date/${dateRecord_id}`}
             className={styles.link_detail_title}
           >
             <BookOutlined /> {title}
@@ -45,10 +59,13 @@ const Date: React.FC<DateProps> = React.memo(
         </div>
         <div className={styles.author}>
           <Link
-            to={`/book/${dateRecord_id}`}
+            to={`/date/${dateRecord_id}`}
             className={styles.link_detail_author}
           >
-            {place_name}
+            {selectPlaceList.map((v, i) => {
+              if (i == 0) return <span>{v.placeName}</span>;
+              if (i != 0) return <span>, {v.placeName}</span>;
+            })}
           </Link>
         </div>
         <div className={styles.created}>

@@ -1,4 +1,34 @@
 // DateList
+export interface DateResType2 {
+  date: dateType[];
+  place: placeType[];
+}
+
+export interface dateType {
+  dateRecord_id: number;
+  title: string;
+  description: string;
+  placeId: string;
+  image: string;
+  isDeleted: string;
+  created_at: string;
+  updated_at: string;
+  selectPlaceList: selectPlaceList[];
+}
+export interface placeType {
+  place_id: number;
+  dateRecord_id: number;
+  place_name: string;
+  address: string;
+  latLong: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface selectPlaceList {
+  placeName: string;
+  address: string;
+}
 export interface DateResType {
   dateRecord_id: number;
   title: string;

@@ -50,15 +50,36 @@ const connection = mysql.createConnection({
   password: conf.password,
   port: conf.port,
   database: conf.database,
+  multipleStatements: true,
 });
 
 const multer = require("multer");
 const upload = multer({ dest: "./upload" });
+app.get("/api/dateList", (req, res) => {
+  connection.query(
+    "SELECT * from dateRecord; SELECT * from place; ",
+    function (err, results) {
+      if (err) throw err;
+      // const result = {};
+      // result.dateRecord = results[0];
+      // result.place = results[1];
+      const dateRecordList = results[0];
+      const placeList = results[1];
 
-app.get("/api/dateRecord", (req, res) => {
+      dateRecordList.map((date) => {
+        // placeListi.
+        return date;
+      });
+      console.log(results);
+      res.send(results);
+    }
+  );
+});
+app.get("/api/dateList1", (req, res) => {
+  debugger;
   connection.query(
     // "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
-    `SELECT A.title, A.description, B.place_name
+    `SELECT A.dateRecord_id, A.title, A.description, A.created_at, B.place_name, B.latLong
        FROM dateRecord as A
  INNER JOIN place as B
          ON A.dateRecord_id = B.dateRecord_id`,
