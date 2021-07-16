@@ -32,26 +32,11 @@ const Date: React.FC<DateProps> = React.memo(
     deleteBook,
     goEdit,
   }) => {
-    console.log({ selectPlaceList });
-    // debugger;
-    const place_name = selectPlaceList.map((v) => {
-      return v.placeName;
-    });
-    console.log('selectPlaceList.map placeNmae: ', place_name.join(', '));
-
-    var result = selectPlaceList.reduce<any>(
-      (acc: any, cur: any) => {
-        return acc.placeName + ', ' + cur.placeName;
-      },
-      { placeName: '' },
-    );
-
-    // console.log(result);
     return (
       <div className={styles.book}>
         <div className={styles.title}>
           <Link
-            to={`/date/${dateRecord_id}`}
+            to={`/dateRecord/${dateRecord_id}`}
             className={styles.link_detail_title}
           >
             <BookOutlined /> {title}
@@ -59,7 +44,7 @@ const Date: React.FC<DateProps> = React.memo(
         </div>
         <div className={styles.author}>
           <Link
-            to={`/date/${dateRecord_id}`}
+            to={`/dateRecord/${dateRecord_id}`}
             className={styles.link_detail_author}
           >
             {selectPlaceList.map((v, i) => {

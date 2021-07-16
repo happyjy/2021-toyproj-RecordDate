@@ -12,11 +12,6 @@ import { getBooks as getBooksSaga } from '../redux/modules/books';
 const DetailContainer = () => {
   console.log('DetailContainer');
   const { id } = useParams();
-  const dateId = Number(id) || -1;
-  const dateList = useSelector<RootState, dateType[] | null>(
-    (state) => state.dateList.dateList,
-  );
-  // debugger;
   const bookId = Number(id) || -1;
   const books = useSelector<RootState, BookResType[] | null>(
     (state) => state.books.books,

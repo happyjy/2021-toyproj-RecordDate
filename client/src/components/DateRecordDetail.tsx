@@ -1,10 +1,10 @@
 import React, { useEffect } from 'react';
 import { PageHeader, Button, Input } from 'antd';
 import { BookOutlined } from '@ant-design/icons';
-
 import Layout from './Layout';
 import { DateResType, BookResType, dateType } from '../types';
 import styles from './Detail.module.css';
+// import styled from 'styled-components';
 
 const { TextArea } = Input;
 
@@ -19,7 +19,12 @@ interface DetailProps {
   logout: () => void;
 }
 
-const DateDetail: React.FC<DetailProps> = ({
+// const Title = styled.h1`
+//   font-size: 1.5em;
+//   text-align: center;
+//   color: palevioletred;
+// `;
+const DateRecordDetail: React.FC<DetailProps> = ({
   date,
   book,
   error,
@@ -49,17 +54,6 @@ const DateDetail: React.FC<DetailProps> = ({
       </div>
     );
   }
-
-  // if (book === null) {
-  //   return null;
-  // }
-  // if (book === undefined) {
-  //   return (
-  //     <div>
-  //       <h1>NotFound Book</h1>
-  //     </div>
-  //   );
-  // }
 
   return (
     <Layout>
@@ -117,4 +111,4 @@ const DateDetail: React.FC<DetailProps> = ({
     edit();
   }
 };
-export default DateDetail;
+export default DateRecordDetail;

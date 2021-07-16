@@ -2,14 +2,14 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
-import DateDetailContainer from '../containers/DateDetailContainer';
+import DateRecordDetailContainer from '../containers/DateRecordDetailContainer';
 
 const Detail = () => {
   const token = useToken();
   if (token === null) {
     return <Redirect to="/signin" />;
   }
-  return <DateDetailContainer />;
+  return <DateRecordDetailContainer />;
 };
 
 export default Detail;

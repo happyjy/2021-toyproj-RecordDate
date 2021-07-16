@@ -38,6 +38,12 @@ export interface DateResType {
   created_at: string;
 }
 
+export interface DateRecordReqType {
+  title: string;
+  place: string;
+  description: string;
+}
+
 // Books
 export interface BookReqType {
   title: string;

@@ -1,11 +1,12 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { message as messageDialog, PageHeader, Input, Button } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+// import TextArea from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
 
 import Layout from './Layout';
 import { BookReqType, BookResType } from '../types';
 import styles from './Add.module.css';
+// import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 
 interface AddProps {
   books: BookResType[] | null;
@@ -26,10 +27,13 @@ const Add: React.FC<AddProps> = ({
   back,
   logout,
 }) => {
-  const titleRef = React.useRef<Input>(null);
-  const messageRef = React.useRef<TextArea>(null);
-  const authorRef = React.useRef<Input>(null);
-  const urlRef = React.useRef<Input>(null);
+  const titleRef = useRef<Input>(null);
+  // const messageRef = useRef<TextAreaRef>(null);
+  const taRef = useRef<HTMLTextAreaElement>(null);
+  const authorRef = useRef<Input>(null);
+  const urlRef = useRef<Input>(null);
+
+  const [text, setText] = React.useState<string>();
 
   useEffect(() => {
     getBooks();
@@ -44,6 +48,13 @@ const Add: React.FC<AddProps> = ({
   if (books === null) {
     return null;
   }
+
+  // const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+  //   const value = e.target.value;
+
+  //   setText(value);
+  //   // onChange(value.split('\n'));
+  // };
 
   return (
     <Layout>
@@ -82,10 +93,13 @@ const Add: React.FC<AddProps> = ({
           <span className={styles.required}> *</span>
         </div>
         <div className={styles.input_area}>
-          <TextArea
+          <textarea
+            onChange={(e) => setText(e.target.value)}
+            value={text}
             rows={4}
             placeholder="Comment"
-            ref={messageRef}
+            // ref={messageRef}
+            ref={taRef}
             className={styles.input}
           />
         </div>
@@ -123,7 +137,11 @@ const Add: React.FC<AddProps> = ({
 
   function click() {
     const title = titleRef.current!.state.value;
-    const message = messageRef.current!.state.value;
+    debugger;
+    console.log(taRef);
+    console.log(text);
+    const message = taRef.current!.value;
+    // const message = messageRef.current!.state.value;
     const author = authorRef.current!.state.value;
     const url = urlRef.current!.state.value;
 
@@ -136,12 +154,12 @@ const Add: React.FC<AddProps> = ({
       messageDialog.error('Please fill out all inputs');
       return;
     }
-    add({
-      title,
-      message,
-      author,
-      url,
-    });
+    // add({
+    //   title,
+    //   message,
+    //   author,
+    //   url,
+    // });
   }
 };
 export default Add;

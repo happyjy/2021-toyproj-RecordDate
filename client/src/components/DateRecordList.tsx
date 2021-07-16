@@ -5,10 +5,10 @@ import styles from './List.module.css';
 import Layout from './Layout';
 import { BookResType, DateResType, dateType } from '../types';
 import Book from './Book';
-import Date from './Date';
+import Date from './DateRecord';
 
 interface BooksProps {
-  dateList: dateType[] | null;
+  dateRecordList: dateType[] | null;
   books: BookResType[] | null;
   loading: boolean;
   error: Error | null;
@@ -21,7 +21,7 @@ interface BooksProps {
 }
 
 const DateList: React.FC<BooksProps> = ({
-  dateList,
+  dateRecordList: dateRecordList,
   books,
   getDateList,
   getBooks,
@@ -92,7 +92,7 @@ const DateList: React.FC<BooksProps> = ({
         </span>
       </div>
       <Table
-        dataSource={dateList || []}
+        dataSource={dateRecordList || []}
         columns={[
           {
             title: 'Book',
@@ -111,7 +111,7 @@ const DateList: React.FC<BooksProps> = ({
             },
           },
         ]}
-        loading={dateList === null || loading}
+        loading={dateRecordList === null || loading}
         showHeader={false}
         className={styles.table}
         rowKey="bookId"

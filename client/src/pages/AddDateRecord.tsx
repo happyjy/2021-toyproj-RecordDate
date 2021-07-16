@@ -2,15 +2,14 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
-import ListContainer from '../containers/ListContainer';
-import DateListContainer from '../containers/DateRecordListContainer';
+import AddDateRecordContainer from '../containers/AddDateRecordContainer';
 
-const Home: React.FC = () => {
+const Add = () => {
   const token = useToken();
   if (token === null) {
     return <Redirect to="/signin" />;
   }
-  return <DateListContainer />;
+  return <AddDateRecordContainer />;
 };
 
-export default Home;
+export default Add;

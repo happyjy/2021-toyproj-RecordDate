@@ -3,7 +3,7 @@ import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
 // import List from '../components/List';
-import DateList from '../components/DateList';
+import DateList from '../components/DateRecordList';
 import { RootState } from '../redux/modules/rootReducer';
 import { DateResType, BookResType, dateType } from '../types';
 import { logout as logoutSaga } from '../redux/modules/auth';
@@ -12,11 +12,11 @@ import {
   deleteBook as deleteBookSaga,
 } from '../redux/modules/books';
 
-import { getDatelist as getDateListSaga } from '../redux/modules/dateList';
+import { getDatelist as getDateListSaga } from '../redux/modules/dateRecord';
 
-const DateListContainer: React.FC = (props) => {
-  const dateList = useSelector<RootState, dateType[] | null>(
-    (state) => state.dateList.dateList,
+const DateRecordListContainer: React.FC = (props) => {
+  const dateRecordList = useSelector<RootState, dateType[] | null>(
+    (state) => state.dateRecord.dateRecordList,
   );
   const books = useSelector<RootState, BookResType[] | null>(
     (state) => state.books.books,
@@ -46,7 +46,7 @@ const DateListContainer: React.FC = (props) => {
   );
 
   const goAdd = useCallback(() => {
-    dispatch(push('/add'));
+    dispatch(push('/addDateRecord'));
   }, [dispatch]);
 
   const goEdit = useCallback(
@@ -63,7 +63,7 @@ const DateListContainer: React.FC = (props) => {
   return (
     <DateList
       {...props}
-      dateList={dateList}
+      dateRecordList={dateRecordList}
       books={books}
       loading={loading}
       error={error}
@@ -77,4 +77,4 @@ const DateListContainer: React.FC = (props) => {
   );
 };
 
-export default DateListContainer;
+export default DateRecordListContainer;

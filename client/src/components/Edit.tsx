@@ -1,6 +1,6 @@
 import React, { useRef, useEffect } from 'react';
 import { message as messageDialog, PageHeader, Input, Button } from 'antd';
-import TextArea from 'antd/lib/input/TextArea';
+// import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
 
 import Layout from './Layout';
@@ -27,7 +27,7 @@ const Edit: React.FC<EditProps> = ({
   logout,
 }) => {
   const titleRef = useRef<Input>(null);
-  const messageRef = useRef<TextArea>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
   const authorRef = useRef<Input>(null);
   const urlRef = useRef<Input>(null);
 
@@ -95,10 +95,11 @@ const Edit: React.FC<EditProps> = ({
           <span className={styles.required}> *</span>
         </div>
         <div className={styles.input_area}>
-          <TextArea
+          <textarea
             rows={4}
             placeholder="Comment"
-            ref={messageRef}
+            ref={textareaRef}
+            // ref={messageRef}
             defaultValue={book?.message || ''}
             className={styles.input}
             style={{ minHeight: 100 }}
@@ -138,7 +139,8 @@ const Edit: React.FC<EditProps> = ({
 
   function click() {
     const title = titleRef.current!.state.value;
-    const message = messageRef.current!.state.value;
+    // const message = messageRef.current!.state.value;
+    const message = textareaRef.current!.value;
     const author = authorRef.current!.state.value;
     const url = urlRef.current!.state.value;
 
