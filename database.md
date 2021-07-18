@@ -58,11 +58,16 @@ SHOW TABLES;
 DROP TABLE dateRecord;
 DROP TABLE place;
 
+ALTER TABLE dateRecord modify placeId VARCHAR(255);
+ALTER TABLE dateRecord DROP COLUMN placeId;
+DELETE FROM dateRecord WHERE dateRecord_id=2;
+
+
 CREATE TABLE IF NOT EXISTS dateRecord (
     dateRecord_id INT AUTO_INCREMENT PRIMARY KEY,
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    placeId VARCHAR(255) NOT NULL,
+    placeId VARCHAR(255),
     image VARCHAR(255),
     isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
