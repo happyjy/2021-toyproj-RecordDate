@@ -47,7 +47,7 @@ const Date: React.FC<DateProps> = React.memo(
             to={`/dateRecord/${dateRecord_id}`}
             className={styles.link_detail_author}
           >
-            {selectPlaceList.map((v, i) => {
+            {selectPlaceList?.map((v, i) => {
               if (i == 0) return <span>{v.placeName}</span>;
               if (i != 0) return <span>, {v.placeName}</span>;
             })}

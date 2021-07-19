@@ -21,7 +21,7 @@ interface BooksProps {
 }
 
 const DateList: React.FC<BooksProps> = ({
-  dateRecordList: dateRecordList,
+  dateRecordList,
   books,
   getDateList,
   getBooks,

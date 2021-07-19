@@ -20,19 +20,6 @@ interface AddProps {
   logout: () => void;
 }
 
-// Create a Title component that'll render an <h1> tag with some styles
-const Title = styled.h1`
-  font-size: 1.5em;
-  text-align: center;
-  color: palevioletred;
-`;
-
-// Create a Wrapper component that'll render a <section> tag with some styles
-const Wrapper = styled.section`
-  padding: 4em;
-  background: papayawhip;
-`;
-
 const FormContainer = styled.div`
   border-radius: 5px;
   /* background-color: #f2f2f2; */
@@ -135,7 +122,7 @@ const AddDateRecord: React.FC<AddProps> = ({
         onBack={back}
         title={
           <div>
-            <FormOutlined /> Add Book
+            <FormOutlined /> Add Date Record
           </div>
         }
         subTitle="Add Your Book"
@@ -173,12 +160,8 @@ const AddDateRecord: React.FC<AddProps> = ({
           지도 영역{' '}
         </span>
       </div>
-      <Wrapper>
-        <Title>Hello World!!</Title>
-      </Wrapper>
 
       <FormContainer>
-        {/* <form action="/action_page.php"> */}
         <label>Title</label>
         <InputEl
           type="text"
@@ -208,77 +191,16 @@ const AddDateRecord: React.FC<AddProps> = ({
           className={styles.input}
         />
 
-        {/* <label>Country</label>
-          <SelectEl id="country" name="country">
-            <option value="australia">Australia</option>
-            <option value="canada">Canada</option>
-            <option value="usa">USA</option>
-          </SelectEl> */}
-
         <InputSubmitContainer>
           <InputSubmit type="submit" value="Add" onClick={click}>
             Add
           </InputSubmit>
         </InputSubmitContainer>
-        {/* </form> */}
       </FormContainer>
-      {/* <div className={styles.add}>
-        <div className={styles.input_title}>
-          Title
-          <span className={styles.required}> *</span>
-        </div>
-        <div className={styles.input_area}>
-          <Input placeholder="Title" ref={titleRef} className={styles.input} />
-        </div>
-        <div className={styles.input_comment}>
-          Comment
-          <span className={styles.required}> *</span>
-        </div>
-        <div className={styles.input_area}>
-          <textarea
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-            rows={4}
-            placeholder="Comment"
-            // ref={messageRef}
-            ref={textareaRef}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.input_author}>
-          Author
-          <span className={styles.required}> *</span>
-        </div>
-        <div className={styles.input_area}>
-          <Input
-            placeholder="Author"
-            ref={authorRef}
-            className={styles.input}
-          />
-        </div>
-        <div className={styles.input_url}>
-          URL
-          <span className={styles.required}> *</span>
-        </div>
-        <div className={styles.input_area}>
-          <Input placeholder="URL" ref={urlRef} className={styles.input} />
-        </div>
-        <div className={styles.button_area}>
-          <Button
-            size="large"
-            loading={loading}
-            onClick={click}
-            className={styles.button}
-          >
-            Add
-          </Button>
-        </div>
-      </div>*/}
     </Layout>
   );
 
   function click() {
-    debugger;
     const title = titleRef.current!.value;
     const place = placeRef.current!.value;
     const description = descriptionRef.current!.value;
@@ -295,27 +217,6 @@ const AddDateRecord: React.FC<AddProps> = ({
       place,
       description,
     });
-
-    // const title = titleRef.current!.state.value;
-    // const message = textareaRef.current!.value;
-    // // const message = messageRef.current!.state.value;
-    // const author = authorRef.current!.state.value;
-    // const url = urlRef.current!.state.value;
-    // if (
-    //   title === undefined ||
-    //   message === undefined ||
-    //   author === undefined ||
-    //   url === undefined
-    // ) {
-    //   messageDialog.error('Please fill out all inputs');
-    //   return;
-    // }
-    // add({
-    //   title,
-    //   message,
-    //   author,
-    //   url,
-    // });
   }
 };
 export default AddDateRecord;
