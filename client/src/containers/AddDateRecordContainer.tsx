@@ -11,13 +11,18 @@ import {
 } from '../redux/modules/books';
 
 import { addDaterecord as addDateRecordSaga } from '../redux/modules/dateRecord';
-import { BookReqType, BookResType, DateRecordReqType } from '../types';
+import {
+  BookReqType,
+  BookResType,
+  DateRecordReqType,
+  dateType,
+} from '../types';
 import AddDateRecord from '../components/AddDateRecord';
 
 const AddDateRecordContainer = () => {
-  const books = useSelector<RootState, BookResType[] | null>(
-    (state) => state.books.books,
-  );
+  // const dateRecordList = useSelector<RootState, dateType[] | null>(
+  //   (state) => state.dateRecord.dateRecordList,
+  // );
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
   );
@@ -33,17 +38,6 @@ const AddDateRecordContainer = () => {
     [dispatch],
   );
 
-  const getBooks = useCallback(() => {
-    dispatch(getBooksSaga());
-  }, [dispatch]);
-
-  const add = useCallback(
-    (book: BookReqType) => {
-      dispatch(addBookSaga(book));
-    },
-    [dispatch],
-  );
-
   const back = useCallback(() => {
     dispatch(goBack());
   }, [dispatch]);
@@ -54,12 +48,10 @@ const AddDateRecordContainer = () => {
 
   return (
     <AddDateRecord
+      // dateRecordList={dateRecordList}
       addDateRecord={addDateRecord}
-      books={books}
       loading={loading}
       error={error}
-      add={add}
-      getBooks={getBooks}
       back={back}
       logout={logout}
     />

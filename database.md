@@ -58,17 +58,14 @@ SHOW TABLES;
 DROP TABLE dateRecord;
 DROP TABLE place;
 
-ALTER TABLE dateRecord modify placeId VARCHAR(255);
-ALTER TABLE dateRecord DROP COLUMN placeId;
-DELETE FROM dateRecord WHERE dateRecord_id=2;
-
 
 CREATE TABLE IF NOT EXISTS dateRecord (
     dateRecord_id INT AUTO_INCREMENT PRIMARY KEY,
+    
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    placeId VARCHAR(255),
     image VARCHAR(255),
+
     isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -77,8 +74,10 @@ CREATE TABLE IF NOT EXISTS dateRecord (
 CREATE TABLE IF NOT EXISTS place (
     place_id INT AUTO_INCREMENT,
     dateRecord_id INT,
+
     place_name VARCHAR(255) NOT NULL,
     latLong VARCHAR(255) NOT NULL,
+    
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (place_id, dateRecord_id),
@@ -88,15 +87,24 @@ CREATE TABLE IF NOT EXISTS place (
 );
 ```
 
-# add column
+# modify column
 
 ```
+ALTER TABLE dateRecord RENAME description TO comment;
+ALTER TABLE dateRecord modify placeId VARCHAR(255);
+ALTER TABLE dateRecord DROP COLUMN placeId;
+DELETE FROM dateRecord WHERE dateRecord_id=2;
+
+ALTER TABLE place modify latLong VARCHAR(255);
+ALTER TABLE place modify latLong VARCHAR(255);
+
+
+
 ALTER TABLE place
 ADD COLUMN address VARCHAR(100) AFTER place_name;
 
 update place set place_name = '안양천 텐트' where place_id = 1;
 update place set address = '서울시 영등포구' where dateRecord_id = 1;
-
 
 ```
 

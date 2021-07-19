@@ -3,13 +3,12 @@ import { AnyAction } from 'redux';
 import { createActions, handleActions } from 'redux-actions';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import DateRecordService from '../../services/DateRecordService';
+import { DateRecordReqType, DateResType, dateType } from '../../types';
 import {
-  DateRecordReqType,
-  DateResType,
-  DateResType2,
-  dateType,
-} from '../../types';
-import { getBooksFromState, getTokenFromState } from '../utils';
+  getBooksFromState,
+  getDateRecordFromState,
+  getTokenFromState,
+} from '../utils';
 
 export interface DateRecordState {
   dateRecordList: dateType[] | null;
@@ -65,9 +64,13 @@ const reducer = handleActions<DateRecordState, any>(
 
 export default reducer;
 
-export const { addDaterecord, getDatelist } = createActions(
+export const { addDaterecord, getDatelist, editDaterecord } = createActions(
   {
     ADD_DATERECORD: (dateRecord: DateRecordReqType) => ({
+      dateRecord,
+    }),
+    EDIT_DATERECORD: (dateRecordId: number, dateRecord: DateRecordReqType) => ({
+      dateRecordId,
       dateRecord,
     }),
   },
@@ -75,11 +78,16 @@ export const { addDaterecord, getDatelist } = createActions(
   options,
 );
 
-console.log({ addDaterecord, getDatelist });
+console.log({
+  addDaterecord: addDaterecord(),
+  getDatelist: getDatelist(),
+  editDaterecord: editDaterecord(),
+});
 
 export function* sagas() {
-  yield takeEvery(`${options.prefix}/GET_DATELIST`, getDateListSaga);
   yield takeEvery(`${options.prefix}/ADD_DATERECORD`, addDateSaga);
+  yield takeEvery(`${options.prefix}/GET_DATELIST`, getDateListSaga);
+  yield takeEvery(`${options.prefix}/EDIT_DATERECORD`, editDateRecord);
 }
 
 function* getDateListSaga() {
@@ -117,6 +125,38 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     const dateRecordList: dateType[] = yield select(getBooksFromState);
     console.log({ dateRecordList });
     yield put(success([...dateRecordList, dateRecord]));
+    yield put(push('/'));
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+  }
+}
+
+interface EditDateRecordSagaAction extends AnyAction {
+  payload: {
+    dateRecordId: number;
+    dateRecord: DateRecordReqType;
+  };
+}
+function* editDateRecord(action: EditDateRecordSagaAction) {
+  try {
+    yield put(pending());
+    const token: string = yield select(getTokenFromState);
+    const newDateRecord: dateType = yield call(
+      DateRecordService.editDateRecord,
+      token,
+      action.payload.dateRecordId,
+      action.payload.dateRecord,
+    );
+    const dateRecordList: DateResType[] = yield select(getDateRecordFromState);
+    yield put(
+      success(
+        dateRecordList.map((dateRecord) =>
+          dateRecord.dateRecord_id === newDateRecord.dateRecord_id
+            ? newDateRecord
+            : dateRecord,
+        ),
+      ),
+    );
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

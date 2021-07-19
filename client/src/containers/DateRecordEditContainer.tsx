@@ -1,23 +1,32 @@
 import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { goBack, push } from 'connected-react-router';
 import { useParams } from 'react-router-dom';
+import { goBack } from 'connected-react-router';
 
-import Detail from '../components/Detail';
+import Edit from '../components/Edit';
 import { RootState } from '../redux/modules/rootReducer';
-import { DateResType, BookResType, dateType } from '../types';
+import { BookResType, dateType } from '../types';
 import { logout as logoutSaga } from '../redux/modules/auth';
-import { getBooks as getBooksSaga } from '../redux/modules/books';
-import DateRecordDetail from '../components/DateRecordDetail';
-import { getDatelist as getDateListSaga } from '../redux/modules/dateRecord';
+import {
+  editBook as editBookSaga,
+  getBooks as getBooksSaga,
+} from '../redux/modules/books';
+import {
+  getDatelist as getDateListSaga,
+  editDaterecord as editDateRecordsaga,
+} from '../redux/modules/dateRecord';
+import DateRecordEdit from '../components/DateRecordEdit';
 
-const DateRecordDetailContainer = () => {
+const DateRecordEditContainer = () => {
   const { id } = useParams();
   const dateId = Number(id) || -1;
   const dateRecordList = useSelector<RootState, dateType[] | null>(
     (state) => state.dateRecord.dateRecordList,
   );
 
+  const loading = useSelector<RootState, boolean>(
+    (state) => state.books.loading,
+  );
   const error = useSelector<RootState, Error | null>(
     (state) => state.books.error,
   );
@@ -28,34 +37,32 @@ const DateRecordDetailContainer = () => {
     dispatch(getDateListSaga());
   }, [dispatch]);
 
-  const getBooks = useCallback(() => {
-    dispatch(getBooksSaga());
-  }, [dispatch]);
+  const editDateRecord = useCallback(
+    (dateRecord) => {
+      dispatch(editDateRecordsaga(dateId, dateRecord));
+    },
+    [dispatch, dateId],
+  );
 
   const back = useCallback(() => {
     dispatch(goBack());
   }, [dispatch]);
 
-  const edit = useCallback(() => {
-    dispatch(push(`/editDateRecord/${id}`));
-  }, [dispatch, id]);
-
   const logout = useCallback(() => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
-  console.log('# dateRecordList: ', dateRecordList);
   return (
-    <DateRecordDetail
+    <DateRecordEdit
       dateRecord={dateRecordList?.find((date) => date.dateRecord_id === dateId)}
-      error={error}
       getDateList={getDateList}
-      getBooks={getBooks}
+      editDateRecord={editDateRecord}
+      loading={loading}
+      error={error}
       back={back}
-      edit={edit}
       logout={logout}
     />
   );
 };
 
-export default DateRecordDetailContainer;
+export default DateRecordEditContainer;

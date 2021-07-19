@@ -2,14 +2,14 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
-import EditContainer from '../containers/EditContainer';
+import DateRecordEditContainer from '../containers/DateRecordEditContainer';
 
 const Edit = () => {
   const token = useToken();
   if (token === null) {
     return <Redirect to="/signin" />;
   }
-  return <EditContainer />;
+  return <DateRecordEditContainer />;
 };
 
 export default Edit;

@@ -71,10 +71,6 @@ export const { addBook, editBook, deleteBook, getBooks } = createActions(
   'GET_BOOKS',
   options,
 );
-// console.log(
-//   '### books.ts > actions: {addBook, editBook, deleteBook, getBooks} ',
-// );
-// console.log({ addBook, editBook, deleteBook, getBooks });
 
 export function* sagas() {
   yield takeEvery(`${options.prefix}/GET_BOOKS`, getBooksSaga);
@@ -128,7 +124,7 @@ function* editBookSaga(action: EditBookSagaAction) {
   try {
     yield put(pending());
     const token: string = yield select(getTokenFromState);
-    const newBook = yield call(
+    const newBook: BookResType = yield call(
       BookService.editBook,
       token,
       action.payload.bookId,

@@ -55,19 +55,15 @@ const connection = mysql.createConnection({
 
 const multer = require("multer");
 const upload = multer({ dest: "./upload" });
-app.get("/api/dateRecordList", (req, res) => {
+app.get("/api/dateRecord", (req, res) => {
   connection.query(
     "SELECT * from dateRecord; SELECT * from place; ",
     function (err, results) {
       if (err) throw err;
-      // const result = {};
-      // result.dateRecord = results[0];
-      // result.place = results[1];
       const dateRecordList = results[0];
       const placeList = results[1];
 
       dateRecordList.map((date) => {
-        // placeListi.
         return date;
       });
       console.log(results);
@@ -76,33 +72,68 @@ app.get("/api/dateRecordList", (req, res) => {
   );
 });
 
-app.post("/api/dateRecordList", (req, res) => {
-  let sql = "INSERT INTO dateRecord(title, description) VALUES (?, ?)";
+app.post("/api/dateRecord", (req, res) => {
+  let insertDateRecord =
+    "INSERT INTO dateRecord(title, description) VALUES (?, ?)";
+  let insertPlace =
+    "INSERT INTO place(dateRecord_id, place_name) VALUES (?, ?)";
   let title = req.body.title;
   let description = req.body.description;
-  let params = [title, description];
-  console.log(req.body);
+  let place = req.body.place;
+  let insertDateRecordParams = [title, description];
 
-  connection.query(sql, params, (err, rows, fields) => {
-    console.log({ sql, params, err, rows, fields });
-    res.send(rows);
-  });
-
-  connection.query("SELECT * from dateRecord;", function (err, results) {
-    console.log("# 결과(SELECT * from dateRecord)", results);
-  });
-});
-app.get("/api/dateList1", (req, res) => {
-  debugger;
+  let INSERTID;
   connection.query(
-    // "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
-    `SELECT A.dateRecord_id, A.title, A.description, A.created_at, B.place_name, B.latLong
-       FROM dateRecord as A
- INNER JOIN place as B
-         ON A.dateRecord_id = B.dateRecord_id`,
+    insertDateRecord,
+    insertDateRecordParams,
     (err, rows, fields) => {
-      console.log(rows);
+      INSERTID = rows.insertId;
+      let insertPlaceParams = [INSERTID, place];
+
+      connection.query(
+        insertPlace,
+        insertPlaceParams,
+        (err, rows, field) => {}
+      );
       res.send(rows);
+    }
+  );
+});
+
+app.patch("/api/dateRecord/:id", (req, res) => {
+  let updateDateRecord =
+    "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
+  let updatePlace = "UPDATE PLACE SET place_name = ? where dateRecord_id = ?;";
+
+  let title = req.body.title;
+  let place = req.body.place;
+  let description = req.body.description;
+  let updateDateRecordParams = [title, description, req.params.id];
+  let updatePlaceParams = [place, req.params.id];
+
+  connection.query(
+    updateDateRecord,
+    updateDateRecordParams,
+    (err, rows, field) => {
+      if (err) throw err;
+    }
+  );
+  connection.query(updatePlace, updatePlaceParams, (err, rows, field) => {
+    if (err) throw err;
+  });
+
+  connection.query(
+    "SELECT * from dateRecord; SELECT * from place; ",
+    function (err, results) {
+      if (err) throw err;
+      const dateRecordList = results[0];
+      const placeList = results[1];
+
+      dateRecordList.map((date) => {
+        return date;
+      });
+
+      res.send(results);
     }
   );
 });

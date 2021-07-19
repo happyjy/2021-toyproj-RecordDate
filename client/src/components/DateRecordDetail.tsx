@@ -4,13 +4,11 @@ import { BookOutlined } from '@ant-design/icons';
 import Layout from './Layout';
 import { DateResType, BookResType, dateType } from '../types';
 import styles from './Detail.module.css';
+import styled, { css } from 'styled-components';
 // import styled from 'styled-components';
 
-const { TextArea } = Input;
-
 interface DetailProps {
-  date: dateType | null | undefined;
-  book: BookResType | null | undefined;
+  dateRecord: dateType | null | undefined;
   error: Error | null;
   back: () => void;
   edit: () => void;
@@ -19,14 +17,8 @@ interface DetailProps {
   logout: () => void;
 }
 
-// const Title = styled.h1`
-//   font-size: 1.5em;
-//   text-align: center;
-//   color: palevioletred;
-// `;
 const DateRecordDetail: React.FC<DetailProps> = ({
-  date,
-  book,
+  dateRecord,
   error,
   edit,
   getDateList,
@@ -44,16 +36,40 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     }
   }, [error, logout]);
 
-  if (date === null) {
+  if (dateRecord === null) {
     return null;
   }
-  if (date === undefined) {
+  if (dateRecord === undefined) {
     return (
       <div>
-        <h1>NotFound date recorded</h1>
+        <h1>NotFound dateRecord</h1>
       </div>
     );
   }
+
+  const FormContainer = styled.div`
+    border-radius: 5px;
+    /* background-color: #f2f2f2; */
+    padding: 20px;
+  `;
+
+  const commonFormProperty = css`
+    width: 100%;
+    padding: 12px 20px;
+    margin: 8px 0;
+    display: inline-block;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+  `;
+  // https://stackoverflow.com/questions/56378356/how-do-i-convert-css-to-styled-components-with-inputtype-submit-attribute
+  const InputEl = styled.input.attrs({ type: 'text' })`
+    ${commonFormProperty};
+  `;
+
+  const TextAreaEl = styled.textarea`
+    ${commonFormProperty};
+  `;
 
   return (
     <Layout>
@@ -61,10 +77,10 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         onBack={back}
         title={
           <div>
-            <BookOutlined /> {date.title}
+            <BookOutlined /> {dateRecord.title}
           </div>
         }
-        // subTitle={date.author}
+        // subTitle={dateRecord.author}
         extra={[
           <Button
             key="2"
@@ -92,18 +108,38 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         <img src="/love.png" style={{ height: '400px' }} alt="love" />
       </div>
 
-      <div className={styles.detail}>
-        <div className={styles.message_title}> My Comment </div>
-        <div className={styles.message}>
-          <TextArea
-            rows={4}
-            value={date.description}
+      <FormContainer>
+        <label>Title</label>
+        <InputEl
+          value={dateRecord.title}
+          type="text"
+          id="title"
+          name="title"
+          placeholder="title..."
+          readOnly
+        />
+
+        <label>place</label>
+        {dateRecord.selectPlaceList.map((place) => (
+          <InputEl
+            value={place.placeName}
+            type="text"
+            id="lname"
+            name="lastname"
+            placeholder="place.."
             readOnly
-            className={styles.message_textarea}
           />
-        </div>
-        <div className={styles.button_area}></div>
-      </div>
+        ))}
+
+        <label>description</label>
+        <TextAreaEl
+          value={dateRecord.description}
+          rows={4}
+          placeholder="Comment"
+          className={styles.input}
+          readOnly
+        />
+      </FormContainer>
     </Layout>
   );
 

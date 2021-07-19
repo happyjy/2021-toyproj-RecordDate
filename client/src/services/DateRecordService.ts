@@ -10,16 +10,19 @@ import {
   selectPlaceList,
 } from '../types';
 
-// const BOOK_API_URL = 'https://api.marktube.tv/v1/book';
-const BOOK_API_URL = 'http://localhost:5000/api/dateRecordList';
+const BOOK_API_URL = 'https://api.marktube.tv/v1/book';
+const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 
 export default class DateRecordService {
   public static async getDateRecordList(token: string): Promise<dateType[]> {
-    const response = await axios.get<[dateType[], placeType[]]>(BOOK_API_URL, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    const response = await axios.get<[dateType[], placeType[]]>(
+      DATERECORD_API_URL,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
       },
-    });
+    );
 
     const dateRecordList = response.data[0];
     const placeList = response.data[1];
@@ -47,7 +50,7 @@ export default class DateRecordService {
     dateRecord: DateRecordReqType,
   ): Promise<DateRecordReqType> {
     const response = await axios.post<DateRecordReqType>(
-      BOOK_API_URL,
+      DATERECORD_API_URL,
       dateRecord,
       {
         headers: {
@@ -57,15 +60,20 @@ export default class DateRecordService {
     );
     return response.data;
   }
-  public static async addBook(
+
+  public static async editDateRecord(
     token: string,
-    book: BookReqType,
-  ): Promise<BookResType> {
-    const response = await axios.post<BookResType>(BOOK_API_URL, book, {
-      headers: {
-        Authorization: `Bearer ${token}`,
+    dateRecordId: number,
+    dateRecord: DateRecordReqType,
+  ): Promise<dateType> {
+    const response = await axios.patch<dateType>(
+      `${DATERECORD_API_URL}/${dateRecordId}`,
+      dateRecord,
+      {
+        headers: { Authorization: `Bearer ${token}` },
       },
-    });
+    );
+
     return response.data;
   }
 

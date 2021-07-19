@@ -1,6 +1,6 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef, useEffect } from 'react';
 import { message as messageDialog, PageHeader, Input, Button } from 'antd';
-// import TextArea from 'antd/lib/input/TextArea';
+// import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
 
 import Layout from './Layout';
@@ -10,8 +10,7 @@ import {
   DateRecordReqType,
   dateType,
 } from '../types';
-import styles from './Add.module.css';
-// import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
+import styles from './Edit.module.css';
 import styled, { css } from 'styled-components';
 
 const FormContainer = styled.div`
@@ -63,41 +62,27 @@ const InputSubmit = styled.button`
   }
 `;
 
-// const Button = styled.input`
-//   ${styles.button_area}
-// `;
-
-interface AddProps {
-  // dateRecordList: dateType | null | undefined;
-  addDateRecord: (dateRecord: DateRecordReqType) => void;
+interface DateRecordEditProps {
+  dateRecord: dateType | null | undefined;
+  getDateList: () => void;
+  editDateRecord: (dateRecord: DateRecordReqType) => void;
   loading: boolean;
   error: Error | null;
   back: () => void;
   logout: () => void;
 }
 
-const AddDateRecord: React.FC<AddProps> = ({
-  // dateRecordList,
-  addDateRecord,
+const DateRecordEdit: React.FC<DateRecordEditProps> = ({
+  dateRecord,
   loading,
   error,
+  editDateRecord,
   back,
   logout,
 }) => {
   const titleRef = useRef<HTMLInputElement>(null);
   const placeRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-  const [text, setText] = React.useState<string>();
-
-  // const titleRef = useRef<Input>(null);
-  // // const messageRef = useRef<TextAreaRef>(null);
-  // const textareaRef = useRef<HTMLTextAreaElement>(null);
-  // const authorRef = useRef<Input>(null);
-  // const urlRef = useRef<Input>(null);
-
-  // useEffect(() => {
-  //   addDaterecord();
-  // }, [addDateRecord]);
 
   useEffect(() => {
     if (error) {
@@ -105,16 +90,28 @@ const AddDateRecord: React.FC<AddProps> = ({
     }
   }, [error, logout]);
 
+  if (dateRecord === null) {
+    return null;
+  }
+
+  if (dateRecord === undefined) {
+    return (
+      <div>
+        <h1>NotFound Book</h1>
+      </div>
+    );
+  }
+
   return (
     <Layout>
       <PageHeader
         onBack={back}
         title={
           <div>
-            <FormOutlined /> Add Date Record
+            <FormOutlined /> Edit Book
           </div>
         }
-        subTitle="Add Your Book"
+        subTitle="Edit Your Book"
         extra={[
           <Button
             key="1"
@@ -126,6 +123,7 @@ const AddDateRecord: React.FC<AddProps> = ({
           </Button>,
         ]}
       />
+
       <div
         className="imgContainer"
         style={{
@@ -153,6 +151,7 @@ const AddDateRecord: React.FC<AddProps> = ({
       <FormContainer>
         <label>Title</label>
         <InputEl
+          defaultValue={dateRecord.title}
           type="text"
           id="title"
           name="title"
@@ -161,28 +160,30 @@ const AddDateRecord: React.FC<AddProps> = ({
         />
 
         <label>place</label>
-        <InputEl
-          type="text"
-          id="lname"
-          name="lastname"
-          placeholder="place.."
-          ref={placeRef}
-        />
+        {dateRecord.selectPlaceList.map((place, idx) => (
+          <InputEl
+            key={idx}
+            defaultValue={place.placeName}
+            type="text"
+            id="lname"
+            name="lastname"
+            placeholder="place.."
+            ref={placeRef}
+          />
+        ))}
 
         <label>description</label>
         <TextAreaEl
-          onChange={(e) => setText(e.target.value)}
-          value={text}
+          defaultValue={dateRecord.description}
           rows={4}
           placeholder="Comment"
-          // ref={messageRef}
           ref={descriptionRef}
           className={styles.input}
         />
 
         <InputSubmitContainer>
           <InputSubmit type="submit" value="Add" onClick={click}>
-            Add
+            Update
           </InputSubmit>
         </InputSubmitContainer>
       </FormContainer>
@@ -193,6 +194,7 @@ const AddDateRecord: React.FC<AddProps> = ({
     const title = titleRef.current!.value;
     const place = placeRef.current!.value;
     const description = descriptionRef.current!.value;
+
     if (
       title === undefined ||
       place === undefined ||
@@ -201,11 +203,11 @@ const AddDateRecord: React.FC<AddProps> = ({
       messageDialog.error('Please fill out all inputs');
       return;
     }
-    addDateRecord({
+    editDateRecord({
       title,
       place,
       description,
     });
   }
 };
-export default AddDateRecord;
+export default DateRecordEdit;

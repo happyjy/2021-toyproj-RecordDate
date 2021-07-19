@@ -99,7 +99,6 @@ const DateList: React.FC<BooksProps> = ({
             dataIndex: 'book',
             key: 'book',
             render: (text, record) => {
-              console.log('# record: ', record);
               return (
                 <Date
                   {...record}
