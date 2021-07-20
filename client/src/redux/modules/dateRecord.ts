@@ -64,30 +64,37 @@ const reducer = handleActions<DateRecordState, any>(
 
 export default reducer;
 
-export const { addDaterecord, getDatelist, editDaterecord } = createActions(
-  {
-    ADD_DATERECORD: (dateRecord: DateRecordReqType) => ({
-      dateRecord,
-    }),
-    EDIT_DATERECORD: (dateRecordId: number, dateRecord: DateRecordReqType) => ({
-      dateRecordId,
-      dateRecord,
-    }),
-  },
-  'GET_DATELIST',
-  options,
-);
+export const { addDaterecord, getDatelist, deleteDaterecord, editDaterecord } =
+  createActions(
+    {
+      ADD_DATERECORD: (dateRecord: DateRecordReqType) => ({
+        dateRecord,
+      }),
+      EDIT_DATERECORD: (
+        dateRecordId: number,
+        dateRecord: DateRecordReqType,
+      ) => ({
+        dateRecordId,
+        dateRecord,
+      }),
+      DELETE_DATERECORD: (dateRecordId: number) => ({ dateRecordId }),
+    },
+    'GET_DATELIST',
+    options,
+  );
 
 console.log({
   addDaterecord: addDaterecord(),
   getDatelist: getDatelist(),
   editDaterecord: editDaterecord(),
+  deleteDaterecord: deleteDaterecord(),
 });
 
 export function* sagas() {
   yield takeEvery(`${options.prefix}/ADD_DATERECORD`, addDateSaga);
   yield takeEvery(`${options.prefix}/GET_DATELIST`, getDateListSaga);
   yield takeEvery(`${options.prefix}/EDIT_DATERECORD`, editDateRecord);
+  yield takeEvery(`${options.prefix}/DELETE_DATERECORD`, deleteDateRecord);
 }
 
 function* getDateListSaga() {
@@ -158,6 +165,31 @@ function* editDateRecord(action: EditDateRecordSagaAction) {
       ),
     );
     yield put(push('/'));
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+  }
+}
+
+interface DeletedDateRecordAction extends AnyAction {
+  payload: {
+    dateRecordId: number;
+  };
+}
+
+function* deleteDateRecord(action: DeletedDateRecordAction) {
+  try {
+    const { dateRecordId } = action.payload;
+    yield put(pending());
+    const token: string = yield select(getTokenFromState);
+    yield call(DateRecordService.deleteDateRecord, token, dateRecordId);
+    const dateRecordList: DateResType[] = yield select(getDateRecordFromState);
+    yield put(
+      success(
+        dateRecordList.filter(
+          (dateRecord) => dateRecord.dateRecord_id !== dateRecordId,
+        ),
+      ),
+    );
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
   }

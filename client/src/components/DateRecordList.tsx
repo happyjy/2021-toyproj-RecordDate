@@ -32,9 +32,6 @@ const DateList: React.FC<BooksProps> = ({
   logout,
   goEdit,
 }) => {
-  // useEffect(() => {
-  //   getBooks();
-  // }, [getBooks]);
   useEffect(() => {
     getDateList();
   }, [getDateList]);

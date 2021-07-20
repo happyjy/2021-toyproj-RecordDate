@@ -66,7 +66,7 @@ CREATE TABLE IF NOT EXISTS dateRecord (
     description TEXT,
     image VARCHAR(255),
 
-    isDeleted BOOLEAN NOT NULL DEFAULT FALSE,
+    isDeleted BOOLEAN NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
@@ -91,18 +91,21 @@ CREATE TABLE IF NOT EXISTS place (
 
 ```
 ALTER TABLE dateRecord RENAME description TO comment;
-ALTER TABLE dateRecord modify placeId VARCHAR(255);
+ALTER TABLE dateRecord MODIFY placeId VARCHAR(255);
 ALTER TABLE dateRecord DROP COLUMN placeId;
+
+ALTER TABLE dateRecord modify isDelete BOOLEAN NOT NULL DEFAULT 0;
+
 DELETE FROM dateRecord WHERE dateRecord_id=2;
 
 ALTER TABLE place modify latLong VARCHAR(255);
 ALTER TABLE place modify latLong VARCHAR(255);
 
+ALTER TABLE place ADD COLUMN address VARCHAR(100) AFTER place_name;
+ALTER TABLE place DROP COLUMN isDeleted;
+ALTER TABLE place ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER latLong;
 
-
-ALTER TABLE place
-ADD COLUMN address VARCHAR(100) AFTER place_name;
-
+update dateRecord set isDelete = 0;
 update place set place_name = '안양천 텐트' where place_id = 1;
 update place set address = '서울시 영등포구' where dateRecord_id = 1;
 

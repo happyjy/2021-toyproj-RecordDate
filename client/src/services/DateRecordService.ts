@@ -4,7 +4,6 @@ import {
   BookReqType,
   BookResType,
   DateRecordReqType,
-  DateResType2,
   dateType,
   placeType,
   selectPlaceList,
@@ -69,6 +68,20 @@ export default class DateRecordService {
     const response = await axios.patch<dateType>(
       `${DATERECORD_API_URL}/${dateRecordId}`,
       dateRecord,
+      {
+        headers: { Authorization: `Bearer ${token}` },
+      },
+    );
+
+    return response.data;
+  }
+
+  public static async deleteDateRecord(
+    token: string,
+    dateRecordId: number,
+  ): Promise<dateType> {
+    const response = await axios.delete<dateType>(
+      `${DATERECORD_API_URL}/${dateRecordId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },

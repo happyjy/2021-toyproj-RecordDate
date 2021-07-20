@@ -56,6 +56,27 @@ const Date: React.FC<DateProps> = React.memo(
         <div className={styles.created}>
           {moment(created_at).format('MM-DD-YYYY hh:mm a')}
         </div>
+        <div className={styles.tooltips}>
+          <Tooltip title="Edit">
+            <Button
+              size="small"
+              shape="circle"
+              onClick={clickEdit}
+              icon={<EditOutlined />}
+              className={styles.button_edit}
+            />
+          </Tooltip>
+          <Tooltip title="Delete">
+            <Button
+              size="small"
+              type="primary"
+              shape="circle"
+              danger
+              onClick={click}
+              icon={<DeleteOutlined />}
+            />
+          </Tooltip>
+        </div>
       </div>
     );
 

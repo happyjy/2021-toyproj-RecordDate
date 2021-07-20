@@ -12,7 +12,10 @@ import {
   deleteBook as deleteBookSaga,
 } from '../redux/modules/books';
 
-import { getDatelist as getDateListSaga } from '../redux/modules/dateRecord';
+import {
+  getDatelist as getDateListSaga,
+  deleteDaterecord as deleteDateRecordSaga,
+} from '../redux/modules/dateRecord';
 
 const DateRecordListContainer: React.FC = (props) => {
   const dateRecordList = useSelector<RootState, dateType[] | null>(
@@ -39,8 +42,9 @@ const DateRecordListContainer: React.FC = (props) => {
   }, [dispatch]);
 
   const deleteBook = useCallback(
-    (bookId) => {
-      dispatch(deleteBookSaga(bookId));
+    (dateRecordId: number) => {
+      // dispatch(deleteBookSaga(dateRecordId));
+      dispatch(deleteDateRecordSaga(dateRecordId));
     },
     [dispatch],
   );
@@ -50,8 +54,8 @@ const DateRecordListContainer: React.FC = (props) => {
   }, [dispatch]);
 
   const goEdit = useCallback(
-    (bookId: number) => {
-      dispatch(push(`/edit/${bookId}`));
+    (dateRecordId: number) => {
+      dispatch(push(`/editDateRecord/${dateRecordId}`));
     },
     [dispatch],
   );

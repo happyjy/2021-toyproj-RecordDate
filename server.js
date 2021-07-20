@@ -57,7 +57,7 @@ const multer = require("multer");
 const upload = multer({ dest: "./upload" });
 app.get("/api/dateRecord", (req, res) => {
   connection.query(
-    "SELECT * from dateRecord; SELECT * from place; ",
+    "SELECT * FROM DATERECORD WHERE ISDELETED = 0; SELECT * FROM PLACE WHERE ISDELETED = 0",
     function (err, results) {
       if (err) throw err;
       const dateRecordList = results[0];
@@ -66,7 +66,7 @@ app.get("/api/dateRecord", (req, res) => {
       dateRecordList.map((date) => {
         return date;
       });
-      console.log(results);
+      // console.log(results);
       res.send(results);
     }
   );
@@ -74,9 +74,9 @@ app.get("/api/dateRecord", (req, res) => {
 
 app.post("/api/dateRecord", (req, res) => {
   let insertDateRecord =
-    "INSERT INTO dateRecord(title, description) VALUES (?, ?)";
+    "INSERT INTO dateRecord(title, description) VALUES (?, ?);";
   let insertPlace =
-    "INSERT INTO place(dateRecord_id, place_name) VALUES (?, ?)";
+    "INSERT INTO place(dateRecord_id, place_name) VALUES (?, ?);";
   let title = req.body.title;
   let description = req.body.description;
   let place = req.body.place;
@@ -138,6 +138,24 @@ app.patch("/api/dateRecord/:id", (req, res) => {
   );
 });
 
+app.delete("/api/dateRecord/:id", (req, res) => {
+  let deleteDateRecord =
+    "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";
+  let deletePlace = "UPDATE PLACE SET isDeleted = 1 where dateRecord_id = ?;";
+
+  let updatePlaceParams = [req.params.id];
+  console.log(1);
+  connection.query(deleteDateRecord, updatePlaceParams, (err, rows, field) => {
+    console.log(2);
+    if (err) throw err;
+  });
+  connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
+    console.log(3);
+    if (err) throw err;
+    res.send(rows);
+  });
+});
+
 // app.get('/api/customers', (req, res) => {
 //   connection.query(
 //     "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
@@ -146,7 +164,6 @@ app.patch("/api/dateRecord/:id", (req, res) => {
 //     }
 // );
 // });
-
 // app.use('/image', express.static('./upload'));
 
 app.post("/api/customers", upload.single("image"), (req, res) => {
