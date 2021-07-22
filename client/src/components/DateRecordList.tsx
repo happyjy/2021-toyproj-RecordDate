@@ -5,29 +5,30 @@ import styles from './List.module.css';
 import Layout from './Layout';
 import { BookResType, DateResType, dateType } from '../types';
 import Book from './Book';
-import Date from './DateRecord';
+import DateRecord from './DateRecord';
 
-interface BooksProps {
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
+interface DateRecordsProps {
   dateRecordList: dateType[] | null;
-  books: BookResType[] | null;
   loading: boolean;
   error: Error | null;
   getDateList: () => void;
-  getBooks: () => void;
-  deleteBook: (bookId: number) => void;
+  deleteRecordDate: (bookId: number) => void;
   goAdd: () => void;
   goEdit: (bookId: number) => void;
   logout: () => void;
 }
 
-const DateList: React.FC<BooksProps> = ({
+const DateRecordList: React.FC<DateRecordsProps> = ({
   dateRecordList,
-  books,
   getDateList,
-  getBooks,
   error,
   loading,
-  deleteBook,
+  deleteRecordDate,
   goAdd,
   logout,
   goEdit,
@@ -41,6 +42,55 @@ const DateList: React.FC<BooksProps> = ({
       logout();
     }
   }, [error, logout]);
+
+  useEffect(() => {
+    console.log({ dateRecordList });
+    // dateRecordList?.selectPlaceList.latLong.split(",");
+
+    var mapContainer = document.getElementById('map'), // 지도를 표시할 div
+      mapOption = {
+        center: new window.kakao.maps.LatLng(
+          37.52279639598579,
+          126.88244947391755,
+        ), // 지도의 중심좌표
+        level: 5, // 지도의 확대 레벨
+      };
+
+    var map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+
+    let placeList: { title: string; latlng: any }[] = [];
+    dateRecordList?.forEach((dateRecord) => {
+      dateRecord.selectPlaceList.forEach((place) => {
+        const latLongSplit = place.latLong.split(',');
+        let lat = latLongSplit[0];
+        let long = latLongSplit[1];
+        placeList.push({
+          title: place.placeName,
+          latlng: new window.kakao.maps.LatLng(lat, long),
+        });
+      });
+    });
+
+    // 마커 이미지의 이미지 주소입니다
+    var imageSrc =
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+
+    for (var i = 0; i < placeList.length; i++) {
+      // 마커 이미지의 이미지 크기 입니다
+      var imageSize = new window.kakao.maps.Size(24, 35);
+
+      // 마커 이미지를 생성합니다
+      var markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+
+      // 마커를 생성합니다
+      var marker = new window.kakao.maps.Marker({
+        map: map, // 마커를 표시할 지도
+        position: placeList[i].latlng, // 마커를 표시할 위치
+        title: placeList[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image: markerImage, // 마커 이미지
+      });
+    }
+  });
 
   return (
     <Layout>
@@ -65,6 +115,7 @@ const DateList: React.FC<BooksProps> = ({
           </Button>,
         ]}
       />
+
       <div
         className="imgContainer"
         style={{
@@ -75,7 +126,8 @@ const DateList: React.FC<BooksProps> = ({
           alignItems: 'center',
         }}
       >
-        <img src="/love.png" style={{ height: '400px' }} alt="love" />
+        <div id="map" style={{ width: '800px', height: '600px' }}></div>
+        {/* <img src="/love.png" style={{ height: '400px' }} alt="love" />
         <span
           style={{
             position: 'absolute',
@@ -86,7 +138,7 @@ const DateList: React.FC<BooksProps> = ({
         >
           {' '}
           지도 영역{' '}
-        </span>
+        </span> */}
       </div>
       <Table
         dataSource={dateRecordList || []}
@@ -97,9 +149,9 @@ const DateList: React.FC<BooksProps> = ({
             key: 'book',
             render: (text, record) => {
               return (
-                <Date
+                <DateRecord
                   {...record}
-                  deleteBook={deleteBook}
+                  deleteRecordDate={deleteRecordDate}
                   goEdit={goEdit}
                   key={record.dateRecord_id}
                 />
@@ -117,4 +169,4 @@ const DateList: React.FC<BooksProps> = ({
   );
 };
 
-export default DateList;
+export default DateRecordList;

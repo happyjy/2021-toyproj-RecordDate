@@ -97,7 +97,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   if (dateRecord === undefined) {
     return (
       <div>
-        <h1>NotFound Book</h1>
+        <h1>NotFound dateRecord</h1>
       </div>
     );
   }
@@ -108,7 +108,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         onBack={back}
         title={
           <div>
-            <FormOutlined /> Edit Book
+            <FormOutlined /> Edit dateRecord
           </div>
         }
         subTitle="Edit Your Book"

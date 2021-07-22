@@ -28,6 +28,7 @@ export interface placeType {
 export interface selectPlaceList {
   placeName: string;
   address: string;
+  latLong: string;
 }
 export interface DateResType {
   dateRecord_id: number;

@@ -26,20 +26,21 @@ export default class DateRecordService {
     const dateRecordList = response.data[0];
     const placeList = response.data[1];
 
-    dateRecordList.map((v: dateType) => {
+    dateRecordList.map((dateRecord: dateType) => {
       let selectPlaceList: selectPlaceList[] = [];
 
-      placeList.forEach((v1: placeType) => {
-        if (v.dateRecord_id === v1.dateRecord_id) {
+      placeList.forEach((place: placeType) => {
+        if (dateRecord.dateRecord_id === place.dateRecord_id) {
           selectPlaceList.push({
-            placeName: v1.place_name,
-            address: v1.address,
+            placeName: place.place_name,
+            address: place.address,
+            latLong: place.latLong,
           });
         }
       });
-      v.selectPlaceList = selectPlaceList;
+      dateRecord.selectPlaceList = selectPlaceList;
 
-      return v;
+      return dateRecord;
     });
     return dateRecordList;
   }
@@ -53,7 +54,7 @@ export default class DateRecordService {
       dateRecord,
       {
         headers: {
-          Authrization: `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
         },
       },
     );

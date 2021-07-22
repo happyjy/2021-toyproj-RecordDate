@@ -1,11 +1,6 @@
 import React from 'react';
 import { Button, Tooltip } from 'antd';
-import {
-  BookOutlined,
-  DeleteOutlined,
-  EditOutlined,
-  HomeOutlined,
-} from '@ant-design/icons';
+import { BookOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
@@ -18,18 +13,18 @@ interface DateProps {
   description: string;
   created_at: string;
   selectPlaceList: selectPlaceList[];
-  deleteBook: (bookId: number) => void;
-  goEdit: (bookId: number) => void;
+  deleteRecordDate: (recordDateId: number) => void;
+  goEdit: (recordDateId: number) => void;
 }
 
-const Date: React.FC<DateProps> = React.memo(
+const DateRecord: React.FC<DateProps> = React.memo(
   ({
     dateRecord_id,
     title,
     description,
     selectPlaceList,
     created_at,
-    deleteBook,
+    deleteRecordDate: deleteBook,
     goEdit,
   }) => {
     return (
@@ -89,4 +84,4 @@ const Date: React.FC<DateProps> = React.memo(
   },
 );
 
-export default Date;
+export default DateRecord;

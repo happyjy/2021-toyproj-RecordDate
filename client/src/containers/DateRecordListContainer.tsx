@@ -3,14 +3,10 @@ import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
 // import List from '../components/List';
-import DateList from '../components/DateRecordList';
+import DateRecordList from '../components/DateRecordList';
 import { RootState } from '../redux/modules/rootReducer';
 import { DateResType, BookResType, dateType } from '../types';
 import { logout as logoutSaga } from '../redux/modules/auth';
-import {
-  getBooks as getBooksSaga,
-  deleteBook as deleteBookSaga,
-} from '../redux/modules/books';
 
 import {
   getDatelist as getDateListSaga,
@@ -37,13 +33,8 @@ const DateRecordListContainer: React.FC = (props) => {
     dispatch(getDateListSaga());
   }, [dispatch]);
 
-  const getBooks = useCallback(() => {
-    dispatch(getBooksSaga());
-  }, [dispatch]);
-
-  const deleteBook = useCallback(
+  const deleteRecordDate = useCallback(
     (dateRecordId: number) => {
-      // dispatch(deleteBookSaga(dateRecordId));
       dispatch(deleteDateRecordSaga(dateRecordId));
     },
     [dispatch],
@@ -65,15 +56,13 @@ const DateRecordListContainer: React.FC = (props) => {
   }, [dispatch]);
 
   return (
-    <DateList
+    <DateRecordList
       {...props}
       dateRecordList={dateRecordList}
-      books={books}
       loading={loading}
       error={error}
       getDateList={getDateList}
-      getBooks={getBooks}
-      deleteBook={deleteBook}
+      deleteRecordDate={deleteRecordDate}
       goAdd={goAdd}
       goEdit={goEdit}
       logout={logout}
