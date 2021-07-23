@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useState } from 'react';
 import { message as messageDialog, PageHeader, Input, Button } from 'antd';
 // import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
@@ -9,6 +9,7 @@ import {
   BookResType,
   DateRecordReqType,
   dateType,
+  placeListType,
 } from '../types';
 import styles from './Edit.module.css';
 import styled, { css } from 'styled-components';
@@ -83,6 +84,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const titleRef = useRef<HTMLInputElement>(null);
   const placeRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  const [placeList, setPlaceList] = useState<placeListType[]>([]);
 
   useEffect(() => {
     if (error) {
@@ -192,12 +195,12 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
   function click() {
     const title = titleRef.current!.value;
-    const place = placeRef.current!.value;
+    // const place = placeRef.current!.value;
     const description = descriptionRef.current!.value;
 
     if (
       title === undefined ||
-      place === undefined ||
+      placeList === undefined ||
       description === undefined
     ) {
       messageDialog.error('Please fill out all inputs');
@@ -205,7 +208,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
     }
     editDateRecord({
       title,
-      place,
+      placeList,
       description,
     });
   }

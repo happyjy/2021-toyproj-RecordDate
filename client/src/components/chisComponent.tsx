@@ -8,7 +8,7 @@ const Container = styled.div`
   width: 100%;
   height: 100%;
   margin: 0px;
-  padding: 20px;
+  padding: 10px 0px;
 `;
 
 const Chips = styled.div`
@@ -57,16 +57,22 @@ const ChipsComponent: React.FC<chipsComponent> = ({
   return (
     <Container>
       <Chips>
-        {placeList.map((place) => (
-          <ChipItem key={place.id}>
-            <ChipLabel>{place.placeName}</ChipLabel>
-            <ChipDeleteIcon
-              data-Index={place.id}
-              onClick={(e) => onClickDelete(e)}
-              src={closeIcon}
-            />
+        {placeList &&
+          placeList.map((place) => (
+            <ChipItem key={place.id}>
+              <ChipLabel>{place.placeName}</ChipLabel>
+              <ChipDeleteIcon
+                data-index={place.id}
+                onClick={(e) => onClickDelete(e)}
+                src={closeIcon}
+              />
+            </ChipItem>
+          ))}
+        {placeList.length === 0 && (
+          <ChipItem>
+            <ChipLabel>지도에서 검색후 번호를 클릭하세요</ChipLabel>
           </ChipItem>
-        ))}
+        )}
       </Chips>
     </Container>
   );

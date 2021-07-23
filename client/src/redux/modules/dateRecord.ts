@@ -129,6 +129,7 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     );
     //[?] getBooksFromState 인자값은 어떻게...?
     const dateRecordList: dateType[] = yield select(getBooksFromState);
+    debugger;
     console.log({ dateRecordList });
     yield put(success([...dateRecordList, dateRecord]));
     yield put(push('/'));

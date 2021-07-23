@@ -58,13 +58,15 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     let placeList: { title: string; latlng: any }[] = [];
     dateRecordList?.forEach((dateRecord) => {
       dateRecord.placeList.forEach((place) => {
-        const latLongSplit = place.latLong.split(',');
-        let lat = latLongSplit[0];
-        let long = latLongSplit[1];
-        placeList.push({
-          title: place.placeName,
-          latlng: new window.kakao.maps.LatLng(lat, long),
-        });
+        if (!!place.latLong) {
+          const latLongSplit = place.latLong.split(',');
+          let lat = latLongSplit[0];
+          let long = latLongSplit[1];
+          placeList.push({
+            title: place.placeName,
+            latlng: new window.kakao.maps.LatLng(lat, long),
+          });
+        }
       });
     });
 

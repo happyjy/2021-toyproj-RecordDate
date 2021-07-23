@@ -81,17 +81,13 @@ const AddDateRecord: React.FC<AddProps> = ({
   logout,
 }) => {
   const titleRef = useRef<HTMLInputElement>(null);
-  const placeRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [text, setText] = React.useState<string>();
 
   const inputEl = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
-  // const menuWrapRef = useRef<HTMLDivElement>(null);
-  // const placeListRef = useRef<HTMLUListElement>(null);
 
   const [keyword, setKeyword] = useState('오목교역');
-  const [map, setMap] = useState();
   const [cb, setCb] = useState(() => () => {});
 
   /* 
@@ -150,7 +146,7 @@ const AddDateRecord: React.FC<AddProps> = ({
 
     // 지도를 생성합니다
     let map = new window.kakao.maps.Map(mapContainer, mapOption);
-    setMap(map);
+    // setMap(map);
 
     // 장소 검색 객체를 생성합니다
     let ps = new window.kakao.maps.services.Places();
@@ -245,16 +241,20 @@ const AddDateRecord: React.FC<AddProps> = ({
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
-        (function (marker, title, road_address_name) {
+        (function (marker, { place_name: title, road_address_name, x, y }) {
           window.kakao.maps.event.addListener(marker, 'click', function () {
             setPlaceList((placeList) => {
+              const result = placeList.some(
+                (place) => place.latLong === `${y}, ${x}`,
+              );
+              if (result) return [...placeList];
               return [
                 ...placeList,
                 {
                   id: placeList.length,
                   placeName: title,
                   address: road_address_name,
-                  latLong: `${marker.n.La}, ${marker.n.Ma}`,
+                  latLong: `${y}, ${x}`,
                 },
               ];
             });
@@ -276,7 +276,7 @@ const AddDateRecord: React.FC<AddProps> = ({
           itemEl.onmouseout = function () {
             infowindow.close();
           };
-        })(marker, places[i].place_name, places[i].road_address_name);
+        })(marker, places[i]);
 
         fragment.appendChild(itemEl);
       }
@@ -381,6 +381,10 @@ const AddDateRecord: React.FC<AddProps> = ({
       }
 
       el.onclick = (e) => {
+        const result = placeList.some(
+          (place) => place.latLong === `${places.y}, ${places.x}`,
+        );
+        if (result) return [...placeList];
         setPlaceList((placeList) => {
           return [
             ...placeList,
@@ -388,7 +392,7 @@ const AddDateRecord: React.FC<AddProps> = ({
               id: placeList.length,
               placeName: places.place_name,
               address: places.road_address_name,
-              latLong: `${places.x}, ${places.y}`,
+              latLong: `${places.y}, ${places.x}`,
             },
           ];
         });
@@ -535,9 +539,6 @@ const AddDateRecord: React.FC<AddProps> = ({
       </div>
 
       <FormContainer>
-        {placeList?.map((place) => (
-          <label>{place.placeName}</label>
-        ))}
         <label>Title</label>
         <InputEl
           type="text"
