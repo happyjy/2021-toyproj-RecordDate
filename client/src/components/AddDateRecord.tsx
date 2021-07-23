@@ -176,7 +176,6 @@ const AddDateRecord: React.FC<AddProps> = ({
 
     let searchPlaces = ((placesSearchCB) => {
       return () => {
-        debugger;
         // https://stackoverflow.com/questions/12989741/the-property-value-does-not-exist-on-value-of-type-htmlelement
         // https://stackoverflow.com/a/43823786/3937115
         // console.log('???', inputEl.current);
@@ -230,7 +229,6 @@ const AddDateRecord: React.FC<AddProps> = ({
       // var menuEl = document.getElementById('menu_wrap') as HTMLInputElement;
       var fragment = document.createDocumentFragment();
       var bounds = new window.kakao.maps.LatLngBounds();
-      var listStr = '';
 
       const menuEl = mapRef?.current?.parentElement?.children[1];
       const listEl =
@@ -244,7 +242,7 @@ const AddDateRecord: React.FC<AddProps> = ({
 
       // 지도에 표시되고 있는 마커를 제거합니다
       removeMarker();
-      debugger;
+
       for (var i = 0; i < places.length; i++) {
         // 마커를 생성하고 지도에 표시합니다
         var placePosition = new window.kakao.maps.LatLng(
@@ -262,7 +260,13 @@ const AddDateRecord: React.FC<AddProps> = ({
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
         (function (marker, title) {
+          debugger;
+          window.kakao.maps.event.addListener(marker, 'click', function () {
+            console.log('click');
+          });
+
           window.kakao.maps.event.addListener(marker, 'mouseover', function () {
+            console.log('mouseover');
             displayInfowindow(marker, title);
           });
 
@@ -284,7 +288,7 @@ const AddDateRecord: React.FC<AddProps> = ({
 
       // 검색결과 항목들을 검색결과 목록 Elemnet에 추가합니다
       listEl?.appendChild(fragment);
-      // todo
+      // [todo]
       // menuEl && menuEl.scrollTop = 0;
 
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
@@ -292,7 +296,7 @@ const AddDateRecord: React.FC<AddProps> = ({
     }
 
     // 검색결과 항목을 Element로 반환하는 함수입니다
-    function getListItem(index: any, places: any) {
+    function getListItem(index: number, places: any) {
       var el = document.createElement('li'),
         itemStr =
           '<span class="markerbg marker_' +
@@ -319,6 +323,79 @@ const AddDateRecord: React.FC<AddProps> = ({
 
       el.innerHTML = itemStr;
       el.className = 'item';
+      el.style.cssText = `
+        list-style: none;
+        position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;
+      `;
+
+      const backgroundPosition = [
+        '0 -10px',
+        '0 -56px',
+        '0 -102px',
+        '0 -148px',
+        '0 -194px',
+        '0 -240px',
+        '0 -286px',
+        '0 -332px',
+        '0 -378px',
+        '0 -423px',
+        '0 -470px',
+        '0 -516px',
+        '0 -562px',
+        '0 -608px',
+        '0 -654px',
+      ];
+
+      console.log(index);
+      if (index === 13) {
+        debugger;
+      }
+      if (index === 14) {
+        debugger;
+      }
+      if (!!el.getElementsByTagName('span')[0]) {
+        el.getElementsByTagName(
+          'span',
+        )[0].style.cssText = `display:block; margin-top:4px;`;
+      }
+      if (!!el.getElementsByTagName('h5')[0]) {
+        el.getElementsByTagName(
+          'h5',
+        )[0].style.cssText = `text-overflow:ellipsis; overflow:hidden; white-space: nowrap;`;
+      }
+
+      if (!!el.querySelector('.info')) {
+        el.querySelector<HTMLElement>(
+          '.info',
+        )!.style.cssText = `text-overflow:ellipsis; overflow:hidden; white-space: nowrap; padding:10px 0px 10px 55px;`;
+      }
+      if (!!el.querySelector('.gray')) {
+        el.querySelector<HTMLElement>(
+          '.gray',
+        )!.style.cssText = `color:#8a8a8a;`;
+      }
+      if (!!el.querySelector('.jibun')) {
+        el.querySelector<HTMLElement>(
+          '.jibun',
+        )!.style.cssText = `padding-left:26px;background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;`;
+      }
+      if (!!el.querySelector('.tel')) {
+        el.querySelector<HTMLElement>('.tel')!.style.cssText = `color:#009900;`;
+      }
+      let markerbg = el.querySelector<HTMLElement>('.markerbg');
+      if (!!markerbg) {
+        markerbg!.style.cssText = `float:left; position:absolute; width:36px; height:37px; margin:10px 0px 0px 10px; background:url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat; background-position: ${backgroundPosition[index]}`;
+      }
+      if (!!el.querySelector('.gray')) {
+        el.querySelector<HTMLElement>(
+          '.gray',
+        )!.style.cssText = `color:#8a8a8a;`;
+      }
+      // if (!!el.querySelector('.marker_' + [index + 1])) {
+      //   el.querySelector<HTMLElement>(
+      //     '.marker_' + [index + 1],
+      //   )!.style.cssText = `background-position: ${backgroundPosition[index]}`;
+      // }
 
       return el;
     }
@@ -341,6 +418,7 @@ const AddDateRecord: React.FC<AddProps> = ({
         marker = new window.kakao.maps.Marker({
           position: position, // 마커의 위치
           image: markerImage,
+          clickable: true, // 마커를 클릭했을 때 지도의 클릭 이벤트가 발생하지 않도록 설정합니다
         });
 
       marker.setMap(map); // 지도 위에 마커를 표출합니다
@@ -434,7 +512,7 @@ const AddDateRecord: React.FC<AddProps> = ({
           id="map"
           style={{
             width: '800px',
-            height: '600px',
+            height: '500px',
             position: 'relative',
             overflow: 'hidden',
           }}
