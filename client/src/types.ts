@@ -13,7 +13,7 @@ export interface dateType {
   isDeleted: string;
   created_at: string;
   updated_at: string;
-  selectPlaceList: selectPlaceList[];
+  placeList: placeListType[];
 }
 export interface placeType {
   place_id: number;
@@ -25,7 +25,8 @@ export interface placeType {
   updated_at: string;
 }
 
-export interface selectPlaceList {
+export interface placeListType {
+  id: number;
   placeName: string;
   address: string;
   latLong: string;
@@ -41,7 +42,8 @@ export interface DateResType {
 
 export interface DateRecordReqType {
   title: string;
-  place: string;
+  // place: string;
+  placeList: placeListType[];
   description: string;
 }
 

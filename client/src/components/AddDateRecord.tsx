@@ -1,13 +1,13 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { message as messageDialog, PageHeader, Button } from 'antd';
-// import TextArea from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
 
 import Layout from './Layout';
-import { DateRecordReqType } from '../types';
+import { DateRecordReqType, placeListType } from '../types';
 import styles from './AddDateRecord.module.css';
 
 import styled, { css } from 'styled-components';
+import Chips from './chisComponent';
 
 const FormContainer = styled.div`
   border-radius: 5px;
@@ -73,13 +73,6 @@ interface AddProps {
   logout: () => void;
 }
 
-// let map = '';
-// let ps = '';
-let ps1 = new window.kakao.maps.services.Places();
-
-// let infowindow = '';
-let placesSearchCB = '';
-
 const AddDateRecord: React.FC<AddProps> = ({
   addDateRecord,
   loading,
@@ -93,13 +86,20 @@ const AddDateRecord: React.FC<AddProps> = ({
   const [text, setText] = React.useState<string>();
 
   const inputEl = useRef<HTMLInputElement>(null);
-  const menuWrapRef1 = useRef<HTMLDivElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
-  const placeListRef = useRef<HTMLUListElement>(null);
+  // const menuWrapRef = useRef<HTMLDivElement>(null);
+  // const placeListRef = useRef<HTMLUListElement>(null);
 
   const [keyword, setKeyword] = useState('오목교역');
   const [map, setMap] = useState();
   const [cb, setCb] = useState(() => () => {});
+
+  /* 
+    # issue: useState with ts
+      * https://stackoverflow.com/a/53650561/3937115
+      * https://www.codegrepper.com/code-examples/typescript/typescript+usestate+array+type
+  */
+  const [placeList, setPlaceList] = useState<placeListType[]>([]);
   /* 
     # event trigger시 useEffect 안에 있는 함수 호출해야함
       * 돔 생성 이후에 생성된 돔에 붙이는 과정과 이벤트 동작이 묶여 있는 상황
@@ -108,38 +108,28 @@ const AddDateRecord: React.FC<AddProps> = ({
       * useState에 함수 설정방법
         * https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
   */
+
+  const onClickDelete = (e: any) => {
+    console.log(e);
+    const index = e.target.dataset.index;
+    const filterPlaceList = placeList.filter((place) => {
+      return place.id + '' !== index && place;
+    });
+    setPlaceList(filterPlaceList);
+  };
+
+  const keypress = (e: any) => {
+    if (e.key === 'Enter') {
+      searchPlace();
+    }
+  };
   const inputEvent = (e: any) => {
-    console.log(e.target.value);
     setKeyword(e.target.value);
   };
 
-  const searchPlace1 = () => {
+  const searchPlace = () => {
     console.log(cb());
   };
-
-  // const searchPlace11 = useCallback(
-  //   (ps: any, placesSearchCB: any) => {
-  //     // https://stackoverflow.com/questions/12989741/the-property-value-does-not-exist-on-value-of-type-htmlelement
-  //     // https://stackoverflow.com/a/43823786/3937115
-  //     console.log('???', inputEl.current);
-  //     var keyword = '이태원';
-  //     // var keyword = inputEl.current.value;
-  //     // if (document.getElementById('keyword')) {
-  //     //   keyword = (document.getElementById('keyword') as HTMLInputElement)
-  //     //     .value;
-  //     // }
-
-  //     if (!keyword.replace(/^\s+|\s+$/g, '')) {
-  //       alert('키워드를 입력해주세요!');
-  //       return false;
-  //     }
-
-  //     debugger;
-  //     // 장소검색 객체를 통해 키워드로 장소검색을 요청합니다
-  //     ps.keywordSearch(keyword, placesSearchCB);
-  //   },
-  //   [ps1, placesSearchCB],
-  // );
 
   useEffect(() => {
     if (error) {
@@ -150,8 +140,6 @@ const AddDateRecord: React.FC<AddProps> = ({
   useEffect(() => {
     // 마커를 담을 배열입니다
     var markers: any[] = [];
-    console.log('# keyword: ', keyword);
-    // debugger;
 
     // var mapContainer = document.getElementById('map'), // 지도를 표시할 div
     var mapContainer = mapRef.current, // 지도를 표시할 div
@@ -159,8 +147,6 @@ const AddDateRecord: React.FC<AddProps> = ({
         center: new window.kakao.maps.LatLng(37.566826, 126.9786567), // 지도의 중심좌표
         level: 3, // 지도의 확대 레벨
       };
-    console.log('# mapContainer: ', mapContainer);
-    console.log('# mapRef: ', mapRef);
 
     // 지도를 생성합니다
     let map = new window.kakao.maps.Map(mapContainer, mapOption);
@@ -224,7 +210,7 @@ const AddDateRecord: React.FC<AddProps> = ({
       place_name: string;
     }
     // 검색 결과 목록과 마커를 표출하는 함수입니다
-    function displayPlaces(places: places[]) {
+    function displayPlaces(places: any[]) {
       // var listEl = document.getElementById('placesList') as HTMLInputElement;
       // var menuEl = document.getElementById('menu_wrap') as HTMLInputElement;
       var fragment = document.createDocumentFragment();
@@ -259,10 +245,19 @@ const AddDateRecord: React.FC<AddProps> = ({
         // 마커와 검색결과 항목에 mouseover 했을때
         // 해당 장소에 인포윈도우에 장소명을 표시합니다
         // mouseout 했을 때는 인포윈도우를 닫습니다
-        (function (marker, title) {
-          debugger;
+        (function (marker, title, road_address_name) {
           window.kakao.maps.event.addListener(marker, 'click', function () {
-            console.log('click');
+            setPlaceList((placeList) => {
+              return [
+                ...placeList,
+                {
+                  id: placeList.length,
+                  placeName: title,
+                  address: road_address_name,
+                  latLong: `${marker.n.La}, ${marker.n.Ma}`,
+                },
+              ];
+            });
           });
 
           window.kakao.maps.event.addListener(marker, 'mouseover', function () {
@@ -281,7 +276,7 @@ const AddDateRecord: React.FC<AddProps> = ({
           itemEl.onmouseout = function () {
             infowindow.close();
           };
-        })(marker, places[i].place_name);
+        })(marker, places[i].place_name, places[i].road_address_name);
 
         fragment.appendChild(itemEl);
       }
@@ -325,7 +320,7 @@ const AddDateRecord: React.FC<AddProps> = ({
       el.className = 'item';
       el.style.cssText = `
         list-style: none;
-        position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;
+        // position:relative;border-bottom:1px solid #888;overflow: hidden;cursor: pointer;min-height: 65px;
       `;
 
       const backgroundPosition = [
@@ -346,13 +341,6 @@ const AddDateRecord: React.FC<AddProps> = ({
         '0 -654px',
       ];
 
-      console.log(index);
-      if (index === 13) {
-        debugger;
-      }
-      if (index === 14) {
-        debugger;
-      }
       if (!!el.getElementsByTagName('span')[0]) {
         el.getElementsByTagName(
           'span',
@@ -391,12 +379,20 @@ const AddDateRecord: React.FC<AddProps> = ({
           '.gray',
         )!.style.cssText = `color:#8a8a8a;`;
       }
-      // if (!!el.querySelector('.marker_' + [index + 1])) {
-      //   el.querySelector<HTMLElement>(
-      //     '.marker_' + [index + 1],
-      //   )!.style.cssText = `background-position: ${backgroundPosition[index]}`;
-      // }
 
+      el.onclick = (e) => {
+        setPlaceList((placeList) => {
+          return [
+            ...placeList,
+            {
+              id: placeList.length,
+              placeName: places.place_name,
+              address: places.road_address_name,
+              latLong: `${places.x}, ${places.y}`,
+            },
+          ];
+        });
+      };
       return el;
     }
 
@@ -517,33 +513,31 @@ const AddDateRecord: React.FC<AddProps> = ({
             overflow: 'hidden',
           }}
         ></div>
-        <div
-          ref={menuWrapRef1}
-          id={styles.menu_wrap}
-          className={styles.bg_white}
-        >
+        <div id={styles.menu_wrap} className={styles.bg_white}>
           <div className={styles.option}>
             <div>
-              {/* <form onSubmit={() => searchPlace1()}> */}
-              키워드 :{' '}
+              키워드 :
               <input
                 type="text"
                 ref={inputEl}
                 id="keyword"
                 value={keyword}
                 onChange={(e) => inputEvent(e)}
+                onKeyPress={(e) => keypress(e)}
               />
-              <button onClick={() => searchPlace1()}>검색하기</button>
-              {/* </form> */}
+              <button onClick={() => searchPlace()}>검색하기</button>
             </div>
           </div>
           <hr />
-          <ul ref={placeListRef} id={styles.placesList}></ul>
+          <ul id={styles.placesList}></ul>
           <div id={styles.pagination}></div>
         </div>
       </div>
 
       <FormContainer>
+        {placeList?.map((place) => (
+          <label>{place.placeName}</label>
+        ))}
         <label>Title</label>
         <InputEl
           type="text"
@@ -554,13 +548,14 @@ const AddDateRecord: React.FC<AddProps> = ({
         />
 
         <label>place</label>
-        <InputEl
+        <Chips placeList={placeList} onClickDelete={onClickDelete}></Chips>
+        {/* <InputEl
           type="text"
           id="lname"
           name="lastname"
           placeholder="place.."
           ref={placeRef}
-        />
+        /> */}
 
         <label>description</label>
         <TextAreaEl
@@ -568,7 +563,6 @@ const AddDateRecord: React.FC<AddProps> = ({
           value={text}
           rows={4}
           placeholder="Comment"
-          // ref={messageRef}
           ref={descriptionRef}
           className={styles.input}
         />
@@ -584,11 +578,11 @@ const AddDateRecord: React.FC<AddProps> = ({
 
   function click() {
     const title = titleRef.current!.value;
-    const place = placeRef.current!.value;
+    // const place = placeRef.current!.value;
     const description = descriptionRef.current!.value;
     if (
       title === undefined ||
-      place === undefined ||
+      placeList === undefined ||
       description === undefined
     ) {
       messageDialog.error('Please fill out all inputs');
@@ -596,7 +590,7 @@ const AddDateRecord: React.FC<AddProps> = ({
     }
     addDateRecord({
       title,
-      place,
+      placeList,
       description,
     });
   }

@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "start": "nodemon ./server.js",
     "client": "cd client && yarn start",
     "server": "node server.js",
     "dev": "concurrently --kill-others-on-fail \"nodemon ./server.js\" \"yarn client\""

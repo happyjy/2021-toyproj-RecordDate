@@ -83,12 +83,12 @@ export const { addDaterecord, getDatelist, deleteDaterecord, editDaterecord } =
     options,
   );
 
-console.log({
-  addDaterecord: addDaterecord(),
-  getDatelist: getDatelist(),
-  editDaterecord: editDaterecord(),
-  deleteDaterecord: deleteDaterecord(),
-});
+// console.log({
+//   addDaterecord: addDaterecord(),
+//   getDatelist: getDatelist(),
+//   editDaterecord: editDaterecord(),
+//   deleteDaterecord: deleteDaterecord(),
+// });
 
 export function* sagas() {
   yield takeEvery(`${options.prefix}/ADD_DATERECORD`, addDateSaga);
@@ -111,7 +111,6 @@ function* getDateListSaga() {
   }
 }
 
-//[?]
 interface AddDateRecordSagaAction extends AnyAction {
   payload: {
     dateRecord: DateRecordReqType;

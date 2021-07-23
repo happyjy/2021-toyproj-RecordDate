@@ -57,16 +57,24 @@ const multer = require("multer");
 const upload = multer({ dest: "./upload" });
 app.get("/api/dateRecord", (req, res) => {
   connection.query(
-    "SELECT * FROM DATERECORD WHERE ISDELETED = 0; SELECT * FROM PLACE WHERE ISDELETED = 0",
+    `SELECT dateRecord_id,
+            title,
+            description,
+            image 
+       FROM DATERECORD 
+      WHERE ISDELETED = 0; 
+      
+     SELECT place_id,
+            dateRecord_id,
+            place_name,
+            latLong
+       FROM PLACE 
+      WHERE ISDELETED = 0`,
     function (err, results) {
       if (err) throw err;
-      const dateRecordList = results[0];
-      const placeList = results[1];
-
-      dateRecordList.map((date) => {
-        return date;
-      });
-      // console.log(results);
+      // const dateRecordList = results[0];
+      // const placeList = results[1];
+      console.log(results);
       res.send(results);
     }
   );

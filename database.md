@@ -114,10 +114,16 @@ update place set address = '서울시 영등포구' where dateRecord_id = 1;
 ```
 
 
-  INSERT INTO dateRecord (title, description, placeId, image) VALUES ('첫번째 데이트', '안양천 텐트가지고 갔엉요', '', 'img/안양천.png');
+  INSERT INTO dateRecord (title, description, image) VALUES ('첫번째 데이트', '안양천 텐트가지고 갔어요', 'img/안양천.png');
+  INSERT INTO dateRecord (title, description, image) VALUES ('두번째 데이트', '사유카페 한강진역, 리틀넥 저녁', 'img/안양천.png');
+  INSERT INTO dateRecord (title, description, image) VALUES ('세번째 데이트', '스콘 에어프라이기로 만들기, 채선당 샤브샤브', 'img/안양천.png');
 
-  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (1, '안양천', '123.000, 321.000');
-  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (1, '싸가정곱창', '23.000, 33.000');
+  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (23, '안양천', '123.000, 321.000');
+  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (24, '사유카페', '123.000, 321.000');
+  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (24, '한강진리틀넥', '123.000, 321.000');
+  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (25, '양평동롯데마드 채선당', '123.000, 321.000');
+  INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (25, '유니네', '123.000, 321.000');
+  
 
 
 SELECT * FROM dateRecord;

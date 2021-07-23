@@ -120,7 +120,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         />
 
         <label>place</label>
-        {dateRecord.selectPlaceList.map((place) => (
+        {dateRecord.placeList.map((place) => (
           <InputEl
             value={place.placeName}
             type="text"

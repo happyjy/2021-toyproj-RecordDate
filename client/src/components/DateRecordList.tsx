@@ -44,9 +44,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   }, [error, logout]);
 
   useEffect(() => {
-    console.log({ dateRecordList });
-    // dateRecordList?.selectPlaceList.latLong.split(",");
-
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
         center: new window.kakao.maps.LatLng(
@@ -60,7 +57,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
     let placeList: { title: string; latlng: any }[] = [];
     dateRecordList?.forEach((dateRecord) => {
-      dateRecord.selectPlaceList.forEach((place) => {
+      dateRecord.placeList.forEach((place) => {
         const latLongSplit = place.latLong.split(',');
         let lat = latLongSplit[0];
         let long = latLongSplit[1];

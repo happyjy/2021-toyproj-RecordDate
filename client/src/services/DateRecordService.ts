@@ -6,7 +6,7 @@ import {
   DateRecordReqType,
   dateType,
   placeType,
-  selectPlaceList,
+  placeListType,
 } from '../types';
 
 const BOOK_API_URL = 'https://api.marktube.tv/v1/book';
@@ -24,21 +24,22 @@ export default class DateRecordService {
     );
 
     const dateRecordList = response.data[0];
-    const placeList = response.data[1];
+    const placeListFromTable = response.data[1];
 
     dateRecordList.map((dateRecord: dateType) => {
-      let selectPlaceList: selectPlaceList[] = [];
+      let placeList: placeListType[] = [];
 
-      placeList.forEach((place: placeType) => {
+      placeListFromTable.forEach((place: placeType, index) => {
         if (dateRecord.dateRecord_id === place.dateRecord_id) {
-          selectPlaceList.push({
+          placeList.push({
+            id: index,
             placeName: place.place_name,
             address: place.address,
             latLong: place.latLong,
           });
         }
       });
-      dateRecord.selectPlaceList = selectPlaceList;
+      dateRecord.placeList = placeList;
 
       return dateRecord;
     });

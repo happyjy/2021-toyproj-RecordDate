@@ -5,14 +5,14 @@ import { Link } from 'react-router-dom';
 import moment from 'moment';
 
 import styles from './Book.module.css';
-import { selectPlaceList } from '../types';
+import { placeListType } from '../types';
 
 interface DateProps {
   dateRecord_id: number;
   title: string;
   description: string;
   created_at: string;
-  selectPlaceList: selectPlaceList[];
+  placeList: placeListType[];
   deleteRecordDate: (recordDateId: number) => void;
   goEdit: (recordDateId: number) => void;
 }
@@ -22,7 +22,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
     dateRecord_id,
     title,
     description,
-    selectPlaceList,
+    placeList,
     created_at,
     deleteRecordDate: deleteBook,
     goEdit,
@@ -42,7 +42,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
             to={`/dateRecord/${dateRecord_id}`}
             className={styles.link_detail_author}
           >
-            {selectPlaceList?.map((v, i) => {
+            {placeList?.map((v, i) => {
               if (i == 0) return <span>{v.placeName}</span>;
               if (i != 0) return <span>, {v.placeName}</span>;
             })}

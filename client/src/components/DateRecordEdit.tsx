@@ -160,7 +160,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         />
 
         <label>place</label>
-        {dateRecord.selectPlaceList.map((place, idx) => (
+        {dateRecord.placeList.map((place, idx) => (
           <InputEl
             key={idx}
             defaultValue={place.placeName}
