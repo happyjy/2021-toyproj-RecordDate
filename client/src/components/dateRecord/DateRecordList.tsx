@@ -1,10 +1,9 @@
 import React, { useEffect } from 'react';
 import { Table, PageHeader, Button } from 'antd';
 
-import styles from './List.module.css';
-import Layout from './Layout';
-import { BookResType, DateResType, dateType } from '../types';
-import Book from './Book';
+import styles from './DateRecordList.module.css';
+import Layout from '../Layout';
+import { dateType } from '../../types';
 import DateRecord from './DateRecord';
 
 declare global {

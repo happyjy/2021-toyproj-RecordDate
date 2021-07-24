@@ -2,12 +2,12 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
 
-import { RootState } from '../redux/modules/rootReducer';
-import { logout as logoutSaga } from '../redux/modules/auth';
+import { RootState } from '../../redux/modules/rootReducer';
+import { logout as logoutSaga } from '../../redux/modules/auth';
 
-import { addDaterecord as addDateRecordSaga } from '../redux/modules/dateRecord';
-import { DateRecordReqType } from '../types';
-import AddDateRecord from '../components/AddDateRecord';
+import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
+import { DateRecordReqType } from '../../types';
+import AddDateRecord from '../../components/dateRecord/AddDateRecord';
 
 const AddDateRecordContainer = () => {
   const loading = useSelector<RootState, boolean>(

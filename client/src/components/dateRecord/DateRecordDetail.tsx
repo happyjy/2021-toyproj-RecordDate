@@ -1,11 +1,10 @@
 import React, { useEffect } from 'react';
 import { PageHeader, Button, Input } from 'antd';
 import { BookOutlined } from '@ant-design/icons';
-import Layout from './Layout';
-import { DateResType, BookResType, dateType } from '../types';
-import styles from './Detail.module.css';
+import Layout from '../Layout';
+import { dateType } from '../../types';
+import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
-// import styled from 'styled-components';
 
 interface DetailProps {
   dateRecord: dateType | null | undefined;
@@ -13,7 +12,6 @@ interface DetailProps {
   back: () => void;
   edit: () => void;
   getDateList: () => void;
-  getBooks: () => void;
   logout: () => void;
 }
 
@@ -22,7 +20,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   error,
   edit,
   getDateList,
-  getBooks,
   back,
   logout,
 }) => {

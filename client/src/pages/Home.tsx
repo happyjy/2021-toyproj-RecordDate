@@ -2,8 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
-import ListContainer from '../containers/ListContainer';
-import DateListContainer from '../containers/DateRecordListContainer';
+import DateListContainer from '../containers/dateRecord/DateRecordListContainer';
 
 const Home: React.FC = () => {
   const token = useToken();

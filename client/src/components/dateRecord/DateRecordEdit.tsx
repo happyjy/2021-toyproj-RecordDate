@@ -3,15 +3,9 @@ import { message as messageDialog, PageHeader, Input, Button } from 'antd';
 // import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
 
-import Layout from './Layout';
-import {
-  BookReqType,
-  BookResType,
-  DateRecordReqType,
-  dateType,
-  placeListType,
-} from '../types';
-import styles from './Edit.module.css';
+import Layout from '../Layout';
+import { DateRecordReqType, dateType, placeListType } from '../../types';
+import styles from './DateRecordEdit.module.css';
 import styled, { css } from 'styled-components';
 
 const FormContainer = styled.div`

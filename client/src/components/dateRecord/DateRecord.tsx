@@ -4,8 +4,8 @@ import { BookOutlined, DeleteOutlined, EditOutlined } from '@ant-design/icons';
 import { Link } from 'react-router-dom';
 import moment from 'moment';
 
-import styles from './Book.module.css';
-import { placeListType } from '../types';
+import styles from './DateRecord.module.css';
+import { placeListType } from '../../types';
 
 interface DateProps {
   dateRecord_id: number;

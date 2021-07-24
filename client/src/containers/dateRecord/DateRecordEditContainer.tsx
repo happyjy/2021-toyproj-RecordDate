@@ -3,19 +3,14 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { goBack } from 'connected-react-router';
 
-import Edit from '../components/Edit';
-import { RootState } from '../redux/modules/rootReducer';
-import { BookResType, dateType } from '../types';
-import { logout as logoutSaga } from '../redux/modules/auth';
-import {
-  editBook as editBookSaga,
-  getBooks as getBooksSaga,
-} from '../redux/modules/books';
+import { RootState } from '../../redux/modules/rootReducer';
+import { dateType } from '../../types';
+import { logout as logoutSaga } from '../../redux/modules/auth';
 import {
   getDatelist as getDateListSaga,
   editDaterecord as editDateRecordsaga,
-} from '../redux/modules/dateRecord';
-import DateRecordEdit from '../components/DateRecordEdit';
+} from '../../redux/modules/dateRecord';
+import DateRecordEdit from '../../components/dateRecord/DateRecordEdit';
 
 const DateRecordEditContainer = () => {
   const { id } = useParams();

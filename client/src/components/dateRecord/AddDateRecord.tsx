@@ -2,12 +2,12 @@ import React, { useEffect, useRef, useState } from 'react';
 import { message as messageDialog, PageHeader, Button } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 
-import Layout from './Layout';
-import { DateRecordReqType, placeListType } from '../types';
+import Layout from '../Layout';
+import { DateRecordReqType, placeListType } from '../../types';
 import styles from './AddDateRecord.module.css';
 
 import styled, { css } from 'styled-components';
-import Chips from './chisComponent';
+import Chips from '../chisComponent';
 
 const FormContainer = styled.div`
   border-radius: 5px;
@@ -133,6 +133,7 @@ const AddDateRecord: React.FC<AddProps> = ({
     }
   }, [error, logout]);
 
+  // 카카오맵
   useEffect(() => {
     // 마커를 담을 배열입니다
     var markers: any[] = [];
