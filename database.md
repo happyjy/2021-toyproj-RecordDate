@@ -76,6 +76,7 @@ CREATE TABLE IF NOT EXISTS place (
     dateRecord_id INT,
 
     place_name VARCHAR(255) NOT NULL,
+    address VARCHAR(100)
     latLong VARCHAR(255) NOT NULL,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

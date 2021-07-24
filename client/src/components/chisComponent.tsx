@@ -48,18 +48,57 @@ const ChipDeleteIcon = styled.img`
 
 interface chipsComponent {
   placeList: placeListType[];
+  setPlaceList: (state: any) => void;
   onClickDelete: (e: any) => void;
 }
 const ChipsComponent: React.FC<chipsComponent> = ({
   placeList,
+  setPlaceList,
   onClickDelete,
 }) => {
+  const onDragStart = (e: any) => {
+    console.log('# onDragStart');
+    e.dataTransfer.setData('dragStartId', e.target.dataset.index);
+    e.dataTransfer.dropEffect = 'move';
+    e.dataTransfer.dropAllowed = 'move';
+  };
+  const onDrop = (e: any) => {
+    console.log('# onDrop');
+    debugger;
+    const dragIndex = e.dataTransfer.getData('dragStartId');
+    let el = e.target;
+    while (!el.dataset.index) {
+      el = e.target.parentElement;
+    }
+    const dropIndex = el.dataset.index;
+    console.log(dropIndex, dragIndex);
+    console.log(placeList, setPlaceList);
+    const result = placeList.map((place) => {
+      if (place.id + '' === dropIndex) {
+        place.id = parseInt(dragIndex);
+        return place;
+      }
+      if (place.id + '' === dragIndex) {
+        place.id = parseInt(dropIndex);
+        return place;
+      }
+      return place;
+    });
+
+    const resultSort = result.sort((a, b) => a.id - b.id);
+    setPlaceList(() => [...resultSort]);
+  };
+  const onDragOver = (e: any) => {
+    console.log('# onDragOver');
+    e.preventDefault();
+  };
+
   return (
     <Container>
-      <Chips>
+      <Chips onDragOver={onDragOver} onDrop={onDrop} onDragStart={onDragStart}>
         {placeList &&
           placeList.map((place) => (
-            <ChipItem key={place.id}>
+            <ChipItem key={place.id} draggable="true" data-index={place.id}>
               <ChipLabel>{place.placeName}</ChipLabel>
               <ChipDeleteIcon
                 data-index={place.id}

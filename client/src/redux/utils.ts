@@ -6,6 +6,8 @@ export function getTokenFromState(state: RootState): string | null {
 }
 
 export function getDateRecordFromState(state: RootState): dateType[] | null {
+  debugger;
+  console.log(state);
   return state.dateRecord.dateRecordList;
 }
 

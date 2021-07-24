@@ -381,11 +381,11 @@ const AddDateRecord: React.FC<AddProps> = ({
       }
 
       el.onclick = (e) => {
-        const result = placeList.some(
-          (place) => place.latLong === `${places.y}, ${places.x}`,
-        );
-        if (result) return [...placeList];
         setPlaceList((placeList) => {
+          const result = placeList.some(
+            (place) => place.latLong === `${places.y}, ${places.x}`,
+          );
+          if (result) return [...placeList];
           return [
             ...placeList,
             {
@@ -549,7 +549,11 @@ const AddDateRecord: React.FC<AddProps> = ({
         />
 
         <label>place</label>
-        <Chips placeList={placeList} onClickDelete={onClickDelete}></Chips>
+        <Chips
+          placeList={placeList}
+          setPlaceList={setPlaceList}
+          onClickDelete={onClickDelete}
+        ></Chips>
         {/* <InputEl
           type="text"
           id="lname"

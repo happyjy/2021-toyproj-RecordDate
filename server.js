@@ -84,25 +84,31 @@ app.post("/api/dateRecord", (req, res) => {
   let insertDateRecord =
     "INSERT INTO dateRecord(title, description) VALUES (?, ?);";
   let insertPlace =
-    "INSERT INTO place(dateRecord_id, place_name) VALUES (?, ?);";
+    "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
   let title = req.body.title;
   let description = req.body.description;
-  let place = req.body.place;
+  let placeList = req.body.placeList;
   let insertDateRecordParams = [title, description];
 
-  let INSERTID;
+  let insertDateRecordid;
   connection.query(
     insertDateRecord,
     insertDateRecordParams,
     (err, rows, fields) => {
-      INSERTID = rows.insertId;
-      let insertPlaceParams = [INSERTID, place];
+      insertDateRecordid = rows.insertId;
+      if (err) throw err;
 
-      connection.query(
-        insertPlace,
-        insertPlaceParams,
-        (err, rows, field) => {}
-      );
+      for (var i = 0; i < placeList.length; i++) {
+        let insertParam = [
+          insertDateRecordid,
+          placeList[i].placeName,
+          placeList[i].address,
+          placeList[i].latLong,
+        ];
+        connection.query(insertPlace, insertParam, (err, rows, field) => {
+          if (err) throw err;
+        });
+      }
       res.send(rows);
     }
   );
