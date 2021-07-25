@@ -1,13 +1,7 @@
 import axios from 'axios';
+import { makeDate } from '../redux/utils';
 
-import {
-  BookReqType,
-  BookResType,
-  DateRecordReqType,
-  dateType,
-  placeType,
-  placeListType,
-} from '../types';
+import { DateRecordReqType, dateType, placeType } from '../types';
 
 const BOOK_API_URL = 'https://api.marktube.tv/v1/book';
 const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
@@ -25,32 +19,14 @@ export default class DateRecordService {
 
     const dateRecordList = response.data[0];
     const placeListFromTable = response.data[1];
-
-    dateRecordList.map((dateRecord: dateType) => {
-      let placeList: placeListType[] = [];
-
-      placeListFromTable.forEach((place: placeType, index) => {
-        if (dateRecord.dateRecord_id === place.dateRecord_id) {
-          placeList.push({
-            id: index,
-            placeName: place.place_name,
-            address: place.address,
-            latLong: place.latLong,
-          });
-        }
-      });
-      dateRecord.placeList = placeList;
-
-      return dateRecord;
-    });
-    return dateRecordList;
+    return makeDate(dateRecordList, placeListFromTable);
   }
 
   public static async addDateRecord(
     token: string,
     dateRecord: DateRecordReqType,
-  ): Promise<DateRecordReqType> {
-    const response = await axios.post<DateRecordReqType>(
+  ): Promise<dateType> {
+    const response = await axios.post<dateType>(
       DATERECORD_API_URL,
       dateRecord,
       {
@@ -67,7 +43,7 @@ export default class DateRecordService {
     dateRecordId: number,
     dateRecord: DateRecordReqType,
   ): Promise<dateType> {
-    const response = await axios.patch<dateType>(
+    const response = await axios.patch<[dateType[], placeType[]]>(
       `${DATERECORD_API_URL}/${dateRecordId}`,
       dateRecord,
       {
@@ -75,7 +51,9 @@ export default class DateRecordService {
       },
     );
 
-    return response.data;
+    const dateRecordList = response.data[0];
+    const placeListFromTable = response.data[1];
+    return makeDate(dateRecordList, placeListFromTable)[0];
   }
 
   public static async deleteDateRecord(
@@ -90,30 +68,5 @@ export default class DateRecordService {
     );
 
     return response.data;
-  }
-
-  public static async editBook(
-    token: string,
-    bookId: number,
-    book: BookReqType,
-  ): Promise<BookResType> {
-    const response = await axios.patch<BookResType>(
-      `${BOOK_API_URL}/${bookId}`,
-      book,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      },
-    );
-    return response.data;
-  }
-
-  public static async deleteBook(token: string, bookId: number): Promise<void> {
-    await axios.delete(`${BOOK_API_URL}/${bookId}`, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
   }
 }

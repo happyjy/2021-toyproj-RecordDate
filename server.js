@@ -74,7 +74,7 @@ app.get("/api/dateRecord", (req, res) => {
       if (err) throw err;
       // const dateRecordList = results[0];
       // const placeList = results[1];
-      console.log(results);
+      // console.log(results);
       res.send(results);
     }
   );
@@ -117,13 +117,16 @@ app.post("/api/dateRecord", (req, res) => {
 app.patch("/api/dateRecord/:id", (req, res) => {
   let updateDateRecord =
     "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
-  let updatePlace = "UPDATE PLACE SET place_name = ? where dateRecord_id = ?;";
+  let insertPlace =
+    "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
+  let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
 
+  const editDateRecordId = req.params.id;
   let title = req.body.title;
-  let place = req.body.place;
+  let delPlaceList = req.body.delPlaceList;
+  let addPlaceList = req.body.addPlaceList;
   let description = req.body.description;
   let updateDateRecordParams = [title, description, req.params.id];
-  let updatePlaceParams = [place, req.params.id];
 
   connection.query(
     updateDateRecord,
@@ -132,21 +135,39 @@ app.patch("/api/dateRecord/:id", (req, res) => {
       if (err) throw err;
     }
   );
-  connection.query(updatePlace, updatePlaceParams, (err, rows, field) => {
-    if (err) throw err;
-  });
+
+  for (var i = 0; i < addPlaceList.length; i++) {
+    let insertParam = [
+      editDateRecordId,
+      addPlaceList[i].placeName,
+      addPlaceList[i].address,
+      addPlaceList[i].latLong,
+    ];
+    connection.query(insertPlace, insertParam, (err, rows, field) => {
+      if (err) throw err;
+    });
+  }
+
+  for (var i = 0; i < delPlaceList.length; i++) {
+    let updatePlaceParams = [delPlaceList[i].id];
+    connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
+      if (err) throw err;
+    });
+  }
 
   connection.query(
-    "SELECT * from dateRecord; SELECT * from place; ",
-    function (err, results) {
+    `SELECT *
+       FROM DATERECORD 
+      WHERE ISDELETED = 0
+        AND DATERECORD_ID = ?; 
+      
+     SELECT *
+       FROM PLACE 
+      WHERE ISDELETED = 0
+        AND DATERECORD_ID = ?`,
+    [editDateRecordId, editDateRecordId],
+    (err, results) => {
       if (err) throw err;
-      const dateRecordList = results[0];
-      const placeList = results[1];
-
-      dateRecordList.map((date) => {
-        return date;
-      });
-
       res.send(results);
     }
   );
@@ -158,13 +179,10 @@ app.delete("/api/dateRecord/:id", (req, res) => {
   let deletePlace = "UPDATE PLACE SET isDeleted = 1 where dateRecord_id = ?;";
 
   let updatePlaceParams = [req.params.id];
-  console.log(1);
   connection.query(deleteDateRecord, updatePlaceParams, (err, rows, field) => {
-    console.log(2);
     if (err) throw err;
   });
   connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
-    console.log(3);
     if (err) throw err;
     res.send(rows);
   });

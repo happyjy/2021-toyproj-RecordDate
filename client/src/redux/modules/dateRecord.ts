@@ -122,7 +122,7 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     yield put(pending());
     //[ ] getTokenFromState 인자값은 어떻게 관리되는지 분석글 작성하기
     const token: string = yield select(getTokenFromState);
-    const dateRecord: DateRecordReqType = yield call(
+    const dateRecord: dateType = yield call(
       DateRecordService.addDateRecord,
       token,
       action.payload.dateRecord,

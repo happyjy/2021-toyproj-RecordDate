@@ -1,12 +1,13 @@
 import React, { useRef, useEffect, useState } from 'react';
 import { message as messageDialog, PageHeader, Input, Button } from 'antd';
-// import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
-
 import Layout from '../Layout';
-import { DateRecordReqType, dateType, placeListType } from '../../types';
+import { dateType, EditDateRecordReqType, placeListType } from '../../types';
 import styles from './DateRecordEdit.module.css';
+import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
+import Chips from '../chisComponent';
+import map from '../map';
 
 const FormContainer = styled.div`
   border-radius: 5px;
@@ -56,11 +57,10 @@ const InputSubmit = styled.button`
     background-color: #1f4152;
   }
 `;
-
 interface DateRecordEditProps {
   dateRecord: dateType | null | undefined;
   getDateList: () => void;
-  editDateRecord: (dateRecord: DateRecordReqType) => void;
+  editDateRecord: (dateRecord: EditDateRecordReqType) => void;
   loading: boolean;
   error: Error | null;
   back: () => void;
@@ -76,10 +76,37 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   logout,
 }) => {
   const titleRef = useRef<HTMLInputElement>(null);
-  const placeRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
-  const [placeList, setPlaceList] = useState<placeListType[]>([]);
+  const [placeList, setPlaceList] = useState<placeListType[]>(
+    dateRecord?.placeList ? dateRecord.placeList : [],
+  );
+  const [originPlaceList, setOriginPlaceList] = useState<placeListType[]>(
+    dateRecord?.placeList ? dateRecord.placeList : [],
+  );
+
+  const inputEl = useRef<HTMLInputElement>(null);
+  const mapRef = useRef<HTMLDivElement>(null);
+  const [keyword, setKeyword] = useState('오목교역');
+  const [cb, setCb] = useState(() => () => {});
+
+  const keypress = (e: any) => {
+    if (e.key === 'Enter') {
+      searchPlace();
+    }
+  };
+  const inputEvent = (e: any) => {
+    setKeyword(e.target.value);
+  };
+
+  const searchPlace = () => {
+    console.log(cb());
+  };
+
+  // 카카오맵
+  useEffect(() => {
+    map(mapRef, inputEl, setCb, setPlaceList);
+  }, []);
 
   useEffect(() => {
     if (error) {
@@ -121,28 +148,36 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         ]}
       />
 
-      <div
-        className="imgContainer"
-        style={{
-          position: 'relative',
-          width: '100%',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <img src="/love.png" style={{ height: '400px' }} alt="love" />
-        <span
+      <div className={mapStyles.map_wrap}>
+        <div
+          ref={mapRef}
+          id="map"
           style={{
-            position: 'absolute',
-            fontSize: '3rem',
-            color: 'wheat',
-            opacity: 0.5,
+            width: '800px',
+            height: '500px',
+            position: 'relative',
+            overflow: 'hidden',
           }}
-        >
-          {' '}
-          지도 영역{' '}
-        </span>
+        ></div>
+        <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
+          <div className={mapStyles.option}>
+            <div>
+              키워드 :
+              <input
+                type="text"
+                ref={inputEl}
+                id="keyword"
+                value={keyword}
+                onChange={(e) => inputEvent(e)}
+                onKeyPress={(e) => keypress(e)}
+              />
+              <button onClick={() => searchPlace()}>검색하기</button>
+            </div>
+          </div>
+          <hr />
+          <ul id={mapStyles.placesList}></ul>
+          <div id={mapStyles.pagination}></div>
+        </div>
       </div>
 
       <FormContainer>
@@ -157,7 +192,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         />
 
         <label>place</label>
-        {dateRecord.placeList.map((place, idx) => (
+        <Chips placeList={placeList} setPlaceList={setPlaceList}></Chips>
+        {/* {dateRecord.placeList.map((place, idx) => (
           <InputEl
             key={idx}
             defaultValue={place.placeName}
@@ -167,7 +203,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             placeholder="place.."
             ref={placeRef}
           />
-        ))}
+        ))} */}
 
         <label>description</label>
         <TextAreaEl
@@ -200,9 +236,45 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
       messageDialog.error('Please fill out all inputs');
       return;
     }
+
+    // 변경된 placeList와 origin placeList 비교
+
+    /* 
+      # array로 key/value data structure를 만들기 위한 Type 설정
+      https://stackoverflow.com/q/40358434/3937115
+        * 아래 로직에서는 Map 객체를 사용해서 로직을 작성해 봤다.
+      1. { [key: string]: any }
+      2. use Map(dont use array)
+
+    */
+    interface NewArr {
+      [key: string]: any;
+    }
+    // var newArr: { [key: string]: any } = [];
+    // let newArr: NewArr = [];
+    let compMap: Map<string, placeListType> = new Map<string, placeListType>();
+
+    for (var i = 0; i < originPlaceList.length; i++) {
+      // newArr[originPlaceList[i].latLong] = originPlaceList[i];
+      compMap.set(originPlaceList[i].latLong, originPlaceList[i]);
+    }
+
+    let delPlaceList: placeListType[] = [];
+    let addPlaceList: placeListType[] = [];
+    addPlaceList = placeList.filter((place) => {
+      if (!!compMap.get(place.latLong)) {
+        compMap.delete(place.latLong);
+      } else {
+        return place;
+      }
+    });
+
+    delPlaceList = [...compMap.values()];
+
     editDateRecord({
       title,
-      placeList,
+      delPlaceList,
+      addPlaceList,
       description,
     });
   }

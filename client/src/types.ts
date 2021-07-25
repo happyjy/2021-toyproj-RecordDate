@@ -40,11 +40,17 @@ export interface DateResType {
   created_at: string;
 }
 
-export interface DateRecordReqType {
+export interface DateRecordReqDefaultType {
   title: string;
-  // place: string;
-  placeList: placeListType[];
   description: string;
+}
+export interface DateRecordReqType extends DateRecordReqDefaultType {
+  placeList: placeListType[];
+}
+// [todo] interface extend활용 리팩토링하기
+export interface EditDateRecordReqType extends DateRecordReqDefaultType {
+  delPlaceList: placeListType[];
+  addPlaceList: placeListType[];
 }
 
 // Books

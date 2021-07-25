@@ -12,9 +12,10 @@
 
 # list page
 
-* list pagination 확인하기
-* 필터 기능 추가(년, 월)
-* show 방법 (short, detail)
+* [ ] list 클릭시 선택된 마커가 지도에 한눈에 표기 될수 있게 기능 추가
+* [ ] list pagination 확인하기
+* [ ] 필터 기능 추가(년, 월)
+* [ ] show 방법 (short, detail)
 
 # add page
 

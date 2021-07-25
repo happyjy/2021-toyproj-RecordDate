@@ -49,30 +49,35 @@ const ChipDeleteIcon = styled.img`
 interface chipsComponent {
   placeList: placeListType[];
   setPlaceList: (state: any) => void;
-  onClickDelete: (e: any) => void;
 }
 const ChipsComponent: React.FC<chipsComponent> = ({
   placeList,
   setPlaceList,
-  onClickDelete,
 }) => {
+  // const [placeList, setPlaceList] = useState<placeListType[]>([]);
+  debugger;
+
+  const onClickDelete = (e: any) => {
+    console.log(e);
+    const index = e.target.dataset.index;
+    const filterPlaceList = placeList.filter((place) => {
+      return place.id + '' !== index && place;
+    });
+    setPlaceList(filterPlaceList);
+  };
+
   const onDragStart = (e: any) => {
-    console.log('# onDragStart');
     e.dataTransfer.setData('dragStartId', e.target.dataset.index);
     e.dataTransfer.dropEffect = 'move';
     e.dataTransfer.dropAllowed = 'move';
   };
   const onDrop = (e: any) => {
-    console.log('# onDrop');
-    debugger;
     const dragIndex = e.dataTransfer.getData('dragStartId');
     let el = e.target;
     while (!el.dataset.index) {
       el = e.target.parentElement;
     }
     const dropIndex = el.dataset.index;
-    console.log(dropIndex, dragIndex);
-    console.log(placeList, setPlaceList);
     const result = placeList.map((place) => {
       if (place.id + '' === dropIndex) {
         place.id = parseInt(dragIndex);

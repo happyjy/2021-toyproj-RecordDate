@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react';
 import { Table, PageHeader, Button } from 'antd';
-
 import styles from './DateRecordList.module.css';
 import Layout from '../Layout';
 import { dateType } from '../../types';
@@ -42,6 +41,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     }
   }, [error, logout]);
 
+  // 다음 지도
   useEffect(() => {
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
