@@ -6,7 +6,7 @@ import { DateRecordReqType, placeListType } from '../../types';
 import styles from './AddDateRecord.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
-import Chips from '../chisComponent';
+import Chips from './chipsComponent';
 import map from '../map';
 
 const FormContainer = styled.div`
@@ -114,7 +114,7 @@ const AddDateRecord: React.FC<AddProps> = ({
   };
 
   const searchPlace = () => {
-    console.log(cb());
+    cb();
   };
 
   useEffect(() => {
@@ -125,7 +125,7 @@ const AddDateRecord: React.FC<AddProps> = ({
 
   // 카카오맵
   useEffect(() => {
-    map(mapRef, inputEl, setCb, setPlaceList);
+    map(mapRef, inputEl, setCb, placeList, setPlaceList);
   }, []);
 
   // useEffect(() => {

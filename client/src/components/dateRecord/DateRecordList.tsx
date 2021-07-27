@@ -5,11 +5,6 @@ import Layout from '../Layout';
 import { dateType } from '../../types';
 import DateRecord from './DateRecord';
 
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
 interface DateRecordsProps {
   dateRecordList: dateType[] | null;
   loading: boolean;
@@ -59,8 +54,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       dateRecord.placeList.forEach((place) => {
         if (!!place.latLong) {
           const latLongSplit = place.latLong.split(',');
-          let lat = latLongSplit[0];
-          let long = latLongSplit[1];
+          const lat = latLongSplit[0];
+          const long = latLongSplit[1];
           placeList.push({
             title: place.placeName,
             latlng: new window.kakao.maps.LatLng(lat, long),
@@ -125,18 +120,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         }}
       >
         <div id="map" style={{ width: '800px', height: '600px' }}></div>
-        {/* <img src="/love.png" style={{ height: '400px' }} alt="love" />
-        <span
-          style={{
-            position: 'absolute',
-            fontSize: '3rem',
-            color: 'wheat',
-            opacity: 0.5,
-          }}
-        >
-          {' '}
-          지도 영역{' '}
-        </span> */}
       </div>
       <Table
         dataSource={dateRecordList || []}

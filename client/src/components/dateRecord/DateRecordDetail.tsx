@@ -5,6 +5,7 @@ import Layout from '../Layout';
 import { dateType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
+import Chips from './chipsComponent';
 
 interface DetailProps {
   dateRecord: dateType | null | undefined;
@@ -32,6 +33,45 @@ const DateRecordDetail: React.FC<DetailProps> = ({
       logout();
     }
   }, [error, logout]);
+
+  // 다음 지도
+  useEffect(() => {
+    const mapContainer = document.getElementById('map'), // 지도를 표시할 div
+      mapOption = {
+        center: new window.kakao.maps.LatLng(
+          37.52279639598579,
+          126.88244947391755,
+        ), // 지도의 중심좌표
+        level: 5, // 지도의 확대 레벨
+      };
+    const map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+    const placeList = (dateRecord && dateRecord.placeList) || [];
+    const bounds = new window.kakao.maps.LatLngBounds();
+
+    const imageSrc =
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+    const imageSize = new window.kakao.maps.Size(24, 35);
+
+    for (let i = 0; i < placeList.length; i++) {
+      // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
+      let latLong = placeList[i].latLong.split(', ');
+      let placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
+      const markerImage = new window.kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+      );
+
+      let marker = new window.kakao.maps.Marker({
+        position: placePosition1,
+        title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image: markerImage, // 마커 이미지
+      });
+      marker.setMap(map);
+
+      bounds.extend(placePosition1);
+    }
+    map.setBounds(bounds);
+  });
 
   if (dateRecord === null) {
     return null;
@@ -98,12 +138,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         ]}
       />
 
-      <div
-        className="imgContainer"
-        style={{ width: '100%', display: 'flex', justifyContent: 'center' }}
-      >
-        <img src="/love.png" style={{ height: '400px' }} alt="love" />
-      </div>
+      <div id="map" style={{ width: '800px', height: '600px' }}></div>
 
       <FormContainer>
         <label>Title</label>
@@ -117,16 +152,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         />
 
         <label>place</label>
-        {dateRecord.placeList.map((place) => (
-          <InputEl
-            value={place.placeName}
-            type="text"
-            id="lname"
-            name="lastname"
-            placeholder="place.."
-            readOnly
-          />
-        ))}
+        <Chips placeList={dateRecord.placeList}></Chips>
 
         <label>description</label>
         <TextAreaEl

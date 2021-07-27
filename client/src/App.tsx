@@ -14,6 +14,11 @@ import Edit from './pages/Edit';
 import DateRecordDetail from './pages/DateRecordDetail';
 import DateRecordEdit from './pages/DateRecordEdit';
 import AddDateRecord from './pages/AddDateRecord';
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
 
 const App = () => (
   <ErrorBoundary FallbackComponent={Error}>

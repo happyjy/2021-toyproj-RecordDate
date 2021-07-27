@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
-import { placeListType } from '../types';
-import { default as closeIcon } from '../assets/img/close.svg';
+import { placeListType } from '../../types';
+import { default as closeIcon } from '../../assets/img/close.svg';
 // import { close } from '*.svg';
 
 const Container = styled.div`
@@ -48,22 +48,34 @@ const ChipDeleteIcon = styled.img`
 
 interface chipsComponent {
   placeList: placeListType[];
-  setPlaceList: (state: any) => void;
+  setPlaceList?: (state: any) => void;
+  placeMarkerList?: any[];
 }
 const ChipsComponent: React.FC<chipsComponent> = ({
   placeList,
   setPlaceList,
+  placeMarkerList,
 }) => {
-  // const [placeList, setPlaceList] = useState<placeListType[]>([]);
-  debugger;
-
   const onClickDelete = (e: any) => {
-    console.log(e);
+    // reset PlaceList
     const index = e.target.dataset.index;
     const filterPlaceList = placeList.filter((place) => {
-      return place.id + '' !== index && place;
+      return place.id.toString() !== index && place;
     });
-    setPlaceList(filterPlaceList);
+
+    // delete Place from Map
+    const deletePlace = placeList.filter((place) => {
+      return place.id.toString() === index && place;
+    })[0];
+
+    const latLong = deletePlace.latLong.split(', ');
+    const placePosition = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
+    const marker = new window.kakao.maps.Marker({
+      position: placePosition, // 마커의 위치
+    });
+
+    placeMarkerList && placeMarkerList[marker.n].setMap(null);
+    setPlaceList && setPlaceList(filterPlaceList);
   };
 
   const onDragStart = (e: any) => {
@@ -91,7 +103,7 @@ const ChipsComponent: React.FC<chipsComponent> = ({
     });
 
     const resultSort = result.sort((a, b) => a.id - b.id);
-    setPlaceList(() => [...resultSort]);
+    setPlaceList && setPlaceList(() => [...resultSort]);
   };
   const onDragOver = (e: any) => {
     console.log('# onDragOver');

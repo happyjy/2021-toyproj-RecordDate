@@ -6,7 +6,7 @@ import { dateType, EditDateRecordReqType, placeListType } from '../../types';
 import styles from './DateRecordEdit.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
-import Chips from '../chisComponent';
+import Chips from './chipsComponent';
 import map from '../map';
 
 const FormContainer = styled.div`
@@ -88,7 +88,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const inputEl = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [keyword, setKeyword] = useState('오목교역');
-  const [cb, setCb] = useState(() => () => {});
+  const [SearchPlacesCb, setSearchPlacesCb] = useState(() => () => {});
+  const [placeMarkerList, setPlaceMarkerList] = useState<any[]>([]);
 
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
@@ -100,12 +101,19 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   };
 
   const searchPlace = () => {
-    console.log(cb());
+    SearchPlacesCb();
   };
 
   // 카카오맵
   useEffect(() => {
-    map(mapRef, inputEl, setCb, setPlaceList);
+    const [placeMarkerObjList] = map(
+      mapRef,
+      inputEl,
+      setSearchPlacesCb,
+      placeList,
+      setPlaceList,
+    );
+    setPlaceMarkerList(placeMarkerObjList);
   }, []);
 
   useEffect(() => {
@@ -192,18 +200,11 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         />
 
         <label>place</label>
-        <Chips placeList={placeList} setPlaceList={setPlaceList}></Chips>
-        {/* {dateRecord.placeList.map((place, idx) => (
-          <InputEl
-            key={idx}
-            defaultValue={place.placeName}
-            type="text"
-            id="lname"
-            name="lastname"
-            placeholder="place.."
-            ref={placeRef}
-          />
-        ))} */}
+        <Chips
+          placeList={placeList}
+          setPlaceList={setPlaceList}
+          placeMarkerList={placeMarkerList}
+        ></Chips>
 
         <label>description</label>
         <TextAreaEl

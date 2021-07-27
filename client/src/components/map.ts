@@ -1,6 +1,16 @@
-export default (mapRef: any, inputEl: any, setCb: any, setPlaceList: any) => {
+import { placeListType } from '../types';
+import { default as markerStart } from '../assets/img/markerStar.png';
+
+export default (
+  mapRef: any,
+  inputEl: any,
+  setCb: any,
+  placeList: placeListType[],
+  setPlaceList: any,
+) => {
   // 마커를 담을 배열입니다
-  var markers: any[] = [];
+  let markers: any[] = [];
+  let placeMakerList: any[] = [];
 
   // var mapContainer = document.getElementById('map'), // 지도를 표시할 div
   var mapContainer = mapRef.current, // 지도를 표시할 div
@@ -11,7 +21,36 @@ export default (mapRef: any, inputEl: any, setCb: any, setPlaceList: any) => {
 
   // 지도를 생성합니다
   let map = new window.kakao.maps.Map(mapContainer, mapOption);
-  // setMap(map);
+
+  setTimeout(() => {
+    var bounds = new window.kakao.maps.LatLngBounds();
+    const imageSrc =
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+    const imageSize = new window.kakao.maps.Size(24, 35);
+
+    var marker;
+    for (let i = 0; i < placeList.length; i++) {
+      // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
+      let latLong = placeList[i].latLong.split(', ');
+      let placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
+      const markerImage = new window.kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+      );
+
+      marker = new window.kakao.maps.Marker({
+        position: placePosition1,
+        title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image: markerImage, // 마커 이미지
+      });
+      marker.setMap(map);
+
+      // LatLngBounds 객체에 좌표를 추가합니다
+      placeMakerList[marker.n] = marker;
+      bounds.extend(placePosition1);
+    }
+    map.setBounds(bounds);
+  }, 500);
 
   // 장소 검색 객체를 생성합니다
   let ps = new window.kakao.maps.services.Places();
@@ -93,7 +132,7 @@ export default (mapRef: any, inputEl: any, setCb: any, setPlaceList: any) => {
           places[i].y,
           places[i].x,
         ),
-        marker = addMarker(placePosition, i),
+        marker = addMarker(placePosition, i, places),
         itemEl = getListItem(i, places[i]); // 검색 결과 항목 Element를 생성합니다
 
       // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
@@ -259,7 +298,9 @@ export default (mapRef: any, inputEl: any, setCb: any, setPlaceList: any) => {
   }
 
   // 마커를 생성하고 지도 위에 마커를 표시하는 함수입니다
-  function addMarker(position: any, idx: any, title?: any) {
+  function addMarker(position: any, idx: any, places?: any) {
+    // if (idx === places.length - 1) addPlace();
+
     var imageSrc =
         'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png', // 마커 이미지 url, 스프라이트 이미지를 씁니다
       imageSize = new window.kakao.maps.Size(36, 37), // 마커 이미지의 크기
@@ -340,4 +381,36 @@ export default (mapRef: any, inputEl: any, setCb: any, setPlaceList: any) => {
       if (el.lastChild) el.removeChild(el.lastChild);
     }
   }
+
+  function addPlace() {
+    // 장소 표기
+    // 마커 이미지의 이미지 주소입니다
+    const imageSrc =
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+
+    for (let i = 0; i < placeList.length; i++) {
+      // 마커 이미지의 이미지 크기 입니다
+      const imageSize = new window.kakao.maps.Size(24, 35);
+
+      // 마커 이미지를 생성합니다
+      const markerImage = new window.kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+      );
+
+      var latLong = placeList[i].latLong.split(', ');
+      var placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
+      // 마커를 생성합니다
+      const marker = new window.kakao.maps.Marker({
+        map: map, // 마커를 표시할 지도
+        position: placePosition1, // 마커를 표시할 위치
+        title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+        image: markerImage, // 마커 이미지
+      });
+
+      placeMakerList[marker.n] = marker;
+    }
+  }
+
+  return [placeMakerList];
 };

@@ -16,7 +16,6 @@ const DateRecordEditContainer = () => {
   const { id } = useParams();
   const dateId = Number(id) || -1;
   const dateRecordList = useSelector<RootState, dateType[] | null>((state) => {
-    debugger;
     return state.dateRecord.dateRecordList;
   });
 
