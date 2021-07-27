@@ -5,7 +5,7 @@ import { useParams } from 'react-router-dom';
 
 import Detail from '../components/Detail';
 import { RootState } from '../redux/modules/rootReducer';
-import { DateResType, BookResType, dateType } from '../types';
+import { BookResType } from '../types';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import { getBooks as getBooksSaga } from '../redux/modules/books';
 

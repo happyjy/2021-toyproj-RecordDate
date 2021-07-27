@@ -34,9 +34,9 @@ const TextAreaEl = styled.textarea`
   ${commonFormProperty};
 `;
 
-const SelectEl = styled.select`
-  ${commonFormProperty};
-`;
+// const SelectEl = styled.select`
+//   ${commonFormProperty};
+// `;
 
 const InputSubmitContainer = styled.div`
   text-align: right;
@@ -126,7 +126,7 @@ const AddDateRecord: React.FC<AddProps> = ({
   // 카카오맵
   useEffect(() => {
     map(mapRef, inputEl, setCb, placeList, setPlaceList);
-  }, []);
+  }, [placeList]);
 
   // useEffect(() => {
   //   // 마커를 담을 배열입니다

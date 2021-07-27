@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { message as messageDialog, PageHeader, Input, Button } from 'antd';
+import { message as messageDialog, PageHeader, Button } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import { dateType, EditDateRecordReqType, placeListType } from '../../types';
@@ -30,10 +30,6 @@ const InputEl = styled.input.attrs({ type: 'text' })`
 `;
 
 const TextAreaEl = styled.textarea`
-  ${commonFormProperty};
-`;
-
-const SelectEl = styled.select`
   ${commonFormProperty};
 `;
 
@@ -81,7 +77,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const [placeList, setPlaceList] = useState<placeListType[]>(
     dateRecord?.placeList ? dateRecord.placeList : [],
   );
-  const [originPlaceList, setOriginPlaceList] = useState<placeListType[]>(
+  const [originPlaceList] = useState<placeListType[]>(
     dateRecord?.placeList ? dateRecord.placeList : [],
   );
 
@@ -114,7 +110,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
       setPlaceList,
     );
     setPlaceMarkerList(placeMarkerObjList);
-  }, []);
+  }, [placeList]);
 
   useEffect(() => {
     if (error) {
@@ -252,7 +248,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
       [key: string]: any;
     }
     // var newArr: { [key: string]: any } = [];
-    // let newArr: NewArr = [];
+    // let newArr: NewArr = []
     let compMap: Map<string, placeListType> = new Map<string, placeListType>();
 
     for (var i = 0; i < originPlaceList.length; i++) {
@@ -262,11 +258,11 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
     let delPlaceList: placeListType[] = [];
     let addPlaceList: placeListType[] = [];
-    addPlaceList = placeList.filter((place) => {
+    placeList.forEach((place) => {
       if (!!compMap.get(place.latLong)) {
         compMap.delete(place.latLong);
       } else {
-        return place;
+        addPlaceList.push(place);
       }
     });
 

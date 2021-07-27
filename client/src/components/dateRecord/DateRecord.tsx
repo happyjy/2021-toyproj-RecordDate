@@ -31,6 +31,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
       <div className={styles.book}>
         <div className={styles.title}>
           <Link
+            key={dateRecord_id}
             to={`/dateRecord/${dateRecord_id}`}
             className={styles.link_detail_title}
           >
@@ -43,8 +44,8 @@ const DateRecord: React.FC<DateProps> = React.memo(
             className={styles.link_detail_author}
           >
             {placeList?.map((v, i) => {
-              if (i == 0) return <span>{v.placeName}</span>;
-              if (i != 0) return <span>, {v.placeName}</span>;
+              if (i === 0) return <span>{v.placeName}</span>;
+              if (i !== 0) return <span>, {v.placeName}</span>;
             })}
           </Link>
         </div>

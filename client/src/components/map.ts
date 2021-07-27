@@ -1,5 +1,4 @@
 import { placeListType } from '../types';
-import { default as markerStart } from '../assets/img/markerStar.png';
 
 export default (
   mapRef: any,
@@ -22,35 +21,40 @@ export default (
   // 지도를 생성합니다
   let map = new window.kakao.maps.Map(mapContainer, mapOption);
 
-  setTimeout(() => {
-    var bounds = new window.kakao.maps.LatLngBounds();
-    const imageSrc =
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-    const imageSize = new window.kakao.maps.Size(24, 35);
+  if (placeList.length > 0) {
+    setTimeout(() => {
+      var bounds = new window.kakao.maps.LatLngBounds();
+      const imageSrc =
+        'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+      const imageSize = new window.kakao.maps.Size(24, 35);
 
-    var marker;
-    for (let i = 0; i < placeList.length; i++) {
-      // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
-      let latLong = placeList[i].latLong.split(', ');
-      let placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
-      const markerImage = new window.kakao.maps.MarkerImage(
-        imageSrc,
-        imageSize,
-      );
+      var marker;
+      for (let i = 0; i < placeList.length; i++) {
+        // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
+        let latLong = placeList[i].latLong.split(', ');
+        let placePosition1 = new window.kakao.maps.LatLng(
+          latLong[0],
+          latLong[1],
+        );
+        const markerImage = new window.kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+        );
 
-      marker = new window.kakao.maps.Marker({
-        position: placePosition1,
-        title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-        image: markerImage, // 마커 이미지
-      });
-      marker.setMap(map);
+        marker = new window.kakao.maps.Marker({
+          position: placePosition1,
+          title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+          image: markerImage, // 마커 이미지
+        });
+        marker.setMap(map);
 
-      // LatLngBounds 객체에 좌표를 추가합니다
-      placeMakerList[marker.n] = marker;
-      bounds.extend(placePosition1);
-    }
-    map.setBounds(bounds);
-  }, 500);
+        // LatLngBounds 객체에 좌표를 추가합니다
+        placeMakerList[marker.n] = marker;
+        bounds.extend(placePosition1);
+      }
+      map.setBounds(bounds);
+    }, 500);
+  }
 
   // 장소 검색 객체를 생성합니다
   let ps = new window.kakao.maps.services.Places();
@@ -112,10 +116,10 @@ export default (
   function displayPlaces(places: any[]) {
     // var listEl = document.getElementById('placesList') as HTMLInputElement;
     // var menuEl = document.getElementById('menu_wrap') as HTMLInputElement;
+    // const menuEl = mapRef?.current?.parentElement?.children[1];
     var fragment = document.createDocumentFragment();
     var bounds = new window.kakao.maps.LatLngBounds();
 
-    const menuEl = mapRef?.current?.parentElement?.children[1];
     const listEl =
       mapRef?.current?.parentElement?.children[1].getElementsByTagName('ul')[0];
 
@@ -142,7 +146,11 @@ export default (
       // 마커와 검색결과 항목에 mouseover 했을때
       // 해당 장소에 인포윈도우에 장소명을 표시합니다
       // mouseout 했을 때는 인포윈도우를 닫습니다
-      (function (marker, { place_name: title, road_address_name, x, y }) {
+      (function (
+        itemEl,
+        marker,
+        { place_name: title, road_address_name, x, y },
+      ) {
         window.kakao.maps.event.addListener(marker, 'click', function () {
           setPlaceList((placeList: any) => {
             const result = placeList.some(
@@ -177,7 +185,7 @@ export default (
         itemEl.onmouseout = function () {
           infowindow.close();
         };
-      })(marker, places[i]);
+      })(itemEl, marker, places[i]);
 
       fragment.appendChild(itemEl);
     }
@@ -215,7 +223,7 @@ export default (
       itemStr += '    <span>' + places.address_name + '</span>';
     }
 
-    itemStr += '  <span class="tel">' + places.phone + '</span>' + '</div>';
+    itemStr += '  <span class="tel">' + places.phone + '</span> </div>';
 
     el.innerHTML = itemStr;
     el.className = 'item';
@@ -382,35 +390,35 @@ export default (
     }
   }
 
-  function addPlace() {
-    // 장소 표기
-    // 마커 이미지의 이미지 주소입니다
-    const imageSrc =
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+  // function addPlace() {
+  //   // 장소 표기
+  //   // 마커 이미지의 이미지 주소입니다
+  //   const imageSrc =
+  //     'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
 
-    for (let i = 0; i < placeList.length; i++) {
-      // 마커 이미지의 이미지 크기 입니다
-      const imageSize = new window.kakao.maps.Size(24, 35);
+  //   for (let i = 0; i < placeList.length; i++) {
+  //     // 마커 이미지의 이미지 크기 입니다
+  //     const imageSize = new window.kakao.maps.Size(24, 35);
 
-      // 마커 이미지를 생성합니다
-      const markerImage = new window.kakao.maps.MarkerImage(
-        imageSrc,
-        imageSize,
-      );
+  //     // 마커 이미지를 생성합니다
+  //     const markerImage = new window.kakao.maps.MarkerImage(
+  //       imageSrc,
+  //       imageSize,
+  //     );
 
-      var latLong = placeList[i].latLong.split(', ');
-      var placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
-      // 마커를 생성합니다
-      const marker = new window.kakao.maps.Marker({
-        map: map, // 마커를 표시할 지도
-        position: placePosition1, // 마커를 표시할 위치
-        title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-        image: markerImage, // 마커 이미지
-      });
+  //     var latLong = placeList[i].latLong.split(', ');
+  //     var placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
+  //     // 마커를 생성합니다
+  //     const marker = new window.kakao.maps.Marker({
+  //       map: map, // 마커를 표시할 지도
+  //       position: placePosition1, // 마커를 표시할 위치
+  //       title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+  //       image: markerImage, // 마커 이미지
+  //     });
 
-      placeMakerList[marker.n] = marker;
-    }
-  }
+  //     placeMakerList[marker.n] = marker;
+  //   }
+  // }
 
   return [placeMakerList];
 };

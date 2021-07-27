@@ -4,11 +4,7 @@ import { createActions, handleActions } from 'redux-actions';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import DateRecordService from '../../services/DateRecordService';
 import { DateRecordReqType, DateResType, dateType } from '../../types';
-import {
-  getBooksFromState,
-  getDateRecordFromState,
-  getTokenFromState,
-} from '../utils';
+import { getDateRecordFromState, getTokenFromState } from '../utils';
 
 export interface DateRecordState {
   dateRecordList: dateType[] | null;
@@ -130,7 +126,8 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     //[ ] getDateRecordFromState 인자값은 어떻게 관리되는지 분석글 작성하기
     const dateRecordList: dateType[] = yield select(getDateRecordFromState);
     console.log({ dateRecordList });
-    // yield put(success([...dateRecordList, dateRecord]));
+    // [todo] response data structure 맞춰 success 완성 시키기
+    yield put(success([...dateRecordList, dateRecord]));
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

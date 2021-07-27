@@ -76,7 +76,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       var markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
 
       // 마커를 생성합니다
-      var marker = new window.kakao.maps.Marker({
+      new window.kakao.maps.Marker({
         map: map, // 마커를 표시할 지도
         position: placeList[i].latlng, // 마커를 표시할 위치
         title: placeList[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
@@ -125,26 +125,26 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         dataSource={dateRecordList || []}
         columns={[
           {
-            title: 'Book',
-            dataIndex: 'book',
-            key: 'book',
+            title: 'DateRecord',
+            dataIndex: 'dateRecord',
+            key: 'dateRecord',
             render: (text, record) => {
               return (
                 <DateRecord
+                  key={record.dateRecord_id}
                   {...record}
                   deleteRecordDate={deleteRecordDate}
                   goEdit={goEdit}
-                  key={record.dateRecord_id}
                 />
               );
             },
           },
         ]}
-        loading={dateRecordList === null || loading}
         showHeader={false}
-        className={styles.table}
-        rowKey="bookId"
         pagination={false}
+        loading={dateRecordList === null || loading}
+        className={styles.table}
+        rowKey="dateRecord_id"
       />
     </Layout>
   );

@@ -1,12 +1,10 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { message as messageDialog, PageHeader, Input, Button } from 'antd';
-// import TextArea from 'antd/lib/input/TextArea';
 import { FormOutlined } from '@ant-design/icons';
 
 import Layout from './Layout';
 import { BookReqType, BookResType } from '../types';
 import styles from './Add.module.css';
-// import TextArea, { TextAreaRef } from 'antd/lib/input/TextArea';
 
 interface AddProps {
   books: BookResType[] | null;

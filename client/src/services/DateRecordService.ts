@@ -3,7 +3,6 @@ import { makeDate } from '../redux/utils';
 
 import { DateRecordReqType, dateType, placeType } from '../types';
 
-const BOOK_API_URL = 'https://api.marktube.tv/v1/book';
 const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 
 export default class DateRecordService {
