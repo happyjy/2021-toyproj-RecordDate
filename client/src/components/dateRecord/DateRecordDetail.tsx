@@ -24,6 +24,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   back,
   logout,
 }) => {
+  if (!!dateRecord) {
+    debugger;
+  }
   useEffect(() => {
     getDateList();
   }, [getDateList]);
@@ -66,8 +69,8 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
         image: markerImage, // 마커 이미지
       });
-      marker.setMap(map);
 
+      marker.setMap(map);
       bounds.extend(placePosition1);
     }
     map.setBounds(bounds);
@@ -151,7 +154,8 @@ const DateRecordDetail: React.FC<DetailProps> = ({
           readOnly
         />
 
-        <label>place</label>
+        <img src={'http://localhost:5000' + dateRecord.image} alt="profile" />
+        <label>place1</label>
         <Chips placeList={dateRecord.placeList}></Chips>
 
         <label>description</label>

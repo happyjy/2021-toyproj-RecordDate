@@ -46,6 +46,7 @@ export interface DateRecordReqDefaultType {
 }
 export interface DateRecordReqType extends DateRecordReqDefaultType {
   placeList: placeListType[];
+  imageFile?: any;
 }
 // [todo] interface extend활용 리팩토링하기
 export interface EditDateRecordReqType extends DateRecordReqDefaultType {

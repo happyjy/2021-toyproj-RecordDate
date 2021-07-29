@@ -117,6 +117,8 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
   try {
     yield put(pending());
     //[ ] getTokenFromState 인자값은 어떻게 관리되는지 분석글 작성하기
+    debugger;
+
     const token: string = yield select(getTokenFromState);
     const dateRecord: dateType = yield call(
       DateRecordService.addDateRecord,
@@ -127,7 +129,7 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     const dateRecordList: dateType[] = yield select(getDateRecordFromState);
     console.log({ dateRecordList });
     // [todo] response data structure 맞춰 success 완성 시키기
-    yield put(success([...dateRecordList, dateRecord]));
+    // yield put(success([...dateRecordList, dateRecord]));
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

@@ -2,6 +2,7 @@ const fs = require("fs");
 const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
+
 const app = express();
 const port = process.env.PORT || 5000;
 console.log("### server.js > process.env.PORT: ", process.env.PORT);
@@ -53,8 +54,6 @@ const connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-const multer = require("multer");
-const upload = multer({ dest: "./upload" });
 app.get("/api/dateRecord", (req, res) => {
   connection.query(
     `SELECT dateRecord_id,
@@ -80,21 +79,27 @@ app.get("/api/dateRecord", (req, res) => {
   );
 });
 
-app.post("/api/dateRecord", (req, res) => {
+const multer = require("multer");
+const upload = multer({ dest: "./upload" });
+app.use("/image", express.static("upload"));
+
+app.post("/api/dateRecord", upload.single("imageFile"), (req, res) => {
   let insertDateRecord =
-    "INSERT INTO dateRecord(title, description) VALUES (?, ?);";
+    "INSERT INTO dateRecord(title, description, image) VALUES (?, ?, ?);";
   let insertPlace =
     "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
+  let imageName = "/image/" + req.file.filename;
   let title = req.body.title;
   let description = req.body.description;
-  let placeList = req.body.placeList;
-  let insertDateRecordParams = [title, description];
+  let placeList = JSON.parse(req.body.placeList);
+  let insertDateRecordParams = [title, description, imageName];
 
   let insertDateRecordid;
   connection.query(
     insertDateRecord,
     insertDateRecordParams,
     (err, rows, fields) => {
+      console.log(rows);
       insertDateRecordid = rows.insertId;
       if (err) throw err;
 
@@ -196,20 +201,19 @@ app.delete("/api/dateRecord/:id", (req, res) => {
 //     }
 // );
 // });
-// app.use('/image', express.static('./upload'));
 
-app.post("/api/customers", upload.single("image"), (req, res) => {
-  let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)";
-  let image = "/image/" + req.file.filename;
-  let name = req.body.name;
-  let birthday = req.body.birthday;
-  let gender = req.body.gender;
-  let job = req.body.job;
-  let params = [image, name, birthday, gender, job];
-  connection.query(sql, params, (err, rows, fields) => {
-    res.send(rows);
-  });
-});
+// app.post("/api/customers", upload.single("image"), (req, res) => {
+//   let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)";
+//   let image = "/image/" + req.file.filename;
+//   let name = req.body.name;
+//   let birthday = req.body.birthday;
+//   let gender = req.body.gender;
+//   let job = req.body.job;
+//   let params = [image, name, birthday, gender, job];
+//   connection.query(sql, params, (err, rows, fields) => {
+//     res.send(rows);
+//   });
+// });
 
 // app.delete('/api/customers/:id', (req, res) => {
 //     let sql = 'UPDATE CUSTOMER SET isDeleted = 1 WHERE id = ?';

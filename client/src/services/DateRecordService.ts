@@ -1,7 +1,12 @@
 import axios from 'axios';
 import { makeDate } from '../redux/utils';
 
-import { DateRecordReqType, dateType, placeType } from '../types';
+import {
+  DateRecordReqType,
+  dateType,
+  placeListType,
+  placeType,
+} from '../types';
 
 const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 
@@ -25,15 +30,18 @@ export default class DateRecordService {
     token: string,
     dateRecord: DateRecordReqType,
   ): Promise<dateType> {
-    const response = await axios.post<dateType>(
-      DATERECORD_API_URL,
-      dateRecord,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    debugger;
+    const formData = new FormData();
+    formData.append('title', dateRecord.title);
+    formData.append('description', dateRecord.description);
+    formData.append('placeList', JSON.stringify(dateRecord.placeList));
+    formData.append('imageFile', dateRecord.imageFile);
+    const response = await axios.post<dateType>(DATERECORD_API_URL, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'content-type': 'multipart/form-data',
       },
-    );
+    });
     return response.data;
   }
 

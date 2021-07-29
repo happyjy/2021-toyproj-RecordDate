@@ -89,6 +89,9 @@ const AddDateRecord: React.FC<AddProps> = ({
   const [keyword, setKeyword] = useState('오목교역');
   const [cb, setCb] = useState(() => () => {});
 
+  const [imageFile, setImagefile] = useState();
+  const [imageFileName, setImagefileName] = useState();
+
   /* 
     # issue: useState with ts
       * https://stackoverflow.com/a/53650561/3937115
@@ -127,6 +130,11 @@ const AddDateRecord: React.FC<AddProps> = ({
   useEffect(() => {
     map(mapRef, inputEl, setCb, placeList, setPlaceList);
   }, [placeList]);
+
+  const onChangeFileupload = (e: any) => {
+    console.log(e);
+    setImagefile(e.target.files[0]);
+  };
 
   // useEffect(() => {
   //   // 마커를 담을 배열입니다
@@ -555,6 +563,13 @@ const AddDateRecord: React.FC<AddProps> = ({
           ref={placeRef}
         /> */}
 
+        <input
+          type="file"
+          id="dateImage"
+          name="dateImage"
+          onChange={(e) => onChangeFileupload(e)}
+        ></input>
+
         <label>description</label>
         <TextAreaEl
           onChange={(e) => setText(e.target.value)}
@@ -586,10 +601,14 @@ const AddDateRecord: React.FC<AddProps> = ({
       messageDialog.error('Please fill out all inputs');
       return;
     }
+
+    debugger;
+
     addDateRecord({
       title,
       placeList,
       description,
+      imageFile,
     });
   }
 };
