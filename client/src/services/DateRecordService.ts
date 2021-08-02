@@ -30,12 +30,13 @@ export default class DateRecordService {
     token: string,
     dateRecord: DateRecordReqType,
   ): Promise<dateType> {
-    debugger;
     const formData = new FormData();
     formData.append('title', dateRecord.title);
     formData.append('description', dateRecord.description);
     formData.append('placeList', JSON.stringify(dateRecord.placeList));
-    formData.append('imageFile', dateRecord.imageFile);
+    [...dateRecord.imageFile].forEach((v) => {
+      formData.append('imageFile', v);
+    });
     const response = await axios.post<dateType>(DATERECORD_API_URL, formData, {
       headers: {
         Authorization: `Bearer ${token}`,

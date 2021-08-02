@@ -24,9 +24,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   back,
   logout,
 }) => {
-  if (!!dateRecord) {
-    debugger;
-  }
   useEffect(() => {
     getDateList();
   }, [getDateList]);
@@ -154,6 +151,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
           readOnly
         />
 
+        {/* {dateRecord.image?.map((v) => (
+          <img src={'http://localhost:5000' + dateRecord.image} alt="profile" />
+        ))} */}
         <img src={'http://localhost:5000' + dateRecord.image} alt="profile" />
         <label>place1</label>
         <Chips placeList={dateRecord.placeList}></Chips>

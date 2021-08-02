@@ -133,7 +133,8 @@ const AddDateRecord: React.FC<AddProps> = ({
 
   const onChangeFileupload = (e: any) => {
     console.log(e);
-    setImagefile(e.target.files[0]);
+    setImagefile(e.target.files);
+    // setImagefile(e.target.files[0]);
   };
 
   // useEffect(() => {
@@ -565,9 +566,10 @@ const AddDateRecord: React.FC<AddProps> = ({
 
         <input
           type="file"
-          id="dateImage"
-          name="dateImage"
+          id="imageFile"
+          name="imageFile"
           onChange={(e) => onChangeFileupload(e)}
+          multiple
         ></input>
 
         <label>description</label>

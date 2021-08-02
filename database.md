@@ -1,7 +1,24 @@
+- [테이블](#테이블)
+- [modify column](#modify-column)
+
+# 테이블
+
+- 종류
+    - dateRecord
+    - place
+    - image
+    - todolist
+        - 할것
+        - 정보
+        - 위치
+
+```
+SHOW TABLES;
+```
+
 ```
   CREATE DATEBASE record_date
-
-
+  
   use record_date;
 
   CREATE TABLE CUSTOMER (
@@ -13,8 +30,6 @@
     job VARCHAR(64)
   );  
 
-
-  use record_date;
   CREATE TABLE CUSTOMER (
     id INT PRIMARY KEY AUTO_INCREMENT,
     image VARCHAR(1024),
@@ -24,33 +39,12 @@
     job VARCHAR(64),
   ) DEFAULT CHARACTER SET UTF8 COLLATE utf8_general_ci;
 
-
-
   INSERT INTO CUSTOMER VALUES (1, './img/man1.jpg', '홍길동', '900101', '남자', '청년');
   INSERT INTO CUSTOMER VALUES (2, './img/man2.jpg', '홍길순', '900111', '남자', '앱개발자');
   INSERT INTO CUSTOMER VALUES (3, './img/man3.jpg', '홍길덩', '900121', '남자', '웹개발자');
 
   INSERT INTO CUSTOMER (CustomerName, ContactName, Address, City, PostalCode, Country)
   VALUES ('Cardinal', 'Tom B. Erichsen', 'Skagen 21', 'Stavanger', '4006', 'Norway');
-```
-
-# 현아랑
-
-## 테이블
-
-* 종류
-  * dateRecord
-  * place
-  
-  * todolist
-    * 할것
-    * 정보
-    * 위치
-
-  *
-
-```
-SHOW TABLES;
 ```
 
 ```
@@ -65,8 +59,8 @@ CREATE TABLE IF NOT EXISTS dateRecord (
     title VARCHAR(255) NOT NULL,
     description TEXT,
     image VARCHAR(255),
-
     isDeleted BOOLEAN NOT NULL DEFAULT 0,
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
@@ -78,10 +72,25 @@ CREATE TABLE IF NOT EXISTS place (
     place_name VARCHAR(255) NOT NULL,
     address VARCHAR(100)
     latLong VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+
+    PRIMARY KEY (place_id, dateRecord_id),
+    FOREIGN KEY (dateRecord_id)
+        REFERENCES dateRecord (dateRecord_id)
+        ON UPDATE RESTRICT ON DELETE CASCADE
+);
+
+CREATE TABLE IF NOT EXISTS dateImage (
+    dateImage_id INT AUTO_INCREMENT,
+    dateRecord_id INT,
+
+    file_name VARCHAR(255) NOT NULL,
     
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    PRIMARY KEY (place_id, dateRecord_id),
+
+    PRIMARY KEY (dateImage_id, dateRecord_id),
     FOREIGN KEY (dateRecord_id)
         REFERENCES dateRecord (dateRecord_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
@@ -91,11 +100,11 @@ CREATE TABLE IF NOT EXISTS place (
 # modify column
 
 ```
-ALTER TABLE dateRecord RENAME description TO comment;
+ALTER TABLE dateRecord RENAME COLUMN description TO comment;
 ALTER TABLE dateRecord MODIFY placeId VARCHAR(255);
 ALTER TABLE dateRecord DROP COLUMN placeId;
-
 ALTER TABLE dateRecord modify isDelete BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE dateImage RENAME COLUMN file_name TO dateImage_name;
 
 DELETE FROM dateRecord WHERE dateRecord_id=2;
 DELETE FROM place where 
@@ -110,6 +119,9 @@ ALTER TABLE place ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER latLong;
 update dateRecord set isDelete = 0;
 update place set place_name = '안양천 텐트' where place_id = 1;
 update place set place_name = '안양천 텐트', address = '서울시 영등포구' where dateRecord_id = 23;
+
+
+
 
 
 ```

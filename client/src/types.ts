@@ -8,7 +8,6 @@ export interface dateType {
   dateRecord_id: number;
   title: string;
   description: string;
-  placeId: string;
   image: string;
   isDeleted: string;
   created_at: string;
@@ -21,6 +20,13 @@ export interface placeType {
   place_name: string;
   address: string;
   latLong: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface dateIamgeType {
+  dateImage_id: number;
+  dateRecord_id: number;
+  file_name: string;
   created_at: string;
   updated_at: string;
 }

@@ -83,16 +83,41 @@ const multer = require("multer");
 const upload = multer({ dest: "./upload" });
 app.use("/image", express.static("upload"));
 
-app.post("/api/dateRecord", upload.single("imageFile"), (req, res) => {
+// const storage = multer.diskStorage({
+//   destination: function (req, file, cb) {
+//     cb(null, "uploads/");
+//   },
+
+//   filename: function (req, file, cb) {
+//     cb(
+//       null,
+//       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
+//     );
+//   },
+// });
+
+// var upload = multer({ storage: storage });
+
+// app.post("/api/dateRecord", upload.single("imageFile"), (req, res) => {
+app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
+  // console.log("# req.file");
+  // console.log(req?.file);
+  // filename
+  // path
+  console.log("# req.files");
+  console.log(req?.files);
+
   let insertDateRecord =
-    "INSERT INTO dateRecord(title, description, image) VALUES (?, ?, ?);";
+    "INSERT INTO dateRecord(title, description) VALUES (?, ?);";
   let insertPlace =
     "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
-  let imageName = "/image/" + req.file.filename;
+  let insertDateImage =
+    "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
   let title = req.body.title;
   let description = req.body.description;
   let placeList = JSON.parse(req.body.placeList);
-  let insertDateRecordParams = [title, description, imageName];
+  let images = req.files;
+  let insertDateRecordParams = [title, description];
 
   let insertDateRecordid;
   connection.query(
@@ -111,6 +136,13 @@ app.post("/api/dateRecord", upload.single("imageFile"), (req, res) => {
           placeList[i].latLong,
         ];
         connection.query(insertPlace, insertParam, (err, rows, field) => {
+          if (err) throw err;
+        });
+      }
+
+      for (var j = 0; j < images.length; j++) {
+        let insertParam = [insertDateRecordid, "/image/" + images[j].filename];
+        connection.query(insertDateImage, insertParam, (err, rows, field) => {
           if (err) throw err;
         });
       }
