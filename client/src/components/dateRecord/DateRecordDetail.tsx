@@ -6,6 +6,7 @@ import { dateType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
 import Chips from './chipsComponent';
+import Carousel from '../Carousel/Carousel';
 
 interface DetailProps {
   dateRecord: dateType | null | undefined;
@@ -140,6 +141,11 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
       <div id="map" style={{ width: '800px', height: '600px' }}></div>
 
+      {dateRecord.dateIamgeList.length > 0 && (
+        <div style={{ width: '350px', height: '350px', margin: '0 auto' }}>
+          <Carousel images={dateRecord.dateIamgeList} />
+        </div>
+      )}
       <FormContainer>
         <label>Title</label>
         <InputEl
@@ -151,13 +157,8 @@ const DateRecordDetail: React.FC<DetailProps> = ({
           readOnly
         />
 
-        {/* {dateRecord.image?.map((v) => (
-          <img src={'http://localhost:5000' + dateRecord.image} alt="profile" />
-        ))} */}
-        <img src={'http://localhost:5000' + dateRecord.image} alt="profile" />
-        <label>place1</label>
+        <label>place</label>
         <Chips placeList={dateRecord.placeList}></Chips>
-
         <label>description</label>
         <TextAreaEl
           value={dateRecord.description}
