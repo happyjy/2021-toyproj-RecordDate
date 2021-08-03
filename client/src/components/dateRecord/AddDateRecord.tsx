@@ -8,6 +8,8 @@ import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
 import Chips from './chipsComponent';
 import map from '../map';
+import useFileUpload from '../../hooks/useFileUplaod';
+import FileUpload from '../FileUpload/FileUpload';
 
 const FormContainer = styled.div`
   border-radius: 5px;
@@ -89,8 +91,7 @@ const AddDateRecord: React.FC<AddProps> = ({
   const [keyword, setKeyword] = useState('오목교역');
   const [cb, setCb] = useState(() => () => {});
 
-  const [imageFile, setImagefile] = useState();
-  const [imageFileName, setImagefileName] = useState();
+  const { imageFile, onChangeFileupload } = useFileUpload();
 
   /* 
     # issue: useState with ts
@@ -130,12 +131,6 @@ const AddDateRecord: React.FC<AddProps> = ({
   useEffect(() => {
     map(mapRef, inputEl, setCb, placeList, setPlaceList);
   }, [placeList]);
-
-  const onChangeFileupload = (e: any) => {
-    console.log(e);
-    setImagefile(e.target.files);
-    // setImagefile(e.target.files[0]);
-  };
 
   // useEffect(() => {
   //   // 마커를 담을 배열입니다
@@ -556,21 +551,8 @@ const AddDateRecord: React.FC<AddProps> = ({
 
         <label>place</label>
         <Chips placeList={placeList} setPlaceList={setPlaceList}></Chips>
-        {/* <InputEl
-          type="text"
-          id="lname"
-          name="lastname"
-          placeholder="place.."
-          ref={placeRef}
-        /> */}
 
-        <input
-          type="file"
-          id="imageFile"
-          name="imageFile"
-          onChange={(e) => onChangeFileupload(e)}
-          multiple
-        ></input>
+        <FileUpload onChangeFileupload={onChangeFileupload}></FileUpload>
 
         <label>description</label>
         <TextAreaEl
@@ -593,7 +575,6 @@ const AddDateRecord: React.FC<AddProps> = ({
 
   function click() {
     const title = titleRef.current!.value;
-    // const place = placeRef.current!.value;
     const description = descriptionRef.current!.value;
     if (
       title === undefined ||
@@ -605,7 +586,6 @@ const AddDateRecord: React.FC<AddProps> = ({
     }
 
     debugger;
-
     addDateRecord({
       title,
       placeList,

@@ -67,8 +67,13 @@ app.get("/api/dateRecord", (req, res) => {
             dateRecord_id,
             place_name,
             latLong
-       FROM PLACE 
-      WHERE ISDELETED = 0`,
+       FROM PLACE
+      WHERE ISDELETED = 0;
+       
+     SELECT dateImage_id,
+            dateRecord_id,
+            dateImage_name
+       FROM DATEIMAGE;`,
     function (err, results) {
       if (err) throw err;
       // const dateRecordList = results[0];
@@ -100,10 +105,6 @@ app.use("/image", express.static("upload"));
 
 // app.post("/api/dateRecord", upload.single("imageFile"), (req, res) => {
 app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
-  // console.log("# req.file");
-  // console.log(req?.file);
-  // filename
-  // path
   console.log("# req.files");
   console.log(req?.files);
 
@@ -151,19 +152,26 @@ app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
   );
 });
 
-app.patch("/api/dateRecord/:id", (req, res) => {
+app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
   let updateDateRecord =
     "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
   let insertPlace =
     "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
   let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
+  let insertDateImage =
+    "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
 
   const editDateRecordId = req.params.id;
   let title = req.body.title;
-  let delPlaceList = req.body.delPlaceList;
-  let addPlaceList = req.body.addPlaceList;
   let description = req.body.description;
+  let delPlaceList = JSON.parse(req.body.delPlaceList);
+  let addPlaceList = JSON.parse(req.body.addPlaceList);
+  // let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
+  let images = req.files;
   let updateDateRecordParams = [title, description, req.params.id];
+
+  console.log("### update fetch: ", images);
+  console.log("param: ", { title, description, delPlaceList, addPlaceList });
 
   connection.query(
     updateDateRecord,
@@ -188,6 +196,13 @@ app.patch("/api/dateRecord/:id", (req, res) => {
   for (var i = 0; i < delPlaceList.length; i++) {
     let updatePlaceParams = [delPlaceList[i].id];
     connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
+      if (err) throw err;
+    });
+  }
+
+  for (var j = 0; j < images.length; j++) {
+    let insertParam = [editDateRecordId, "/image/" + images[j].filename];
+    connection.query(insertDateImage, insertParam, (err, rows, field) => {
       if (err) throw err;
     });
   }

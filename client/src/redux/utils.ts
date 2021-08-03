@@ -1,5 +1,12 @@
 import { RootState } from './modules/rootReducer';
-import { BookResType, dateType, placeListType, placeType } from '../types';
+import {
+  BookResType,
+  dateIamgeListType,
+  dateIamgeType,
+  dateType,
+  placeListType,
+  placeType,
+} from '../types';
 
 export function getTokenFromState(state: RootState): string | null {
   return state.auth.token;
@@ -15,12 +22,16 @@ export function getBooksFromState(state: RootState): BookResType[] | null {
   return state.books.books;
 }
 
-
-export function makeDate(dateRecordList: dateType[], placeListFromTable: placeType[]) {
+export function makeDate(
+  dateRecordList: dateType[],
+  placeListFromTable: placeType[],
+  imageListFromTable?: dateIamgeType[],
+) {
   dateRecordList.map((dateRecord: dateType) => {
     let placeList: placeListType[] = [];
+    let dateIamgeList: dateIamgeListType[] = [];
 
-    placeListFromTable.forEach((place: placeType, index) => {
+    placeListFromTable.forEach((place: placeType) => {
       if (dateRecord.dateRecord_id === place.dateRecord_id) {
         placeList.push({
           id: place.place_id,
@@ -31,6 +42,16 @@ export function makeDate(dateRecordList: dateType[], placeListFromTable: placeTy
       }
     });
     dateRecord.placeList = placeList;
+
+    imageListFromTable?.forEach((image: dateIamgeType) => {
+      if (dateRecord.dateRecord_id === image.dateRecord_id) {
+        dateIamgeList.push({
+          id: image.dateImage_id,
+          dateImageName: image.dateImage_name,
+        });
+      }
+    });
+    dateRecord.dateIamgeList = dateIamgeList;
 
     return dateRecord;
   });

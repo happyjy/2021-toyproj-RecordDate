@@ -3,7 +3,12 @@ import { AnyAction } from 'redux';
 import { createActions, handleActions } from 'redux-actions';
 import { call, put, select, takeEvery } from 'redux-saga/effects';
 import DateRecordService from '../../services/DateRecordService';
-import { DateRecordReqType, DateResType, dateType } from '../../types';
+import {
+  DateRecordReqType,
+  DateResType,
+  dateType,
+  EditDateRecordReqType,
+} from '../../types';
 import { getDateRecordFromState, getTokenFromState } from '../utils';
 
 export interface DateRecordState {
@@ -40,7 +45,6 @@ const reducer = handleActions<DateRecordState, any>(
       error: null,
     }),
     SUCCESS: (state, action) => {
-      // debugger;
       console.log('SUCCESS: ', { state, action });
       return {
         dateRecordList: action.payload.dateRecordList,
@@ -97,7 +101,7 @@ function* getDateListSaga() {
   try {
     yield put(pending());
     const token: string = yield select((state) => state.auth.token);
-    const dateRecordList: DateResType[] = yield call(
+    const dateRecordList: dateType[] = yield call(
       DateRecordService.getDateRecordList,
       token,
     );
@@ -117,8 +121,6 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
   try {
     yield put(pending());
     //[ ] getTokenFromState 인자값은 어떻게 관리되는지 분석글 작성하기
-    debugger;
-
     const token: string = yield select(getTokenFromState);
     const dateRecord: dateType = yield call(
       DateRecordService.addDateRecord,
@@ -139,7 +141,7 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
 interface EditDateRecordSagaAction extends AnyAction {
   payload: {
     dateRecordId: number;
-    dateRecord: DateRecordReqType;
+    dateRecord: EditDateRecordReqType;
   };
 }
 function* editDateRecord(action: EditDateRecordSagaAction) {

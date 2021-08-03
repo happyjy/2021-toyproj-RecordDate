@@ -8,6 +8,8 @@ import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
 import Chips from './chipsComponent';
 import map from '../map';
+import useFileUpload from '../../hooks/useFileUplaod';
+import FileUpload from '../FileUpload/FileUpload';
 
 const FormContainer = styled.div`
   border-radius: 5px;
@@ -86,6 +88,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const [keyword, setKeyword] = useState('오목교역');
   const [SearchPlacesCb, setSearchPlacesCb] = useState(() => () => {});
   const [placeMarkerList, setPlaceMarkerList] = useState<any[]>([]);
+
+  const { imageFile, onChangeFileupload } = useFileUpload();
 
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
@@ -202,6 +206,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
           placeMarkerList={placeMarkerList}
         ></Chips>
 
+        <FileUpload onChangeFileupload={onChangeFileupload}></FileUpload>
+
         <label>description</label>
         <TextAreaEl
           defaultValue={dateRecord.description}
@@ -268,11 +274,16 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
     delPlaceList = [...compMap.values()];
 
+    debugger;
+    console.log(imageFile);
+
     editDateRecord({
       title,
+      description,
       delPlaceList,
       addPlaceList,
-      description,
+      newImageFileList: imageFile,
+      // delImageFileIdList: []// delImageFileIdList?: string[];
     });
   }
 };

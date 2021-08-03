@@ -13,6 +13,7 @@ export interface dateType {
   created_at: string;
   updated_at: string;
   placeList: placeListType[];
+  dateIamgeList: dateIamgeListType[];
 }
 export interface placeType {
   place_id: number;
@@ -23,20 +24,24 @@ export interface placeType {
   created_at: string;
   updated_at: string;
 }
-export interface dateIamgeType {
-  dateImage_id: number;
-  dateRecord_id: number;
-  file_name: string;
-  created_at: string;
-  updated_at: string;
-}
-
 export interface placeListType {
   id: number;
   placeName: string;
   address: string;
   latLong: string;
 }
+export interface dateIamgeType {
+  dateImage_id: number;
+  dateRecord_id: number;
+  dateImage_name: string;
+  created_at: string;
+  updated_at: string;
+}
+export interface dateIamgeListType {
+  id: number;
+  dateImageName: string;
+}
+
 export interface DateResType {
   dateRecord_id: number;
   title: string;
@@ -52,12 +57,14 @@ export interface DateRecordReqDefaultType {
 }
 export interface DateRecordReqType extends DateRecordReqDefaultType {
   placeList: placeListType[];
-  imageFile?: any;
+  imageFile?: any; // [?] input type multiple value 타입 확인하기 => FileList[]; (but, type 문제 생김)
 }
 // [todo] interface extend활용 리팩토링하기
 export interface EditDateRecordReqType extends DateRecordReqDefaultType {
   delPlaceList: placeListType[];
   addPlaceList: placeListType[];
+  delImageFileIdList?: string[];
+  newImageFileList?: any;
 }
 
 // Books

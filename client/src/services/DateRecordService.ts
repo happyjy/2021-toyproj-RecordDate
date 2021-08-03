@@ -2,9 +2,10 @@ import axios from 'axios';
 import { makeDate } from '../redux/utils';
 
 import {
+  dateIamgeType,
   DateRecordReqType,
   dateType,
-  placeListType,
+  EditDateRecordReqType,
   placeType,
 } from '../types';
 
@@ -12,18 +13,18 @@ const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 
 export default class DateRecordService {
   public static async getDateRecordList(token: string): Promise<dateType[]> {
-    const response = await axios.get<[dateType[], placeType[]]>(
-      DATERECORD_API_URL,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+    const response = await axios.get<
+      [dateType[], placeType[], dateIamgeType[]]
+    >(DATERECORD_API_URL, {
+      headers: {
+        Authorization: `Bearer ${token}`,
       },
-    );
+    });
 
     const dateRecordList = response.data[0];
     const placeListFromTable = response.data[1];
-    return makeDate(dateRecordList, placeListFromTable);
+    const imageLstFromTable = response.data[2];
+    return makeDate(dateRecordList, placeListFromTable, imageLstFromTable);
   }
 
   public static async addDateRecord(
@@ -49,13 +50,30 @@ export default class DateRecordService {
   public static async editDateRecord(
     token: string,
     dateRecordId: number,
-    dateRecord: DateRecordReqType,
+    dateRecord: EditDateRecordReqType,
   ): Promise<dateType> {
+    const formData = new FormData();
+    formData.append('title', dateRecord.title);
+    formData.append('description', dateRecord.description);
+    formData.append('delPlaceList', JSON.stringify(dateRecord.delPlaceList));
+    formData.append('addPlaceList', JSON.stringify(dateRecord.addPlaceList));
+    formData.append(
+      'delImageFileIdList',
+      JSON.stringify(dateRecord.delImageFileIdList),
+    );
+    dateRecord.newImageFileList &&
+      [...dateRecord.newImageFileList].forEach((v) => {
+        formData.append('imageFile', v);
+      });
+
     const response = await axios.patch<[dateType[], placeType[]]>(
       `${DATERECORD_API_URL}/${dateRecordId}`,
-      dateRecord,
+      formData,
       {
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'content-type': 'multipart/form-data',
+        },
       },
     );
 
