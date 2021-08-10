@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
-import DateRecordList from '../../components/dateRecord/DateRecordList';
+import DateRecordList from '../../components/DateRecord/DateRecordList';
 import { RootState } from '../../redux/modules/rootReducer';
 import { dateType } from '../../types';
 import { logout as logoutSaga } from '../../redux/modules/auth';

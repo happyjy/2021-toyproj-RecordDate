@@ -2,7 +2,6 @@ import React from 'react';
 import styled from 'styled-components';
 import { placeListType } from '../../types';
 import { default as closeIcon } from '../../assets/img/close.svg';
-// import { close } from '*.svg';
 
 const Container = styled.div`
   width: 100%;

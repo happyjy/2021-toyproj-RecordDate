@@ -6,7 +6,7 @@ import { dateType, EditDateRecordReqType, placeListType } from '../../types';
 import styles from './DateRecordEdit.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
-import Chips from './chipsComponent';
+import Chips from '../ChipsComponent/chipsComponent';
 import map from '../map';
 import useFileUpload from '../../hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
@@ -89,7 +89,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const [SearchPlacesCb, setSearchPlacesCb] = useState(() => () => {});
   const [placeMarkerList, setPlaceMarkerList] = useState<any[]>([]);
 
-  const { imageFile, onChangeFileupload } = useFileUpload();
+  const { imageFile, setImagefile, fileText, setFileText, onChangeFileupload } =
+    useFileUpload();
 
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
@@ -206,7 +207,14 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
           placeMarkerList={placeMarkerList}
         ></Chips>
 
-        <FileUpload onChangeFileupload={onChangeFileupload}></FileUpload>
+        <label>Image uplaod</label>
+        <FileUpload
+          imageFile={imageFile}
+          setImagefile={setImagefile}
+          fileText={fileText}
+          setFileText={setFileText}
+          onChangeFileupload={onChangeFileupload}
+        ></FileUpload>
 
         <label>description</label>
         <TextAreaEl

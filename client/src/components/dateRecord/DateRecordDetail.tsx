@@ -5,7 +5,7 @@ import Layout from '../Layout';
 import { dateType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
-import Chips from './chipsComponent';
+import Chips from '../ChipsComponent/chipsComponent';
 import Carousel from '../Carousel/Carousel';
 
 interface DetailProps {
@@ -16,6 +16,61 @@ interface DetailProps {
   getDateList: () => void;
   logout: () => void;
 }
+
+const FormContainer = styled.div`
+  border-radius: 5px;
+  /* background-color: #f2f2f2; */
+  padding: 20px;
+`;
+
+const commonFormProperty = css`
+  width: 100%;
+  padding: 12px 20px;
+  margin: 8px 0;
+  display: inline-block;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  box-sizing: border-box;
+`;
+// https://stackoverflow.com/questions/56378356/how-do-i-convert-css-to-styled-components-with-inputtype-submit-attribute
+const InputEl = styled.input.attrs({ type: 'text' })`
+  ${commonFormProperty};
+`;
+
+const TextAreaEl = styled.textarea`
+  ${commonFormProperty};
+`;
+
+const ContainerImageLayout = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  justify-content: space-around;
+  grid-gap: 10px;
+  position: relative;
+  margin-top: 20px;
+  /* border: 4px dashed #ccc; */
+  padding: 5px;
+`;
+const ContainerThumbnail = styled.div`
+  position: relative;
+  &:before {
+    content: ' ';
+    display: block;
+    width: 100%;
+    padding-top: 100%; /* Percentage value in padding derived from the width  */
+  }
+`;
+const ThumbnailImg = styled.img`
+  width: 100%;
+  height: 100%;
+  box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+  position: absolute;
+  top: 0px;
+  left: 0px;
+  bottom: 0px;
+  right: 0px;
+  object-fit: cover;
+`;
 
 const DateRecordDetail: React.FC<DetailProps> = ({
   dateRecord,
@@ -85,30 +140,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     );
   }
 
-  const FormContainer = styled.div`
-    border-radius: 5px;
-    /* background-color: #f2f2f2; */
-    padding: 20px;
-  `;
-
-  const commonFormProperty = css`
-    width: 100%;
-    padding: 12px 20px;
-    margin: 8px 0;
-    display: inline-block;
-    border: 1px solid #ccc;
-    border-radius: 4px;
-    box-sizing: border-box;
-  `;
-  // https://stackoverflow.com/questions/56378356/how-do-i-convert-css-to-styled-components-with-inputtype-submit-attribute
-  const InputEl = styled.input.attrs({ type: 'text' })`
-    ${commonFormProperty};
-  `;
-
-  const TextAreaEl = styled.textarea`
-    ${commonFormProperty};
-  `;
-
   return (
     <Layout>
       <PageHeader
@@ -141,11 +172,12 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
       <div id="map" style={{ width: '800px', height: '600px' }}></div>
 
-      {dateRecord.dateIamgeList.length > 0 && (
+      {/* {dateRecord.dateIamgeList.length > 0 && (
         <div style={{ width: '350px', height: '350px', margin: '0 auto' }}>
           <Carousel images={dateRecord.dateIamgeList} />
         </div>
-      )}
+      )} */}
+
       <FormContainer>
         <label>Title</label>
         <InputEl
@@ -168,6 +200,18 @@ const DateRecordDetail: React.FC<DetailProps> = ({
           readOnly
         />
       </FormContainer>
+
+      {dateRecord.dateIamgeList.length > 0 && (
+        <ContainerImageLayout>
+          {dateRecord.dateIamgeList.map((image, i) => (
+            <ContainerThumbnail key={image.id}>
+              <ThumbnailImg
+                src={'http://localhost:5000' + image.dateImageName}
+              ></ThumbnailImg>
+            </ContainerThumbnail>
+          ))}
+        </ContainerImageLayout>
+      )}
     </Layout>
   );
 

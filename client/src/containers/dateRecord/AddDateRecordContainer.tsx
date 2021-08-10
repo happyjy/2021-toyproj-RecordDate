@@ -7,7 +7,7 @@ import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
 import { DateRecordReqType } from '../../types';
-import AddDateRecord from '../../components/dateRecord/AddDateRecord';
+import AddDateRecord from '../../components/DateRecord/AddDateRecord';
 
 const AddDateRecordContainer = () => {
   const loading = useSelector<RootState, boolean>(

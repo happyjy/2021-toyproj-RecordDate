@@ -10,7 +10,7 @@ import {
   getDatelist as getDateListSaga,
   editDaterecord as editDateRecordsaga,
 } from '../../redux/modules/dateRecord';
-import DateRecordEdit from '../../components/dateRecord/DateRecordEdit';
+import DateRecordEdit from '../../components/DateRecord/DateRecordEdit';
 
 const DateRecordEditContainer = () => {
   const { id } = useParams();

@@ -33,6 +33,7 @@ const App = () => (
         <Route exact path="/addDateRecord" component={AddDateRecord} />
         <Route exact path="/editDateRecord/:id" component={DateRecordEdit} />
         <Route exact path="/" component={Home} />
+        {/* <Route exact path="/" component={AddDateRecord} /> */}
         <Route component={NotFound} />
       </Switch>
     </ConnectedRouter>

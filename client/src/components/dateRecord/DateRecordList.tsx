@@ -5,6 +5,12 @@ import Layout from '../Layout';
 import { dateType } from '../../types';
 import DateRecord from './DateRecord';
 
+declare global {
+  interface Window {
+    kakao: any;
+  }
+}
+
 interface DateRecordsProps {
   dateRecordList: dateType[] | null;
   loading: boolean;
@@ -38,6 +44,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   // 다음 지도
   useEffect(() => {
+    console.log('###: ', window.kakao.maps);
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
         center: new window.kakao.maps.LatLng(

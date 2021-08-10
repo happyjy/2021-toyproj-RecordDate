@@ -12,7 +12,7 @@ import { logout as logoutSaga } from '../../redux/modules/auth';
 // import { getBooks as getBooksSaga } from '../redux/modules/books';
 // import DateRecordDetail from '../components/DateRecordDetail';
 import { getDatelist as getDateListSaga } from '../../redux/modules/dateRecord';
-import DateRecordDetail from '../../components/dateRecord/DateRecordDetail';
+import DateRecordDetail from '../../components/DateRecord/DateRecordDetail';
 
 const DateRecordDetailContainer = () => {
   const { id } = useParams();
