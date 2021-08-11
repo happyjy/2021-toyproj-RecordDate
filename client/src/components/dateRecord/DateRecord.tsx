@@ -50,7 +50,8 @@ const DateRecord: React.FC<DateProps> = React.memo(
           </Link>
         </div>
         <div className={styles.created}>
-          {moment(created_at).format('MM-DD-YYYY hh:mm a')}
+          {moment(created_at).format('YYYY-MM-DD')}
+          {/* {moment(created_at).format('YYYY-MM-DD hh:mm a')} */}
         </div>
         <div className={styles.tooltips}>
           <Tooltip title="Edit">

@@ -89,7 +89,7 @@ const AddDateRecord: React.FC<AddProps> = ({
   const inputEl = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [keyword, setKeyword] = useState('문래역');
-  const [cb, setCb] = useState(() => () => {});
+  const [searchPlaces, setSearchPlaces] = useState(() => () => {}); // 지도 검색
 
   const { imageFile, setImagefile, fileText, setFileText, onChangeFileupload } =
     useFileUpload();
@@ -119,7 +119,7 @@ const AddDateRecord: React.FC<AddProps> = ({
   };
 
   const searchPlace = () => {
-    cb();
+    searchPlaces();
   };
 
   useEffect(() => {
@@ -130,7 +130,7 @@ const AddDateRecord: React.FC<AddProps> = ({
 
   // 카카오맵
   useEffect(() => {
-    map(mapRef, inputEl, setCb, placeList, setPlaceList);
+    map(mapRef, inputEl, setSearchPlaces, placeList, setPlaceList);
   }, [placeList]);
 
   return (

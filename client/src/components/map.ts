@@ -3,7 +3,7 @@ import { placeListType } from '../types';
 export default (
   mapRef: any,
   inputEl: any,
-  setCb: any,
+  setSearchPlaces: any,
   placeList: placeListType[],
   setPlaceList: any,
 ) => {
@@ -84,7 +84,7 @@ export default (
     };
   })(placesSearchCB);
 
-  setCb(() => searchPlaces);
+  setSearchPlaces(() => searchPlaces);
 
   // 키워드로 장소를 검색합니다
   searchPlaces();

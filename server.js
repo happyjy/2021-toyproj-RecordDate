@@ -59,7 +59,8 @@ app.get("/api/dateRecord", (req, res) => {
     `SELECT dateRecord_id,
             title,
             description,
-            image 
+            image,
+            created_at
        FROM DATERECORD 
       WHERE ISDELETED = 0; 
       
