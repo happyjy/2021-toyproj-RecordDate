@@ -11,17 +11,18 @@ const ListContainer = styled.div`
   display: flex;
   flex-direction: row;
   margin-top: 62px;
-  padding: 0 24px;
+  height: 100%;
+  /* padding: 0 24px; */
+  /* Medium devices (landscape tablets, 768px and up) */
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 const ImgContainer = styled.div`
-  position: fixed;
-  top: 64px;
-  left: 24px;
-  width: 48vw;
-  /* right: 50%; */
-  height: 85vh;
-  z-index: 100;
+  position: sticky;
+  width: 100%;
 
+  z-index: 100;
   /* border: 5px solid black;
   position: relative;
   top: 0px;
@@ -30,21 +31,22 @@ const ImgContainer = styled.div`
   width: 100%;
   min-width: 400px;
   max-width: 1000px; */
-`;
-const ReplaceImgContainer = styled.div`
-  position: relative;
-  width: 48vw;
-  /* width: 100%;
-  min-width: 400px;
-  max-width: 1000px; */
+  /* Medium devices (landscape tablets, 768px and up) */
+  @media (max-width: 768px) {
+    position: initial;
+    width: 100%;
+  }
 `;
 const ImgItem = styled.div`
   width: 100%;
   height: 100%;
 `;
 const TableContainer = styled.div`
-  width: 48vw;
+  width: 100%;
   margin-top: 0px;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 // const PageHeader1 = styled.PageHeader``;
@@ -70,26 +72,19 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   logout,
   goEdit,
 }) => {
-  const [mapState, setMapState] = useState<any>();
-  const [setBoundsState, setSetBoundsState] = useState(); // 지도 검색
-  // const [bounds, setBoundsState] = useState();
-  // const [boundsFnState, setBoundsFnState] = useState(() => () => {});
-
-  // const [dimensions, setDimensions] = React.useState({
-  //   height: window.innerHeight,
-  //   width: window.innerWidth,
-  // });
-
-  // console.log(dimensions);
+  const [mapState, setMapState] = useState<any>(); // map 객체
+  const [setBoundsState, setSetBoundsState] = useState(); // 위치 객체
 
   useEffect(() => {
     getDateList();
   }, [getDateList]);
+
   useEffect(() => {
     if (error) {
       logout();
     }
   }, [error, logout]);
+
   // 다음 지도
   useEffect(() => {
     var mapContainer = document.getElementById('map'), // 지도를 표시할 div
@@ -177,25 +172,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       }, ms);
     };
   }
+
+  // 지도 범위 재설정 적용
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
-      console.log('### boundsFn');
       mapState?.setBounds(setBoundsState);
-
-      // console.log({ map, bounds });
-      // setDimensions({
-      //   height: window.innerHeight,
-      //   width: window.innerWidth,
-      // });
     }, 1000);
-    // const debouncedHandleResize = function () {
-    // console.log({ map, bounds });
-    // if (mapState && mapState?.setBounds) {
-    //   mapState.setBounds(bounds);
-    // }
-    // boundsFn();
-    // console.log('### boundsFn');
-    // };
     window.addEventListener('resize', debouncedHandleResize);
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
@@ -209,7 +191,9 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           zIndex: 100,
           background: '#fff',
           position: 'fixed',
-          width: '100%',
+          width: '1400px',
+          // width: '100%',
+          // position: 'sticky',
         }}
         title={<div>Date List</div>}
         extra={[
@@ -245,7 +229,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           </button> */}
         </ImgContainer>
 
-        <ReplaceImgContainer></ReplaceImgContainer>
+        {/* <ReplaceImgContainer></ReplaceImgContainer> */}
 
         <TableContainer>
           <Table

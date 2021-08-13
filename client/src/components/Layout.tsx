@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components';
 
 const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  height: 100vh;
 `;
 const SectionContainer = styled.section`
   display: flex;
@@ -13,16 +14,18 @@ const SectionContainer = styled.section`
 
   margin-left: auto;
   margin-right: auto;
-  /* max-width: 1400px; */
+  max-width: 1400px;
   width: 100%;
+  height: 100vh;
   margin-bottom: 50px;
 `;
 
-const Layout: React.FC = ({ children }) => (
-  <Container>
-    <SectionContainer>{children}</SectionContainer>
-  </Container>
-  // <div className={styles.layout}></div>
-);
+const Layout: React.FC = ({ children }) => {
+  return (
+    <Container>
+      <SectionContainer>{children}</SectionContainer>
+    </Container>
+  );
+};
 
 export default Layout;
