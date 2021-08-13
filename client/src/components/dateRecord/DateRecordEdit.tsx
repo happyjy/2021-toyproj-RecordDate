@@ -11,12 +11,41 @@ import map from '../map';
 import useFileUpload from '../../hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 
+const ListContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding: 0px 24px 16px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+const MapContainer = styled.div`
+  width: 70%;
+  height: 100%;
+  padding: 0px 10px 0px 0px;
+  @media (max-width: 768px) {
+    position: initial;
+    width: 100%;
+  }
+`;
+const MapSpace = styled.div`
+  width: 100%;
+  height: 100%;
+  @media (max-width: 768px) {
+    height: 50vh;
+    position: initial;
+  }
+`;
 const FormContainer = styled.div`
   border-radius: 5px;
-  /* background-color: #f2f2f2; */
-  padding: 20px;
+  padding: 0px 0px 0px 10px;
+  width: 30%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
-
 const commonFormProperty = css`
   width: 100%;
   padding: 12px 20px;
@@ -157,80 +186,82 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         ]}
       />
 
-      <div className={mapStyles.map_wrap}>
-        <div
-          ref={mapRef}
-          id="map"
-          style={{
-            width: '800px',
-            height: '500px',
-            position: 'relative',
-            overflow: 'hidden',
-          }}
-        ></div>
-        <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
-          <div className={mapStyles.option}>
-            <div>
-              키워드 :
-              <input
-                type="text"
-                ref={inputEl}
-                id="keyword"
-                value={keyword}
-                onChange={(e) => inputEvent(e)}
-                onKeyPress={(e) => keypress(e)}
-              />
-              <button onClick={() => searchPlace()}>검색하기</button>
+      <ListContainer>
+        <MapContainer className="MapContainer">
+          <div
+            className={mapStyles.map_wrap}
+            style={{
+              width: '100%',
+              height: '100%',
+            }}
+          >
+            <MapSpace ref={mapRef} id="map"></MapSpace>
+
+            <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
+              <div className={mapStyles.option}>
+                <div>
+                  키워드 :
+                  <input
+                    type="text"
+                    ref={inputEl}
+                    id="keyword"
+                    value={keyword}
+                    onChange={(e) => inputEvent(e)}
+                    onKeyPress={(e) => keypress(e)}
+                  />
+                  <button onClick={() => searchPlace()}>검색하기</button>
+                </div>
+              </div>
+              <hr />
+              <ul id={mapStyles.placesList}></ul>
+              <div id={mapStyles.pagination}></div>
             </div>
           </div>
-          <hr />
-          <ul id={mapStyles.placesList}></ul>
-          <div id={mapStyles.pagination}></div>
-        </div>
-      </div>
+        </MapContainer>
 
-      <FormContainer>
-        <label>Title</label>
-        <InputEl
-          defaultValue={dateRecord.title}
-          type="text"
-          id="title"
-          name="title"
-          placeholder="title..."
-          ref={titleRef}
-        />
+        <FormContainer>
+          <label>Title</label>
+          <InputEl
+            defaultValue={dateRecord.title}
+            type="text"
+            id="title"
+            name="title"
+            placeholder="title..."
+            ref={titleRef}
+          />
 
-        <label>place</label>
-        <Chips
-          placeList={placeList}
-          setPlaceList={setPlaceList}
-          placeMarkerList={placeMarkerList}
-        ></Chips>
+          <label>place</label>
+          <Chips
+            placeList={placeList}
+            setPlaceList={setPlaceList}
+            placeMarkerList={placeMarkerList}
+          ></Chips>
 
-        <label>Image uplaod</label>
-        <FileUpload
-          imageFile={imageFile}
-          setImagefile={setImagefile}
-          fileText={fileText}
-          setFileText={setFileText}
-          onChangeFileupload={onChangeFileupload}
-        ></FileUpload>
+          <label>Image uplaod</label>
+          <FileUpload
+            imageFile={imageFile}
+            setImagefile={setImagefile}
+            fileText={fileText}
+            setFileText={setFileText}
+            onChangeFileupload={onChangeFileupload}
+          ></FileUpload>
 
-        <label>description</label>
-        <TextAreaEl
-          defaultValue={dateRecord.description}
-          rows={4}
-          placeholder="Comment"
-          ref={descriptionRef}
-          className={styles.input}
-        />
+          <label>description</label>
+          <TextAreaEl
+            defaultValue={dateRecord.description}
+            rows={4}
+            placeholder="Comment"
+            ref={descriptionRef}
+            className={styles.input}
+          />
 
-        <InputSubmitContainer>
-          <InputSubmit type="submit" value="Add" onClick={click}>
-            Update
-          </InputSubmit>
-        </InputSubmitContainer>
-      </FormContainer>
+          <InputSubmitContainer>
+            <InputSubmit type="submit" value="Add" onClick={click}>
+              Update
+            </InputSubmit>
+          </InputSubmitContainer>
+        </FormContainer>
+      </ListContainer>
     </Layout>
   );
 

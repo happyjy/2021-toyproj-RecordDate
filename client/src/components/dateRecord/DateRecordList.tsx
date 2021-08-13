@@ -17,7 +17,7 @@ const ListContainer = styled.div`
     flex-direction: column;
   }
 `;
-const ImgContainer = styled.div`
+const MapContainer = styled.div`
   position: sticky;
   width: 100%;
   z-index: 100;
@@ -26,14 +26,15 @@ const ImgContainer = styled.div`
     /* width: 100%; */
   }
 `;
-const ImgItem = styled.div`
+const MapSpace = styled.div`
   width: 100%;
   height: 100%;
+  position: 'relative';
+  overflow: 'hidden';
   @media (max-width: 768px) {
     height: 50vh;
     position: initial;
   }
-}
 `;
 const TableContainer = styled.div`
   width: 100%;
@@ -201,8 +202,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         ]}
       />
       <ListContainer>
-        <ImgContainer className="imgContainer">
-          <ImgItem id="map"></ImgItem>
+        <MapContainer className="MapContainer">
+          <MapSpace id="map"></MapSpace>
           {/* <button
             onClick={() => {
               // console.log(boundsFnState);
@@ -212,10 +213,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           >
             클릭
           </button> */}
-        </ImgContainer>
-
-        {/* <ReplaceImgContainer></ReplaceImgContainer> */}
-
+        </MapContainer>
         <TableContainer>
           <Table
             style={{ marginTop: 0 }}

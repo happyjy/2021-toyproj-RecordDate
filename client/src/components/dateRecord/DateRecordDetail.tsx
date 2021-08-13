@@ -17,10 +17,40 @@ interface DetailProps {
   logout: () => void;
 }
 
+const ListContainer = styled.div`
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  height: 100%;
+  padding: 0px 24px 16px;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+const MapContainer = styled.div`
+  width: 70%;
+  height: 100%;
+  padding: 0px 10px 0px 0px;
+  @media (max-width: 768px) {
+    position: initial;
+    width: 100%;
+  }
+`;
+const MapSpace = styled.div`
+  width: 100%;
+  height: 100%;
+  @media (max-width: 768px) {
+    height: 50vh;
+    position: initial;
+  }
+`;
 const FormContainer = styled.div`
   border-radius: 5px;
-  /* background-color: #f2f2f2; */
-  padding: 20px;
+  padding: 0px 0px 0px 10px;
+  width: 30%;
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 const commonFormProperty = css`
@@ -48,7 +78,6 @@ const ContainerImageLayout = styled.div`
   grid-gap: 10px;
   position: relative;
   margin-top: 20px;
-  /* border: 4px dashed #ccc; */
   padding: 5px;
 `;
 const ContainerThumbnail = styled.div`
@@ -170,48 +199,52 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         ]}
       />
 
-      <div id="map" style={{ width: '800px', height: '600px' }}></div>
+      <ListContainer>
+        <MapContainer>
+          <MapSpace id="map"></MapSpace>
+        </MapContainer>
+        {/* <div id="map" style={{ height: '600px' }}></div> */}
 
-      {/* {dateRecord.dateIamgeList.length > 0 && (
+        {/* {dateRecord.dateIamgeList.length > 0 && (
         <div style={{ width: '350px', height: '350px', margin: '0 auto' }}>
           <Carousel images={dateRecord.dateIamgeList} />
         </div>
       )} */}
 
-      <FormContainer>
-        <label>Title</label>
-        <InputEl
-          value={dateRecord.title}
-          type="text"
-          id="title"
-          name="title"
-          placeholder="title..."
-          readOnly
-        />
+        <FormContainer>
+          <label>Title</label>
+          <InputEl
+            value={dateRecord.title}
+            type="text"
+            id="title"
+            name="title"
+            placeholder="title..."
+            readOnly
+          />
 
-        <label>place</label>
-        <Chips placeList={dateRecord.placeList}></Chips>
-        <label>description</label>
-        <TextAreaEl
-          value={dateRecord.description}
-          rows={4}
-          placeholder="Comment"
-          className={styles.input}
-          readOnly
-        />
-      </FormContainer>
-
-      {dateRecord.dateIamgeList.length > 0 && (
-        <ContainerImageLayout>
-          {dateRecord.dateIamgeList.map((image, i) => (
-            <ContainerThumbnail key={image.id}>
-              <ThumbnailImg
-                src={'http://localhost:5000' + image.dateImageName}
-              ></ThumbnailImg>
-            </ContainerThumbnail>
-          ))}
-        </ContainerImageLayout>
-      )}
+          <label>place</label>
+          <Chips placeList={dateRecord.placeList}></Chips>
+          <label>description</label>
+          <TextAreaEl
+            value={dateRecord.description}
+            rows={4}
+            placeholder="Comment"
+            className={styles.input}
+            readOnly
+          />
+          {dateRecord.dateIamgeList.length > 0 && (
+            <ContainerImageLayout>
+              {dateRecord.dateIamgeList.map((image, i) => (
+                <ContainerThumbnail key={image.id}>
+                  <ThumbnailImg
+                    src={'http://localhost:5000' + image.dateImageName}
+                  ></ThumbnailImg>
+                </ContainerThumbnail>
+              ))}
+            </ContainerImageLayout>
+          )}
+        </FormContainer>
+      </ListContainer>
     </Layout>
   );
 
