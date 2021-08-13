@@ -10,10 +10,9 @@ const ListContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
-  margin-top: 62px;
+  /* margin-top: 62px; */
   height: 100%;
-  /* padding: 0 24px; */
-  /* Medium devices (landscape tablets, 768px and up) */
+  padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -21,25 +20,20 @@ const ListContainer = styled.div`
 const ImgContainer = styled.div`
   position: sticky;
   width: 100%;
-
   z-index: 100;
-  /* border: 5px solid black;
-  position: relative;
-  top: 0px;
-  left: 0px;
-  height: 85vh;
-  width: 100%;
-  min-width: 400px;
-  max-width: 1000px; */
-  /* Medium devices (landscape tablets, 768px and up) */
   @media (max-width: 768px) {
     position: initial;
-    width: 100%;
+    /* width: 100%; */
   }
 `;
 const ImgItem = styled.div`
   width: 100%;
   height: 100%;
+  @media (max-width: 768px) {
+    height: 50vh;
+    position: initial;
+  }
+}
 `;
 const TableContainer = styled.div`
   width: 100%;
@@ -48,8 +42,6 @@ const TableContainer = styled.div`
     width: 100%;
   }
 `;
-
-// const PageHeader1 = styled.PageHeader``;
 
 interface DateRecordsProps {
   dateRecordList: dateType[] | null;
@@ -187,14 +179,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   return (
     <Layout>
       <PageHeader
-        style={{
-          zIndex: 100,
-          background: '#fff',
-          position: 'fixed',
-          width: '1400px',
-          // width: '100%',
-          // position: 'sticky',
-        }}
+        className={styles.pageHeader1}
         title={<div>Date List</div>}
         extra={[
           <Button

@@ -10,3 +10,26 @@
 .table {
   margin-top: 30px;
 }
+
+
+.pageHeader1 {
+  z-index: 100;
+  background: '#fff';
+  position: 'fixed';
+  max-width: 1400px;
+  width: 100%;
+}
+
+
+@media (max-width: 768px){
+  .pageHeader1 > .ant-page-header-heading{
+    border : 1px blue solid;
+  }
+  .pageHeader1 > .ant-page-header-heading >.ant-page-header-heading-extra{
+    border : 1px blue solid;
+    float: right;
+    clear: initial;
+    width: initial;
+    padding: 0;
+  }
+}

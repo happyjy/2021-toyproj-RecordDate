@@ -4,3 +4,13 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+
+@media (max-width: 768px){
+  .ant-page-header-heading-extra{
+    float: right;
+    clear: initial;
+    width: initial;
+    padding: 0;
+  }
+}
