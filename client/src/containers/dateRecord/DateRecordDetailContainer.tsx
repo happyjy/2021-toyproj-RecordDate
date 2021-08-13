@@ -5,12 +5,7 @@ import { useParams } from 'react-router-dom';
 import { RootState } from '../../redux/modules/rootReducer';
 import { dateType } from '../../types';
 
-// import Detail from '../components/Detail';
-// import { RootState } from '../redux/modules/rootReducer';
-// import { DateResType, BookResType, dateType } from '../types';
 import { logout as logoutSaga } from '../../redux/modules/auth';
-// import { getBooks as getBooksSaga } from '../redux/modules/books';
-// import DateRecordDetail from '../components/DateRecordDetail';
 import { getDatelist as getDateListSaga } from '../../redux/modules/dateRecord';
 import DateRecordDetail from '../../components/DateRecord/DateRecordDetail';
 
@@ -43,7 +38,7 @@ const DateRecordDetailContainer = () => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
-  console.log('# dateRecordList: ', dateRecordList);
+  // console.log('# recordDetail > dateRecordList: ', dateRecordList);
   return (
     <DateRecordDetail
       dateRecord={dateRecordList?.find((date) => date.dateRecord_id === dateId)}

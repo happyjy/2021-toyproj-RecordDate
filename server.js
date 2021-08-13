@@ -74,7 +74,8 @@ app.get("/api/dateRecord", (req, res) => {
      SELECT dateImage_id,
             dateRecord_id,
             dateImage_name
-       FROM DATEIMAGE;`,
+       FROM DATEIMAGE
+      WHERE ISDELETED = 0;`,
     function (err, results) {
       if (err) throw err;
       // const dateRecordList = results[0];
@@ -161,13 +162,15 @@ app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
   let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
   let insertDateImage =
     "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
+  let deleteDateImage =
+    "update dateImage set isDeleted = ? where dateImage_id = ?";
 
   const editDateRecordId = req.params.id;
   let title = req.body.title;
   let description = req.body.description;
   let delPlaceList = JSON.parse(req.body.delPlaceList);
   let addPlaceList = JSON.parse(req.body.addPlaceList);
-  // let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
+  let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
   let images = req.files;
   let updateDateRecordParams = [title, description, req.params.id];
 
@@ -204,6 +207,13 @@ app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
   for (var j = 0; j < images.length; j++) {
     let insertParam = [editDateRecordId, "/image/" + images[j].filename];
     connection.query(insertDateImage, insertParam, (err, rows, field) => {
+      if (err) throw err;
+    });
+  }
+
+  for (var k = 0; k < delImageFileIdList.length; k++) {
+    let insertParam = [1, delImageFileIdList[k]];
+    connection.query(deleteDateImage, insertParam, (err, rows, field) => {
       if (err) throw err;
     });
   }

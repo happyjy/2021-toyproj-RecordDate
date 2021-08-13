@@ -13,7 +13,7 @@ export interface dateType {
   created_at: string;
   updated_at: string;
   placeList: placeListType[];
-  dateIamgeList: dateIamgeListType[];
+  dateImageList: dateImageListType[];
 }
 export interface placeType {
   place_id: number;
@@ -37,9 +37,11 @@ export interface dateIamgeType {
   created_at: string;
   updated_at: string;
 }
-export interface dateIamgeListType {
+export interface dateImageListType {
   id: number;
   dateImageName: string;
+  idx?: number;
+  result?: string;
 }
 
 export interface DateResType {
@@ -63,8 +65,10 @@ export interface DateRecordReqType extends DateRecordReqDefaultType {
 export interface EditDateRecordReqType extends DateRecordReqDefaultType {
   delPlaceList: placeListType[];
   addPlaceList: placeListType[];
-  delImageFileIdList?: string[];
-  newImageFileList?: any;
+  newImageFileList: File[];
+  // newImageFileList: any[];
+  // newImageFileList: dateImageListType[];
+  delImageFileIdList: number[];
 }
 
 // Books

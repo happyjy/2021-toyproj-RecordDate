@@ -1,7 +1,7 @@
 import { RootState } from './modules/rootReducer';
 import {
   BookResType,
-  dateIamgeListType,
+  dateImageListType,
   dateIamgeType,
   dateType,
   placeListType,
@@ -29,7 +29,7 @@ export function makeDate(
 ) {
   dateRecordList.map((dateRecord: dateType) => {
     let placeList: placeListType[] = [];
-    let dateIamgeList: dateIamgeListType[] = [];
+    let dateImageList: dateImageListType[] = [];
 
     placeListFromTable.forEach((place: placeType) => {
       if (dateRecord.dateRecord_id === place.dateRecord_id) {
@@ -45,13 +45,13 @@ export function makeDate(
 
     imageListFromTable?.forEach((image: dateIamgeType) => {
       if (dateRecord.dateRecord_id === image.dateRecord_id) {
-        dateIamgeList.push({
+        dateImageList.push({
           id: image.dateImage_id,
           dateImageName: image.dateImage_name,
         });
       }
     });
-    dateRecord.dateIamgeList = dateIamgeList;
+    dateRecord.dateImageList = dateImageList;
 
     return dateRecord;
   });

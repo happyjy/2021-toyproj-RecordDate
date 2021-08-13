@@ -2,13 +2,13 @@ import React, { Dispatch } from 'react';
 import styled from 'styled-components';
 import { default as imageClose } from '../../assets/img/close.svg';
 
-interface ITest {
+interface ICloseIcon {
   rotate?: number;
   inputColor: string;
   imageClose: any;
 }
 
-const CloseIcon = styled.div<ITest>`
+const CloseIcon = styled.div<ICloseIcon>`
   position: absolute;
   width: 70%;
   height: 70%;
@@ -131,8 +131,10 @@ const ThumbnailImg = styled.img`
 interface FileUpload {
   imageFile: any[];
   setImagefile: Dispatch<any>;
-  fileText: any[];
+  fileText: any[]; // [ ] 타입수정필요 (참고: useFileUpload)
   setFileText: Dispatch<any>;
+  loadImageFiles?: any[];
+  setLoadImageFiles?: Dispatch<any>;
   onChangeFileupload: (e: React.ChangeEvent<HTMLInputElement>) => void;
 }
 const FileUpload: React.FC<FileUpload> = ({
@@ -143,29 +145,36 @@ const FileUpload: React.FC<FileUpload> = ({
   onChangeFileupload,
 }) => {
   const fileuploadRef = React.createRef<HTMLInputElement>();
-  // const [ref, setRef] = useState(fileuploadRef);
-  // useEffect(() => {
-  //   setRef(fileuploadRef);
-  // }, []);
 
   const onClickUploadButton = (e: any) => {
     fileuploadRef && fileuploadRef.current && fileuploadRef.current.click();
   };
 
   const onClickCloseIcon = (e: any) => {
-    interface Test {
+    interface IdelImage {
       [key: string]: any;
     }
-    console.log(e.target);
-    let delImage: Test[] = [];
+    let delImageList: IdelImage[] = [];
     const result = fileText.filter((v) => {
-      if (v.idx === parseInt(e.target.dataset.idx)) delImage[v.name] = v;
+      if (v.idx === parseInt(e.target.dataset.idx)) {
+        if (v.name) {
+          delImageList[v.name] = v;
+        } else if (v.dateImageName) {
+          delImageList[v.dateImageName] = v;
+        }
+      }
       return v.idx !== parseInt(e.target.dataset.idx);
     });
     setFileText(result);
+    console.log('### onclickCloseIcon > fileText: ' + fileText);
 
     const resultImageFile = [...imageFile].filter((file) => {
-      return !delImage[file.name];
+      if (file.name) {
+        return !delImageList[file.name];
+      } else {
+        // if (file.dateImageName)
+        return !delImageList[file.dateImageName];
+      }
     });
     setImagefile(resultImageFile);
   };
@@ -189,10 +198,22 @@ const FileUpload: React.FC<FileUpload> = ({
             {fileText.map((file) => {
               return (
                 <ContainerThumbnail key={file.idx}>
-                  <ThumbnailImg
-                    src={file.result}
-                    alt="Image preview..."
-                  ></ThumbnailImg>
+                  {/* load from FileReader Object return */}
+                  {file.result && (
+                    <ThumbnailImg
+                      data-idx={file.idx}
+                      src={file.result}
+                      alt="Image preview..."
+                    ></ThumbnailImg>
+                  )}
+                  {/* load from fileName */}
+                  {file.dateImageName && (
+                    <ThumbnailImg
+                      data-idx={file.idx}
+                      src={file.dateImageName}
+                      alt="Image preview..."
+                    ></ThumbnailImg>
+                  )}
                   <CloseIcon
                     data-idx={file.idx}
                     onClick={(e) => onClickCloseIcon(e)}

@@ -2,7 +2,12 @@ import React, { useRef, useEffect, useState } from 'react';
 import { message as messageDialog, PageHeader, Button } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
-import { dateType, EditDateRecordReqType, placeListType } from '../../types';
+import {
+  dateImageListType,
+  dateType,
+  EditDateRecordReqType,
+  placeListType,
+} from '../../types';
 import styles from './DateRecordEdit.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
@@ -84,6 +89,37 @@ const InputSubmit = styled.button`
     background-color: #1f4152;
   }
 `;
+
+// const ContainerImageLayout = styled.div`
+//   display: grid;
+//   grid-template-columns: repeat(3, 1fr);
+//   justify-content: space-around;
+//   grid-gap: 10px;
+//   position: relative;
+//   margin-top: 20px;
+//   padding: 5px;
+// `;
+// const ContainerThumbnail = styled.div`
+//   position: relative;
+//   &:before {
+//     content: ' ';
+//     display: block;
+//     width: 100%;
+//     padding-top: 100%; /* Percentage value in padding derived from the width  */
+//   }
+// `;
+// const ThumbnailImg = styled.img`
+//   width: 100%;
+//   height: 100%;
+//   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
+//   position: absolute;
+//   top: 0px;
+//   left: 0px;
+//   bottom: 0px;
+//   right: 0px;
+//   object-fit: cover;
+// `;
+
 interface DateRecordEditProps {
   dateRecord: dateType | null | undefined;
   getDateList: () => void;
@@ -96,15 +132,19 @@ interface DateRecordEditProps {
 
 const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   dateRecord,
+  getDateList,
+  editDateRecord,
   loading,
   error,
-  editDateRecord,
   back,
   logout,
 }) => {
+  useEffect(() => {
+    getDateList();
+  }, [getDateList]);
+
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
-
   const [placeList, setPlaceList] = useState<placeListType[]>(
     dateRecord?.placeList ? dateRecord.placeList : [],
   );
@@ -118,8 +158,37 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const [SearchPlacesCb, setSearchPlacesCb] = useState(() => () => {});
   const [placeMarkerList, setPlaceMarkerList] = useState<any[]>([]);
 
-  const { imageFile, setImagefile, fileText, setFileText, onChangeFileupload } =
-    useFileUpload();
+  const {
+    imageFile,
+    setImagefile,
+    fileText,
+    setFileText,
+    // loadImageFiles,
+    // setLoadImageFiles,
+    onChangeFileupload,
+  } = useFileUpload();
+
+  // const [imageList, setImageList] = useState<dateImageListType[]>(
+  //   dateRecord?.dateImageList ? dateRecord.dateImageList : [],
+  // );
+
+  const result: dateImageListType[] = dateRecord
+    ? dateRecord?.dateImageList.map((v, i) => {
+        v.idx = i;
+        v.result = v.dateImageName;
+        return v;
+      })
+    : [];
+
+  const [originImageList] = useState<dateImageListType[]>(result);
+  useEffect(() => {
+    setImagefile(dateRecord?.dateImageList ? dateRecord.dateImageList : []);
+    setFileText(result);
+  }, []);
+
+  const [dateImageList, setDateImageList] = useState<any[]>(
+    dateRecord?.dateImageList ? dateRecord.dateImageList : [],
+  );
 
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
@@ -135,16 +204,16 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   };
 
   // 카카오맵
-  useEffect(() => {
-    const [placeMarkerObjList] = map(
-      mapRef,
-      inputEl,
-      setSearchPlacesCb,
-      placeList,
-      setPlaceList,
-    );
-    setPlaceMarkerList(placeMarkerObjList);
-  }, [placeList]);
+  // useEffect(() => {
+  //   const [placeMarkerObjList] = map(
+  //     mapRef,
+  //     inputEl,
+  //     setSearchPlacesCb,
+  //     placeList,
+  //     setPlaceList,
+  //   );
+  //   setPlaceMarkerList(placeMarkerObjList);
+  // }, [placeList]);
 
   useEffect(() => {
     if (error) {
@@ -197,7 +266,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
           >
             <MapSpace ref={mapRef} id="map"></MapSpace>
 
-            <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
+            {/* <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
               <div className={mapStyles.option}>
                 <div>
                   키워드 :
@@ -215,7 +284,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
               <hr />
               <ul id={mapStyles.placesList}></ul>
               <div id={mapStyles.pagination}></div>
-            </div>
+            </div> */}
           </div>
         </MapContainer>
 
@@ -243,6 +312,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             setImagefile={setImagefile}
             fileText={fileText}
             setFileText={setFileText}
+            // loadImageFiles={loadImageFiles}
+            // setLoadImageFiles={setLoadImageFiles}
             onChangeFileupload={onChangeFileupload}
           ></FileUpload>
 
@@ -254,6 +325,17 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             ref={descriptionRef}
             className={styles.input}
           />
+          {/* {dateRecord.dateImageList.length > 0 && (
+            <ContainerImageLayout>
+              {dateRecord.dateImageList.map((image, i) => (
+                <ContainerThumbnail key={image.id}>
+                  <ThumbnailImg
+                    src={'http://localhost:5000' + image.dateImageName}
+                  ></ThumbnailImg>
+                </ContainerThumbnail>
+              ))}
+            </ContainerImageLayout>
+          )} */}
 
           <InputSubmitContainer>
             <InputSubmit type="submit" value="Add" onClick={click}>
@@ -289,40 +371,68 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
       2. use Map(dont use array)
 
     */
+    // 저장할 장소 설정
     interface NewArr {
       [key: string]: any;
     }
-    // var newArr: { [key: string]: any } = [];
-    // let newArr: NewArr = []
-    let compMap: Map<string, placeListType> = new Map<string, placeListType>();
-
-    for (var i = 0; i < originPlaceList.length; i++) {
-      // newArr[originPlaceList[i].latLong] = originPlaceList[i];
-      compMap.set(originPlaceList[i].latLong, originPlaceList[i]);
+    let compMapPlace: Map<string, placeListType> = new Map<
+      string,
+      placeListType
+    >();
+    for (let i = 0; i < originPlaceList.length; i++) {
+      compMapPlace.set(originPlaceList[i].latLong, originPlaceList[i]);
     }
-
     let delPlaceList: placeListType[] = [];
     let addPlaceList: placeListType[] = [];
     placeList.forEach((place) => {
-      if (!!compMap.get(place.latLong)) {
-        compMap.delete(place.latLong);
+      if (!!compMapPlace.get(place.latLong)) {
+        compMapPlace.delete(place.latLong);
       } else {
         addPlaceList.push(place);
       }
     });
+    delPlaceList = [...compMapPlace.values()];
 
-    delPlaceList = [...compMap.values()];
+    // 저장할 이미지 설정
+    let newImageFileList: File[] = [];
+    newImageFileList = imageFile.filter((v) => {
+      return v.__proto__ === File.prototype;
+    });
 
-    debugger;
-    console.log(imageFile);
+    let delImageFileIdList: number[] = [];
+    let leftImage = imageFile.map((v) => v.id);
+    delImageFileIdList = originImageList
+      .filter((v) => {
+        return !leftImage.includes(v.id);
+      })
+      .map((v) => v.id);
+
+    // let compMapImage: { [key: string]: any } = [];
+    // for (let i = 0; i < originImageList.length; i++) {
+    //   let originImage = originImageList[i];
+    //   if (originImage.dateImageName) {
+    //     compMapImage[originImage.dateImageName] = originImage;
+    //   }
+    // }
+    // let delImageFileIdList: number[] = [];
+    // imageFile.forEach((c) => {
+    //   if (
+    //     c.__proto__ !== File.prototype &&
+    //     c.dateImageName &&
+    //     !compMapImage[c.dateImageName]
+    //   ) {
+    //     delImageFileIdList.push(c.id);
+    //   }
+    // });
+    console.log({ imageFile, fileText });
 
     editDateRecord({
       title,
       description,
       delPlaceList,
       addPlaceList,
-      newImageFileList: imageFile,
-      // delImageFileIdList: []// delImageFileIdList?: string[];
+      newImageFileList,
+      delImageFileIdList,
     });
   }
 };

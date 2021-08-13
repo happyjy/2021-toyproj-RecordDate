@@ -15,9 +15,9 @@ import DateRecordEdit from '../../components/DateRecord/DateRecordEdit';
 const DateRecordEditContainer = () => {
   const { id } = useParams();
   const dateId = Number(id) || -1;
-  const dateRecordList = useSelector<RootState, dateType[] | null>((state) => {
-    return state.dateRecord.dateRecordList;
-  });
+  const dateRecordList = useSelector<RootState, dateType[] | null>(
+    (state) => state.dateRecord.dateRecordList,
+  );
 
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
@@ -34,7 +34,6 @@ const DateRecordEditContainer = () => {
 
   const editDateRecord = useCallback(
     (dateRecord) => {
-      debugger;
       dispatch(editDateRecordsaga(dateId, dateRecord));
     },
     [dispatch, dateId],
@@ -48,6 +47,7 @@ const DateRecordEditContainer = () => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
+  // console.log('# recordEdit > dateRecordList: ', dateRecordList);
   return (
     <DateRecordEdit
       dateRecord={dateRecordList?.find((date) => date.dateRecord_id === dateId)}

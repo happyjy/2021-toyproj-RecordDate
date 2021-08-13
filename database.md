@@ -115,10 +115,12 @@ ALTER TABLE place modify latLong VARCHAR(255);
 ALTER TABLE place ADD COLUMN address VARCHAR(100) AFTER place_name;
 ALTER TABLE place DROP COLUMN isDeleted;
 ALTER TABLE place ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER latLong;
+ALTER TABLE dateImage ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER dateImage_name;
 
 update dateRecord set isDelete = 0;
 update place set place_name = '안양천 텐트' where place_id = 1;
 update place set place_name = '안양천 텐트', address = '서울시 영등포구' where dateRecord_id = 23;
+update dateImage set isDeleted = '1' where dateImage_id = 23;
 
 
 
