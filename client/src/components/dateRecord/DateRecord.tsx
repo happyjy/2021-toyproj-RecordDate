@@ -24,7 +24,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
     description,
     placeList,
     created_at,
-    deleteRecordDate: deleteBook,
+    deleteRecordDate,
     goEdit,
   }) => {
     return (
@@ -78,7 +78,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
     );
 
     function click() {
-      deleteBook(dateRecord_id);
+      deleteRecordDate(dateRecord_id);
     }
     function clickEdit() {
       goEdit(dateRecord_id);

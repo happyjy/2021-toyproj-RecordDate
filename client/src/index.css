@@ -14,3 +14,8 @@ body {
     padding: 0;
   }
 }
+
+.FilterOutlinedContainer>button.ant-btn{
+  border:initial;
+  padding: 4px 12px;
+}

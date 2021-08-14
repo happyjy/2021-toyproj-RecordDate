@@ -65,6 +65,10 @@ export default class DateRecordService {
       [...dateRecord.newImageFileList].forEach((v) => {
         formData.append('imageFile', v);
       });
+    formData.append(
+      'addPlaceList',
+      JSON.stringify(dateRecord.delImageFileIdList),
+    );
 
     const response = await axios.patch<[dateType[], placeType[]]>(
       `${DATERECORD_API_URL}/${dateRecordId}`,

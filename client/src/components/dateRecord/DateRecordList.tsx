@@ -1,12 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { Table, PageHeader, Button } from 'antd';
+import {
+  Table,
+  PageHeader,
+  Button,
+  DatePicker,
+  Space,
+  Input,
+  Dropdown,
+  Menu,
+} from 'antd';
 import styles from './DateRecordList.module.css';
 import Layout from '../Layout';
 import { dateType } from '../../types';
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
+import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 
-const ListContainer = styled.div`
+const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
@@ -36,12 +46,59 @@ const MapSpace = styled.div`
     position: initial;
   }
 `;
+
+const ListContainer = styled.div``;
+const ConditionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  padding: 0 16px;
+
+  & > * {
+    &:not(:last-child) {
+      margin-bottom: 10px;
+    }
+  }
+
+  /* justify-content: space-between; */
+`;
+const PickerContainer = styled.div``;
+const SearchContainer = styled.div`
+  /* display: flex;
+  flex-direction: row;
+  justify-content: space-between; */
+  position: relative;
+`;
+const FilterContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+`;
+const FilterOutlinedContainer = styled.div`
+  /* position: absolute;
+  margin: 0;
+  right: 12px;
+  top: 50%;
+  transform: translate(0, -50%); */
+`;
 const TableContainer = styled.div`
   width: 100%;
   margin-top: 0px;
   @media (max-width: 768px) {
     width: 100%;
   }
+`;
+
+const InputContainer = styled.div`
+  position: relative;
+  display: flex;
+  justify-content: space-between;
+`;
+const SearchOutlinedContainer = styled.div`
+  position: absolute;
+  margin: 0;
+  right: 12px;
+  top: 50%;
+  transform: translate(0, -50%);
 `;
 
 interface DateRecordsProps {
@@ -177,6 +234,31 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     };
   });
 
+  const { RangePicker } = DatePicker;
+
+  const menu = (
+    <Menu>
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.antgroup.com"
+        >
+          내림차순 정렬
+        </a>
+      </Menu.Item>
+      <Menu.Item>
+        <a
+          target="_blank"
+          rel="noopener noreferrer"
+          href="https://www.aliyun.com"
+        >
+          오름차순 정렬
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+
   return (
     <Layout>
       <PageHeader
@@ -201,7 +283,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           </Button>,
         ]}
       />
-      <ListContainer>
+      <Container>
         <MapContainer className="MapContainer">
           <MapSpace id="map"></MapSpace>
           {/* <button
@@ -214,35 +296,58 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
             클릭
           </button> */}
         </MapContainer>
-        <TableContainer>
-          <Table
-            style={{ marginTop: 0 }}
-            dataSource={dateRecordList || []}
-            columns={[
-              {
-                title: 'DateRecord',
-                dataIndex: 'dateRecord',
-                key: 'dateRecord',
-                render: (text, record) => {
-                  return (
-                    <DateRecord
-                      key={record.dateRecord_id}
-                      {...record}
-                      deleteRecordDate={deleteRecordDate}
-                      goEdit={goEdit}
-                    />
-                  );
+
+        <ListContainer>
+          <ConditionContainer>
+            <FilterContainer>
+              <RangePicker></RangePicker>
+              <FilterOutlinedContainer className="FilterOutlinedContainer">
+                <Dropdown overlay={menu} placement="bottomCenter">
+                  <Button>
+                    <FilterOutlined />
+                  </Button>
+                </Dropdown>
+              </FilterOutlinedContainer>
+            </FilterContainer>
+            <SearchContainer>
+              <InputContainer>
+                <Input placeholder="Basic usage"></Input>
+                <SearchOutlinedContainer>
+                  <SearchOutlined />
+                </SearchOutlinedContainer>
+              </InputContainer>
+            </SearchContainer>
+          </ConditionContainer>
+          <TableContainer>
+            <Table
+              style={{ marginTop: 0 }}
+              dataSource={dateRecordList || []}
+              columns={[
+                {
+                  title: 'DateRecord',
+                  dataIndex: 'dateRecord',
+                  key: 'dateRecord',
+                  render: (text, record) => {
+                    return (
+                      <DateRecord
+                        key={record.dateRecord_id}
+                        {...record}
+                        deleteRecordDate={deleteRecordDate}
+                        goEdit={goEdit}
+                      />
+                    );
+                  },
                 },
-              },
-            ]}
-            showHeader={false}
-            pagination={false}
-            loading={dateRecordList === null || loading}
-            className={styles.table}
-            rowKey="dateRecord_id"
-          />
-        </TableContainer>
-      </ListContainer>
+              ]}
+              showHeader={false}
+              pagination={false}
+              loading={dateRecordList === null || loading}
+              className={styles.table}
+              rowKey="dateRecord_id"
+            />
+          </TableContainer>
+        </ListContainer>
+      </Container>
     </Layout>
   );
 };
