@@ -48,11 +48,13 @@ interface chipsComponent {
   placeList: placeListType[];
   setPlaceList?: (state: any) => void;
   placeMarkerList?: any[];
+  showDelIcon?: boolean;
 }
 const ChipsComponent: React.FC<chipsComponent> = ({
   placeList,
   setPlaceList,
   placeMarkerList,
+  showDelIcon = true,
 }) => {
   const onClickDelete = (e: any) => {
     // reset PlaceList
@@ -115,11 +117,13 @@ const ChipsComponent: React.FC<chipsComponent> = ({
           placeList.map((place) => (
             <ChipItem key={place.id} draggable="true" data-index={place.id}>
               <ChipLabel>{place.placeName}</ChipLabel>
-              <ChipDeleteIcon
-                data-index={place.id}
-                onClick={(e) => onClickDelete(e)}
-                src={closeIcon}
-              />
+              {showDelIcon && (
+                <ChipDeleteIcon
+                  data-index={place.id}
+                  onClick={(e) => onClickDelete(e)}
+                  src={closeIcon}
+                />
+              )}
             </ChipItem>
           ))}
         {placeList.length === 0 && (

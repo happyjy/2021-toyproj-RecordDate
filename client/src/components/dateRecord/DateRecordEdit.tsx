@@ -204,16 +204,16 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   };
 
   // 카카오맵
-  // useEffect(() => {
-  //   const [placeMarkerObjList] = map(
-  //     mapRef,
-  //     inputEl,
-  //     setSearchPlacesCb,
-  //     placeList,
-  //     setPlaceList,
-  //   );
-  //   setPlaceMarkerList(placeMarkerObjList);
-  // }, [placeList]);
+  useEffect(() => {
+    const [placeMarkerObjList] = map(
+      mapRef,
+      inputEl,
+      setSearchPlacesCb,
+      placeList,
+      setPlaceList,
+    );
+    setPlaceMarkerList(placeMarkerObjList);
+  }, [placeList]);
 
   useEffect(() => {
     if (error) {
@@ -266,7 +266,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
           >
             <MapSpace ref={mapRef} id="map"></MapSpace>
 
-            {/* <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
+            <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
               <div className={mapStyles.option}>
                 <div>
                   키워드 :
@@ -284,7 +284,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
               <hr />
               <ul id={mapStyles.placesList}></ul>
               <div id={mapStyles.pagination}></div>
-            </div> */}
+            </div>
           </div>
         </MapContainer>
 
@@ -304,6 +304,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             placeList={placeList}
             setPlaceList={setPlaceList}
             placeMarkerList={placeMarkerList}
+            showDelIcon={false}
           ></Chips>
 
           <label>Image uplaod</label>
