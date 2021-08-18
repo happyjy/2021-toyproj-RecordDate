@@ -250,7 +250,7 @@ const AddDateRecord: React.FC<AddProps> = ({
           />
 
           <InputSubmitContainer>
-            <InputSubmit type="submit" value="Add" onClick={click}>
+            <InputSubmit type="submit" value="Add" onClick={onAddDateRecord}>
               Add
             </InputSubmit>
           </InputSubmitContainer>
@@ -259,7 +259,7 @@ const AddDateRecord: React.FC<AddProps> = ({
     </Layout>
   );
 
-  function click() {
+  function onAddDateRecord() {
     const title = titleRef.current!.value;
     const description = descriptionRef.current!.value;
     if (
@@ -271,7 +271,6 @@ const AddDateRecord: React.FC<AddProps> = ({
       return;
     }
 
-    debugger;
     addDateRecord({
       title,
       placeList,

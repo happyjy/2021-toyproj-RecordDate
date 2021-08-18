@@ -55,14 +55,26 @@ const connection = mysql.createConnection({
 });
 
 app.get("/api/dateRecord", (req, res) => {
-  connection.query(
-    `SELECT dateRecord_id,
+  const searchOption = JSON.parse(req.query.searchOption);
+  console.log(searchOption.rangeDate);
+  console.log(searchOption.sort);
+
+  let selectParam = [
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-31",
+    searchOption.sort,
+  ];
+  // console.log(selectParam);
+
+  const selectQuery = `SELECT dateRecord_id,
             title,
             description,
             image,
             created_at
        FROM DATERECORD 
-      WHERE ISDELETED = 0; 
+      WHERE ISDELETED = 0
+        AND created_at between ? and ?
+      order by created_at ${selectParam[2] == "desc" ? "desc" : "asc"};
       
      SELECT place_id,
             dateRecord_id,
@@ -75,15 +87,13 @@ app.get("/api/dateRecord", (req, res) => {
             dateRecord_id,
             dateImage_name
        FROM DATEIMAGE
-      WHERE ISDELETED = 0;`,
-    function (err, results) {
-      if (err) throw err;
-      // const dateRecordList = results[0];
-      // const placeList = results[1];
-      // console.log(results);
-      res.send(results);
-    }
-  );
+      WHERE ISDELETED = 0;`;
+
+  connection.query(selectQuery, selectParam, function (err, results) {
+    if (err) throw err;
+    // console.log(results[0]);
+    res.send(results);
+  });
 });
 
 const multer = require("multer");
@@ -203,31 +213,28 @@ app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
       if (err) throw err;
     });
   }
-
   for (var j = 0; j < images.length; j++) {
     let insertParam = [editDateRecordId, "/image/" + images[j].filename];
     connection.query(insertDateImage, insertParam, (err, rows, field) => {
       if (err) throw err;
     });
   }
-
   for (var k = 0; k < delImageFileIdList.length; k++) {
     let insertParam = [1, delImageFileIdList[k]];
     connection.query(deleteDateImage, insertParam, (err, rows, field) => {
       if (err) throw err;
     });
   }
-
   connection.query(
     `SELECT *
        FROM DATERECORD 
       WHERE ISDELETED = 0
         AND DATERECORD_ID = ?; 
-      
-     SELECT *
-       FROM PLACE 
-      WHERE ISDELETED = 0
-        AND DATERECORD_ID = ?`,
+    
+    SELECT *
+      FROM PLACE 
+     WHERE ISDELETED = 0
+       AND DATERECORD_ID = ?`,
     [editDateRecordId, editDateRecordId],
     (err, results) => {
       if (err) throw err;
@@ -235,7 +242,6 @@ app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
     }
   );
 });
-
 app.delete("/api/dateRecord/:id", (req, res) => {
   let deleteDateRecord =
     "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";

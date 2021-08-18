@@ -71,6 +71,20 @@ export interface EditDateRecordReqType extends DateRecordReqDefaultType {
   delImageFileIdList: number[];
 }
 
+// 검색 조건
+export interface keywordSearchType {
+  key: string;
+  target: { value: string };
+}
+// type TypeSearch = {
+//   key: string;
+//   target: { value: string };
+// };
+export interface searchOptionType {
+  rangeDate: string[];
+  sort: string | undefined;
+}
+
 // Books
 export interface BookReqType {
   title: string;
@@ -91,7 +105,6 @@ export interface LoginReqType {
   email: string;
   password: string;
 }
-
 export interface LoginResType {
   token: string;
 }

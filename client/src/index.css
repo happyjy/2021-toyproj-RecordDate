@@ -17,5 +17,8 @@ body {
 
 .FilterOutlinedContainer>button.ant-btn{
   border:initial;
+}
+.FilterOutlinedContainer>span.anticon-search{
+  border: initial;
   padding: 4px 12px;
 }

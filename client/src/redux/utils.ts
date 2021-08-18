@@ -13,8 +13,6 @@ export function getTokenFromState(state: RootState): string | null {
 }
 
 export function getDateRecordFromState(state: RootState): dateType[] | null {
-  debugger;
-  console.log(state);
   return state.dateRecord.dateRecordList;
 }
 
@@ -57,4 +55,25 @@ export function makeDate(
   });
 
   return dateRecordList;
+}
+
+export function debounce(fn, ms) {
+  let timer: any;
+  return () => {
+    clearTimeout(timer);
+    timer = setTimeout(function () {
+      timer = null;
+      // fn.apply(this, arguments);
+      fn.apply(fn, arguments);
+    }, ms);
+  };
+}
+
+export function getDateFormatSearchType(date: Date) {
+  const yearNum = date.getFullYear().toString();
+  const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
+  return [yearNum, monthNum].join('-');
+
+  // const dateNum = date.getDate().toString().padStart(2, '0');
+  // return [yearNum, monthNum, dateNum].join('-');
 }

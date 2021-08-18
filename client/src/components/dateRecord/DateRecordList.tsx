@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import moment from 'moment';
 import {
   Table,
   PageHeader,
@@ -11,10 +12,11 @@ import {
 } from 'antd';
 import styles from './DateRecordList.module.css';
 import Layout from '../Layout';
-import { dateType } from '../../types';
+import { dateType, searchOptionType, keywordSearchType } from '../../types';
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
+import { debounce, getDateFormatSearchType } from '../../redux/utils';
 
 const Container = styled.div`
   position: relative;
@@ -25,6 +27,13 @@ const Container = styled.div`
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    @media (max-width: 768px) {
+      & > * {
+        &:not(:last-child) {
+          margin-bottom: 20px;
+        }
+      }
+    }
   }
 `;
 const MapContainer = styled.div`
@@ -46,7 +55,6 @@ const MapSpace = styled.div`
     position: initial;
   }
 `;
-
 const ListContainer = styled.div``;
 const ConditionContainer = styled.div`
   display: flex;
@@ -61,7 +69,7 @@ const ConditionContainer = styled.div`
 
   /* justify-content: space-between; */
 `;
-const PickerContainer = styled.div``;
+// const PickerContainer = styled.div``;
 const SearchContainer = styled.div`
   /* display: flex;
   flex-direction: row;
@@ -87,7 +95,6 @@ const TableContainer = styled.div`
     width: 100%;
   }
 `;
-
 const InputContainer = styled.div`
   position: relative;
   display: flex;
@@ -99,13 +106,14 @@ const SearchOutlinedContainer = styled.div`
   right: 12px;
   top: 50%;
   transform: translate(0, -50%);
+  cursor: point;
 `;
 
 interface DateRecordsProps {
   dateRecordList: dateType[] | null;
   loading: boolean;
   error: Error | null;
-  getDateList: () => void;
+  getDateList: (searchOption: searchOptionType) => void;
   deleteRecordDate: (bookId: number) => void;
   goAdd: () => void;
   goEdit: (bookId: number) => void;
@@ -124,10 +132,32 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 }) => {
   const [mapState, setMapState] = useState<any>(); // map 객체
   const [setBoundsState, setSetBoundsState] = useState(); // 위치 객체
+  const [dateRecordListState, setDateRecordListState] = useState<
+    dateType[] | null
+  >(dateRecordList); // list state
+
+  const targetDate = new Date();
+  targetDate.setMonth(targetDate.getMonth() - 6);
+
+  // 검색조건(키워드)
+  const [keywordSeach, setKeywordSearch] = useState<String>('');
+
+  // 검색조건(기간, 정렬)
+  const [searchOption, setSearchOption] = useState<searchOptionType>({
+    rangeDate: [
+      getDateFormatSearchType(targetDate),
+      getDateFormatSearchType(new Date()),
+    ],
+    sort: 'desc',
+  });
 
   useEffect(() => {
-    getDateList();
+    getDateList(searchOption);
   }, [getDateList]);
+
+  useEffect(() => {
+    setDateRecordListState(dateRecordList);
+  }, [dateRecordList]);
 
   useEffect(() => {
     if (error) {
@@ -204,24 +234,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       bounds.extend(placeList[i].latlng);
     }
 
-    // setSetBounds(map.setBounds);
     setMapState(map);
     setSetBoundsState(bounds);
     map.setBounds(bounds);
-    // setBoundsFnState(() => map.setBounds(bounds));
   }, [dateRecordList]);
-
-  function debounce(fn, ms) {
-    let timer: any;
-    return () => {
-      clearTimeout(timer);
-      timer = setTimeout(function () {
-        timer = null;
-        // fn.apply(this, arguments);
-        fn.apply(fn, arguments);
-      }, ms);
-    };
-  }
 
   // 지도 범위 재설정 적용
   useEffect(() => {
@@ -234,30 +250,71 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     };
   });
 
+  /* 조회 이벤트 */
+  const onChangeDatePicker = function (_, rangeDate: string[]) {
+    setSearchOption((option) => {
+      return { ...option, rangeDate };
+    });
+  };
+  const onClickSearchButton = function () {
+    getDateList(searchOption);
+  };
+  const onClickSortButton = function (type) {
+    setSearchOption((option) => {
+      return { ...option, sort: type };
+    });
+  };
   const { RangePicker } = DatePicker;
-
   const menu = (
     <Menu>
       <Menu.Item>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.antgroup.com"
-        >
-          내림차순 정렬
-        </a>
+        <div onClick={() => onClickSortButton('desc')}>내림차순 정렬</div>
       </Menu.Item>
       <Menu.Item>
-        <a
-          target="_blank"
-          rel="noopener noreferrer"
-          href="https://www.aliyun.com"
-        >
-          오름차순 정렬
-        </a>
+        <div onClick={() => onClickSortButton('asc')}>오름차순 정렬</div>
       </Menu.Item>
     </Menu>
   );
+  const onChangeKeywordSearch = function ({ target: { value } }) {
+    setKeywordSearch(value);
+  };
+  const onKeydownKeywordSearch: (keywordSearchType) => void = function ({
+    key,
+    target: { value },
+  }) {
+    if (key === 'Enter') {
+      if (!value) {
+        setDateRecordListState(dateRecordList);
+      } else {
+        keywordSearch(value);
+      }
+    }
+  };
+  const onClickKeywordSearch = function () {
+    keywordSearch(keywordSeach);
+  };
+
+  const keywordSearch = function (value) {
+    let restultFromTitle: dateType[] = [];
+    restultFromTitle =
+      dateRecordList?.filter((v) => {
+        return v.title.includes(value);
+      }) || [];
+
+    let resultFromPlaceList: dateType[] = [];
+    dateRecordList?.forEach((v) => {
+      let result = v.placeList?.filter((v) =>
+        v.placeName.includes(value),
+      ).length;
+
+      if (result > 0) {
+        resultFromPlaceList.push(v);
+      }
+    });
+
+    let resultMerge = [...restultFromTitle, ...resultFromPlaceList];
+    setDateRecordListState(resultMerge);
+  };
 
   return (
     <Layout>
@@ -300,20 +357,32 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         <ListContainer>
           <ConditionContainer>
             <FilterContainer>
-              <RangePicker></RangePicker>
+              <RangePicker
+                picker="month"
+                onChange={onChangeDatePicker}
+                defaultValue={[
+                  moment(searchOption.rangeDate[0]),
+                  moment(searchOption.rangeDate[1]),
+                ]}
+              ></RangePicker>
               <FilterOutlinedContainer className="FilterOutlinedContainer">
                 <Dropdown overlay={menu} placement="bottomCenter">
                   <Button>
                     <FilterOutlined />
                   </Button>
                 </Dropdown>
+                <SearchOutlined onClick={onClickSearchButton} />
               </FilterOutlinedContainer>
             </FilterContainer>
             <SearchContainer>
               <InputContainer>
-                <Input placeholder="Basic usage"></Input>
+                <Input
+                  placeholder="keyword"
+                  onChange={onChangeKeywordSearch}
+                  onKeyDown={onKeydownKeywordSearch}
+                ></Input>
                 <SearchOutlinedContainer>
-                  <SearchOutlined />
+                  <SearchOutlined onClick={onClickKeywordSearch} />
                 </SearchOutlinedContainer>
               </InputContainer>
             </SearchContainer>
@@ -321,7 +390,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           <TableContainer>
             <Table
               style={{ marginTop: 0 }}
-              dataSource={dateRecordList || []}
+              dataSource={dateRecordListState || []}
               columns={[
                 {
                   title: 'DateRecord',
@@ -341,7 +410,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
               ]}
               showHeader={false}
               pagination={false}
-              loading={dateRecordList === null || loading}
+              loading={dateRecordListState === null || loading}
               className={styles.table}
               rowKey="dateRecord_id"
             />

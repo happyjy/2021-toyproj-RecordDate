@@ -7,15 +7,20 @@ import {
   dateType,
   EditDateRecordReqType,
   placeType,
+  searchOptionType,
 } from '../types';
 
 const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 
 export default class DateRecordService {
-  public static async getDateRecordList(token: string): Promise<dateType[]> {
+  public static async getDateRecordList(
+    token: string,
+    searchOption: searchOptionType,
+  ): Promise<dateType[]> {
     const response = await axios.get<
       [dateType[], placeType[], dateIamgeType[]]
     >(DATERECORD_API_URL, {
+      params: { searchOption },
       headers: {
         Authorization: `Bearer ${token}`,
       },
@@ -38,6 +43,7 @@ export default class DateRecordService {
     [...dateRecord.imageFile].forEach((v) => {
       formData.append('imageFile', v);
     });
+
     const response = await axios.post<dateType>(DATERECORD_API_URL, formData, {
       headers: {
         Authorization: `Bearer ${token}`,

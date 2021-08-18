@@ -4,7 +4,7 @@ import { push } from 'connected-react-router';
 
 import DateRecordList from '../../components/DateRecord/DateRecordList';
 import { RootState } from '../../redux/modules/rootReducer';
-import { dateType } from '../../types';
+import { dateType, searchOptionType } from '../../types';
 import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import {
@@ -25,9 +25,12 @@ const DateRecordListContainer: React.FC = (props) => {
 
   const dispatch = useDispatch();
 
-  const getDateList = useCallback(() => {
-    dispatch(getDateListSaga());
-  }, [dispatch]);
+  const getDateList = useCallback(
+    (searchOption: searchOptionType) => {
+      dispatch(getDateListSaga(searchOption));
+    },
+    [dispatch],
+  );
 
   const deleteRecordDate = useCallback(
     (dateRecordId: number) => {

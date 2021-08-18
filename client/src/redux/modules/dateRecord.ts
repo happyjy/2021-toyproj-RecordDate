@@ -8,6 +8,7 @@ import {
   DateResType,
   dateType,
   EditDateRecordReqType,
+  searchOptionType,
 } from '../../types';
 import { getDateRecordFromState, getTokenFromState } from '../utils';
 
@@ -78,8 +79,11 @@ export const { addDaterecord, getDatelist, deleteDaterecord, editDaterecord } =
         dateRecord,
       }),
       DELETE_DATERECORD: (dateRecordId: number) => ({ dateRecordId }),
+      GET_DATELIST: (searchOption: searchOptionType) => {
+        return { searchOption };
+      },
     },
-    'GET_DATELIST',
+    // 'GET_DATELIST',
     options,
   );
 
@@ -95,20 +99,6 @@ export function* sagas() {
   yield takeEvery(`${options.prefix}/GET_DATELIST`, getDateListSaga);
   yield takeEvery(`${options.prefix}/EDIT_DATERECORD`, editDateRecord);
   yield takeEvery(`${options.prefix}/DELETE_DATERECORD`, deleteDateRecord);
-}
-
-function* getDateListSaga() {
-  try {
-    yield put(pending());
-    const token: string = yield select((state) => state.auth.token);
-    const dateRecordList: dateType[] = yield call(
-      DateRecordService.getDateRecordList,
-      token,
-    );
-    yield put(success(dateRecordList));
-  } catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
-  }
 }
 
 interface AddDateRecordSagaAction extends AnyAction {
@@ -134,6 +124,27 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     // [todo] response data structure 맞춰 success 완성 시키기
     // yield put(success([...dateRecordList, dateRecord]));
     yield put(push('/'));
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+  }
+}
+
+interface getDateListSagaAction extends AnyAction {
+  payload: {
+    searchOption: searchOptionType;
+  };
+}
+
+function* getDateListSaga(action: getDateListSagaAction) {
+  try {
+    yield put(pending());
+    const token: string = yield select((state) => state.auth.token);
+    const dateRecordList: dateType[] = yield call(
+      DateRecordService.getDateRecordList,
+      token,
+      action.payload.searchOption,
+    );
+    yield put(success(dateRecordList));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
   }

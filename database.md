@@ -1,5 +1,6 @@
 - [테이블](#테이블)
 - [modify column](#modify-column)
+  - [select & date](#select--date)
 
 # 테이블
 
@@ -123,9 +124,6 @@ update place set place_name = '안양천 텐트', address = '서울시 영등포
 update dateImage set isDeleted = '1' where dateImage_id = 23;
 
 
-
-
-
 ```
 
 ```
@@ -167,3 +165,21 @@ SELECT B.place_name
 INNER JOIN 주소 as B
         ON A.dateRecord_id = B.dateRecord_id
   limit 1;
+
+## select & date
+
+```
+select * from daterecord where 1=1 and created_at between '2021-08-05' and '2021-08-14';
+
+
+SELECT dateRecord_id,
+       title,
+       description,
+       image,
+       created_at
+  FROM DATERECORD 
+ WHERE ISDELETED = 0
+   AND created_at >= '2021-01-01'
+   AND created_at <= '2021-07-01'
+ order by created_at desc
+```
