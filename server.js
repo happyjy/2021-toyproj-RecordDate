@@ -54,28 +54,57 @@ const connection = mysql.createConnection({
   multipleStatements: true,
 });
 
+// DATE RECORD SELECT
 app.get("/api/dateRecord", (req, res) => {
   const searchOption = JSON.parse(req.query.searchOption);
   console.log(searchOption.rangeDate);
   console.log(searchOption.sort);
 
+  const endOfRange = searchOption.rangeDate[1];
+  const splitedEndOfRange = endOfRange.split("-");
+  const lastDateEndOfRange = new Date(
+    splitedEndOfRange[0],
+    splitedEndOfRange[1],
+    0
+  ).getDate();
+
   let selectParam = [
     searchOption.rangeDate[0] + "-01",
-    searchOption.rangeDate[1] + "-31",
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
     searchOption.sort,
   ];
-  // console.log(selectParam);
+  console.log(selectParam);
 
-  const selectQuery = `SELECT dateRecord_id,
-            title,
-            description,
-            image,
-            created_at
-       FROM DATERECORD 
-      WHERE ISDELETED = 0
-        AND created_at between ? and ?
-      order by created_at ${selectParam[2] == "desc" ? "desc" : "asc"};
-      
+  // NUMBERING
+  // const numbering
+  const temp = `
+ SELECT dateRecord_id,
+        title,
+        description,
+        image,
+        created_at
+   FROM DATERECORD 
+  WHERE ISDELETED = 0
+    AND created_at between ? and ?
+    // AND created_at >= ?
+    // AND created_at <= TIMESTAMP(?)
+  order by created_at ${selectParam[3] == "desc" ? "desc" : "asc"}
+`;
+  const selectQuery = `
+  select @n:=@n+1 dateCnt, t.dateRecord_id
+                           , t.title
+                           , t.description
+                           , t.image
+                           , t.created_at
+    from (select @n:=( select count(*)
+                         from dateRecord
+                        where 1=1
+                         and created_at < ?)) initvars, dateRecord t
+   where 1=1
+     AND created_at between ? and ?
+order by dateCnt ${selectParam[3] == "desc" ? "desc" : "asc"};
+
      SELECT place_id,
             dateRecord_id,
             place_name,
@@ -89,6 +118,8 @@ app.get("/api/dateRecord", (req, res) => {
        FROM DATEIMAGE
       WHERE ISDELETED = 0;`;
 
+  // console.log(selectQuery);
+
   connection.query(selectQuery, selectParam, function (err, results) {
     if (err) throw err;
     // console.log(results[0]);
@@ -100,22 +131,7 @@ const multer = require("multer");
 const upload = multer({ dest: "./upload" });
 app.use("/image", express.static("upload"));
 
-// const storage = multer.diskStorage({
-//   destination: function (req, file, cb) {
-//     cb(null, "uploads/");
-//   },
-
-//   filename: function (req, file, cb) {
-//     cb(
-//       null,
-//       file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-//     );
-//   },
-// });
-
-// var upload = multer({ storage: storage });
-
-// app.post("/api/dateRecord", upload.single("imageFile"), (req, res) => {
+// DATE RECORD INSERT
 app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
   console.log("# req.files");
   console.log(req?.files);
@@ -164,6 +180,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
   );
 });
 
+// DATE RECORD UPDATE
 app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
   let updateDateRecord =
     "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
@@ -242,6 +259,8 @@ app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
     }
   );
 });
+
+// DATE RECORD DELETE
 app.delete("/api/dateRecord/:id", (req, res) => {
   let deleteDateRecord =
     "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";
@@ -256,40 +275,6 @@ app.delete("/api/dateRecord/:id", (req, res) => {
     res.send(rows);
   });
 });
-
-// app.get('/api/customers', (req, res) => {
-//   connection.query(
-//     "SELECT * FROM CUSTOMER WHERE isDeleted = 0",
-//     (err, rows, fields) => {
-//         res.send(rows);
-//     }
-// );
-// });
-
-// app.post("/api/customers", upload.single("image"), (req, res) => {
-//   let sql = "INSERT INTO CUSTOMER VALUES (null, ?, ?, ?, ?, ?, now(), 0)";
-//   let image = "/image/" + req.file.filename;
-//   let name = req.body.name;
-//   let birthday = req.body.birthday;
-//   let gender = req.body.gender;
-//   let job = req.body.job;
-//   let params = [image, name, birthday, gender, job];
-//   connection.query(sql, params, (err, rows, fields) => {
-//     res.send(rows);
-//   });
-// });
-
-// app.delete('/api/customers/:id', (req, res) => {
-//     let sql = 'UPDATE CUSTOMER SET isDeleted = 1 WHERE id = ?';
-//     let params = [req.params.id];
-//     connection.query(sql, params,
-//         (err, rows, fields) => {
-//             res.send(rows);
-//         }
-//     )
-// });
-
-// app.listen(port, () => console.log(`Listening on port ${port}`));
 
 connection.connect();
 app.listen(port, () => console.log(`Listening on port ${port}`));

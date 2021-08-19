@@ -5,6 +5,7 @@ export interface DateResType2 {
 }
 
 export interface dateType {
+  dateCnt: number;
   dateRecord_id: number;
   title: string;
   description: string;

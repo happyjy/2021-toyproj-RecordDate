@@ -8,6 +8,7 @@ import styles from './DateRecord.module.css';
 import { placeListType } from '../../types';
 
 interface DateProps {
+  dateCnt: number;
   dateRecord_id: number;
   title: string;
   description: string;
@@ -19,6 +20,7 @@ interface DateProps {
 
 const DateRecord: React.FC<DateProps> = React.memo(
   ({
+    dateCnt,
     dateRecord_id,
     title,
     description,
@@ -29,13 +31,17 @@ const DateRecord: React.FC<DateProps> = React.memo(
   }) => {
     return (
       <div className={styles.book}>
+        <div className={styles.dateCnt}>
+          <span>[{dateCnt} 번째 데이트]</span>
+        </div>
         <div className={styles.title}>
           <Link
             key={dateRecord_id}
             to={`/dateRecord/${dateRecord_id}`}
             className={styles.link_detail_title}
           >
-            <BookOutlined /> {dateRecord_id}_{title}
+            {/* <BookOutlined />  */}
+            {title}
           </Link>
         </div>
         <div className={styles.author}>

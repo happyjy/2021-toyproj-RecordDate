@@ -41,7 +41,7 @@ const MapContainer = styled.div`
   height: calc(100vh - 64px);
   position: sticky;
   top: 64px;
-  flex-basis: 60%;
+  flex-basis: 50%;
   /* z-index: 100; */
   @media (max-width: 768px) {
     position: initial;
@@ -60,7 +60,7 @@ const MapSpace = styled.div`
 `;
 const ListContainer = styled.div`
   /* border: 5px black solid; */
-  flex-basis: 40%;
+  flex-basis: 50%;
 `;
 const ConditionContainer = styled.div`
   display: flex;
