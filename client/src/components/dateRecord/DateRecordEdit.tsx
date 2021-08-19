@@ -20,7 +20,7 @@ const ListContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: auto;
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
@@ -28,11 +28,11 @@ const ListContainer = styled.div`
 `;
 const MapContainer = styled.div`
   width: 70%;
-  height: 100%;
+  height: auto;
   padding: 0px 10px 0px 0px;
   @media (max-width: 768px) {
     position: initial;
-    width: 100%;
+    width: auto;
   }
 `;
 const MapSpace = styled.div`
@@ -304,7 +304,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             placeList={placeList}
             setPlaceList={setPlaceList}
             placeMarkerList={placeMarkerList}
-            showDelIcon={false}
+            showDelIcon={true}
           ></Chips>
 
           <label>Image uplaod</label>
@@ -364,7 +364,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
     // 변경된 placeList와 origin placeList 비교
 
-    /* 
+    /*
       # array로 key/value data structure를 만들기 위한 Type 설정
       https://stackoverflow.com/q/40358434/3937115
         * 아래 로직에서는 Map 객체를 사용해서 로직을 작성해 봤다.
@@ -425,7 +425,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
     //     delImageFileIdList.push(c.id);
     //   }
     // });
-    console.log({ imageFile, fileText });
+    // console.log({ imageFile, fileText });
 
     editDateRecord({
       title,

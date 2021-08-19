@@ -15,7 +15,7 @@ const ListContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: auto;
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
@@ -23,7 +23,7 @@ const ListContainer = styled.div`
 `;
 const MapContainer = styled.div`
   width: 70%;
-  height: 100%;
+  height: auto;
   padding: 0px 10px 0px 0px;
   @media (max-width: 768px) {
     position: initial;
@@ -124,13 +124,13 @@ const AddDateRecord: React.FC<AddProps> = ({
   const { imageFile, setImagefile, fileText, setFileText, onChangeFileupload } =
     useFileUpload();
 
-  /* 
+  /*
     # issue: useState with ts
       * https://stackoverflow.com/a/53650561/3937115
       * https://www.codegrepper.com/code-examples/typescript/typescript+usestate+array+type
   */
   const [placeList, setPlaceList] = useState<placeListType[]>([]);
-  /* 
+  /*
     # event trigger시 useEffect 안에 있는 함수 호출해야함
       * 돔 생성 이후에 생성된 돔에 붙이는 과정과 이벤트 동작이 묶여 있는 상황
       * 돔 이벤트 발생시 useEffect안에 있는 함수 호출 해야 하는 상황

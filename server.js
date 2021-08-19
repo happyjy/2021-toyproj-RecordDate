@@ -54,7 +54,7 @@ const connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-// DATE RECORD SELECT
+// # DATE RECORD SELECT
 app.get("/api/dateRecord", (req, res) => {
   const searchOption = JSON.parse(req.query.searchOption);
   console.log(searchOption.rangeDate);
@@ -84,7 +84,7 @@ app.get("/api/dateRecord", (req, res) => {
         description,
         image,
         created_at
-   FROM DATERECORD 
+   FROM DATERECORD
   WHERE ISDELETED = 0
     AND created_at between ? and ?
     // AND created_at >= ?
@@ -92,18 +92,20 @@ app.get("/api/dateRecord", (req, res) => {
   order by created_at ${selectParam[3] == "desc" ? "desc" : "asc"}
 `;
   const selectQuery = `
-  select @n:=@n+1 dateCnt, t.dateRecord_id
+  SELECT @n:=@n+1 dateCnt, t.dateRecord_id
                            , t.title
                            , t.description
                            , t.image
                            , t.created_at
-    from (select @n:=( select count(*)
-                         from dateRecord
-                        where 1=1
-                         and created_at < ?)) initvars, dateRecord t
-   where 1=1
-     AND created_at between ? and ?
-order by dateCnt ${selectParam[3] == "desc" ? "desc" : "asc"};
+    FROM (SELECT @n:=( SELECT count(*)
+                         FROM dateRecord
+                        WHERE 1=1
+                         AND ISDELETED = 0
+                         AND created_at < ?)) initvars, dateRecord t
+   WHERE 1=1
+     AND ISDELETED = 0
+     AND CREATED_AT BETWEEN ? AND ?
+ORDER BY DATECNT ${selectParam[3] == "desc" ? "desc" : "asc"};
 
      SELECT place_id,
             dateRecord_id,
@@ -111,7 +113,7 @@ order by dateCnt ${selectParam[3] == "desc" ? "desc" : "asc"};
             latLong
        FROM PLACE
       WHERE ISDELETED = 0;
-       
+
      SELECT dateImage_id,
             dateRecord_id,
             dateImage_name
@@ -131,7 +133,7 @@ const multer = require("multer");
 const upload = multer({ dest: "./upload" });
 app.use("/image", express.static("upload"));
 
-// DATE RECORD INSERT
+// # DATE RECORD INSERT
 app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
   console.log("# req.files");
   console.log(req?.files);
@@ -180,87 +182,94 @@ app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
   );
 });
 
-// DATE RECORD UPDATE
-app.patch("/api/dateRecord/:id", upload.array("imageFile"), (req, res) => {
-  let updateDateRecord =
-    "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
-  let insertPlace =
-    "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
-  let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
-  let insertDateImage =
-    "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
-  let deleteDateImage =
-    "update dateImage set isDeleted = ? where dateImage_id = ?";
+// # DATE RECORD UPDATE
+app.patch(
+  "/api/dateRecord/:id",
+  upload.array("newImageFileList"),
+  (req, res) => {
+    let updateDateRecord =
+      "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
+    let insertPlace =
+      "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
+    let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
+    let insertDateImage =
+      "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
+    let deleteDateImage =
+      "update dateImage set isDeleted = ? where dateImage_id = ?";
 
-  const editDateRecordId = req.params.id;
-  let title = req.body.title;
-  let description = req.body.description;
-  let delPlaceList = JSON.parse(req.body.delPlaceList);
-  let addPlaceList = JSON.parse(req.body.addPlaceList);
-  let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
-  let images = req.files;
-  let updateDateRecordParams = [title, description, req.params.id];
+    const editDateRecordId = req.params.id;
+    let title = req.body.title;
+    let description = req.body.description;
+    let delPlaceList = JSON.parse(req.body.delPlaceList);
+    // console.log("### nextlevel: " + req.body.addPlaceList);
+    let addPlaceList = JSON.parse(req.body.addPlaceList);
+    let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
+    let images = req.files;
+    let updateDateRecordParams = [title, description, req.params.id];
 
-  console.log("### update fetch: ", images);
-  console.log("param: ", { title, description, delPlaceList, addPlaceList });
+    console.log("### newImageFileList: ", images);
+    console.log("param: ", { title, description, delPlaceList, addPlaceList });
 
-  connection.query(
-    updateDateRecord,
-    updateDateRecordParams,
-    (err, rows, field) => {
-      if (err) throw err;
+    connection.query(
+      updateDateRecord,
+      updateDateRecordParams,
+      (err, rows, field) => {
+        if (err) throw err;
+      }
+    );
+
+    for (var i = 0; i < addPlaceList.length; i++) {
+      let insertParam = [
+        editDateRecordId,
+        addPlaceList[i].placeName,
+        addPlaceList[i].address,
+        addPlaceList[i].latLong,
+      ];
+      connection.query(insertPlace, insertParam, (err, rows, field) => {
+        if (err) throw err;
+      });
     }
-  );
 
-  for (var i = 0; i < addPlaceList.length; i++) {
-    let insertParam = [
-      editDateRecordId,
-      addPlaceList[i].placeName,
-      addPlaceList[i].address,
-      addPlaceList[i].latLong,
-    ];
-    connection.query(insertPlace, insertParam, (err, rows, field) => {
-      if (err) throw err;
-    });
-  }
+    for (var i = 0; i < delPlaceList.length; i++) {
+      let updatePlaceParams = [delPlaceList[i].id];
+      connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
+        if (err) throw err;
+      });
+    }
+    for (var j = 0; j < images.length; j++) {
+      let insertParam = [editDateRecordId, "/image/" + images[j].filename];
+      connection.query(insertDateImage, insertParam, (err, rows, field) => {
+        if (err) throw err;
+      });
+    }
+    for (var k = 0; k < delImageFileIdList.length; k++) {
+      let insertParam = [1, delImageFileIdList[k]];
+      connection.query(deleteDateImage, insertParam, (err, rows, field) => {
+        if (err) throw err;
+      });
+    }
 
-  for (var i = 0; i < delPlaceList.length; i++) {
-    let updatePlaceParams = [delPlaceList[i].id];
-    connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
-      if (err) throw err;
-    });
-  }
-  for (var j = 0; j < images.length; j++) {
-    let insertParam = [editDateRecordId, "/image/" + images[j].filename];
-    connection.query(insertDateImage, insertParam, (err, rows, field) => {
-      if (err) throw err;
-    });
-  }
-  for (var k = 0; k < delImageFileIdList.length; k++) {
-    let insertParam = [1, delImageFileIdList[k]];
-    connection.query(deleteDateImage, insertParam, (err, rows, field) => {
-      if (err) throw err;
-    });
-  }
-  connection.query(
-    `SELECT *
-       FROM DATERECORD 
+    connection.query(
+      `SELECT *
+       FROM DATERECORD
       WHERE ISDELETED = 0
-        AND DATERECORD_ID = ?; 
-    
+        AND DATERECORD_ID = ?;
+
     SELECT *
-      FROM PLACE 
+      FROM PLACE
      WHERE ISDELETED = 0
        AND DATERECORD_ID = ?`,
-    [editDateRecordId, editDateRecordId],
-    (err, results) => {
-      if (err) throw err;
-      res.send(results);
-    }
-  );
-});
+      [editDateRecordId, editDateRecordId],
+      (err, results) => {
+        if (err) throw err;
+        console.log("### select dateRecord, place AFTER update: ", results);
+        res.send(results);
+      }
+    );
+  }
+);
 
-// DATE RECORD DELETE
+// # DATE RECORD DELETE
 app.delete("/api/dateRecord/:id", (req, res) => {
   let deleteDateRecord =
     "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";

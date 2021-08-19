@@ -54,7 +54,7 @@ const ChipsComponent: React.FC<chipsComponent> = ({
   placeList,
   setPlaceList,
   placeMarkerList,
-  showDelIcon = true,
+  showDelIcon = false,
 }) => {
   const onClickDelete = (e: any) => {
     // reset PlaceList

@@ -11,6 +11,15 @@
   padding-left: 10px;
 }
 
+.spanDateCnt{
+  cursor: pointer;
+  transition: color 0.2s ease-in-out;
+}
+
+.spanDateCnt:hover{
+  color: #d485d9
+}
+
 .title {
   /* display: table-cell; */
   vertical-align: middle;

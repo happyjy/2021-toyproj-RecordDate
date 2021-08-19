@@ -16,6 +16,7 @@ interface DateProps {
   placeList: placeListType[];
   deleteRecordDate: (recordDateId: number) => void;
   goEdit: (recordDateId: number) => void;
+  resetMapByDateRecord: (e: React.MouseEvent, dateRecord_id: number) => void;
 }
 
 const DateRecord: React.FC<DateProps> = React.memo(
@@ -28,11 +29,17 @@ const DateRecord: React.FC<DateProps> = React.memo(
     created_at,
     deleteRecordDate,
     goEdit,
+    resetMapByDateRecord,
   }) => {
     return (
       <div className={styles.book}>
         <div className={styles.dateCnt}>
-          <span>[{dateCnt} 번째 데이트]</span>
+          <span
+            className={styles.spanDateCnt}
+            onClick={(e) => resetMapByDateRecord(e, dateRecord_id)}
+          >
+            [{dateCnt} 번째 데이트]
+          </span>
         </div>
         <div className={styles.title}>
           <Link

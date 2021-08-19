@@ -8,20 +8,11 @@ import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/chipsComponent';
 import Carousel from '../Carousel/Carousel';
 
-interface DetailProps {
-  dateRecord: dateType | null | undefined;
-  error: Error | null;
-  back: () => void;
-  edit: () => void;
-  getDateList: () => void;
-  logout: () => void;
-}
-
 const ListContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
-  height: 100%;
+  height: auto;
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
@@ -29,11 +20,11 @@ const ListContainer = styled.div`
 `;
 const MapContainer = styled.div`
   width: 70%;
-  height: 100%;
+  height: auto;
   padding: 0px 10px 0px 0px;
   @media (max-width: 768px) {
     position: initial;
-    width: 100%;
+    width: auto;
   }
 `;
 const MapSpace = styled.div`
@@ -101,13 +92,22 @@ const ThumbnailImg = styled.img`
   object-fit: cover;
 `;
 
+interface DetailProps {
+  dateRecord: dateType | null | undefined;
+  error: Error | null;
+  back: () => void;
+  edit: () => void;
+  getDateList: () => void;
+  logout: () => void;
+}
+
 const DateRecordDetail: React.FC<DetailProps> = ({
   dateRecord,
   error,
   edit,
   getDateList,
   back,
-  logout,
+  logout: onClickLogout,
 }) => {
   useEffect(() => {
     getDateList();
@@ -115,9 +115,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
   useEffect(() => {
     if (error) {
-      logout();
+      onClickLogout();
     }
-  }, [error, logout]);
+  }, [error, onClickLogout]);
 
   // 다음 지도
   useEffect(() => {
@@ -183,7 +183,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
           <Button
             key="2"
             type="primary"
-            onClick={click}
+            onClick={onClickEdit}
             className={styles.button}
           >
             Edit
@@ -191,7 +191,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
           <Button
             key="1"
             type="primary"
-            onClick={logout}
+            onClick={onClickLogout}
             className={styles.button}
           >
             Logout
@@ -248,7 +248,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     </Layout>
   );
 
-  function click() {
+  function onClickEdit() {
     edit();
   }
 };

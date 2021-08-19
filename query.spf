@@ -86,27 +86,31 @@
 			<true/>
 			<key>queries</key>
 			<string>select * from dateRecord;
+78
+select * from place
+where 1=1 
+-- and dateRecord_id = '80'
+;
+
+commit; 
 
 select cast('2021-08-14' as date) 
 ,cast('2021-09-31' as date)
 ,now()
 ,last_day(now())
 ,last_day(cast('2021-09-01' as date))
+,UNIX_TIMESTAMP('2021-08-11 23:59:59')
+,TIMESTAMP('2021-08-11 23:59:59')
 from dual;
 
-select * , cast('2021-08-14' as date)
+select *
 from dateRecord
 where 1=1
-AND created_at between '2021-08-02' and cast('2021-08-14 23:59:59');
--- AND created_at between cast('2021-08-02' as date) and '2021-08-14 23:59:59';
-
+AND created_at between '2021-08-02' and TIMESTAMP('2021-08-11 23:59:59');
 -- and created_at &gt;= cast('2021-08-02' as date)
--- and created_at &lt;= '2021-08-14 23:59:59';
--- and created_at &lt;= '2021-08-14 23:59:59' ;
--- and created_at &lt;= cast('2021-08-14' as date);
+-- and created_at &lt;= TIMESTAMP('2021-08-11 23:59:59');
 
 -- numbering 전략
-
 select @n:=@n+1 RowNumber, t.dateRecord_id
                            , t.title
                            , t.description
@@ -117,7 +121,29 @@ select @n:=@n+1 RowNumber, t.dateRecord_id
                         where 1=1
                          and created_at &lt; '2021-08-01')) initvars, dateRecord t
    where 1=1
-     AND created_at between '2021-08-01' and '2021-08-31';</string>
+     AND created_at between '2021-08-01' and '2021-08-31'
+     order by RowNumber desc;
+
+
+select * 
+from (
+select @n:=@n+1 RowNumber, t.dateRecord_id
+                           , t.title
+                           , t.description
+                           , t.image
+                           , t.created_at
+    from (select @n:=( select count(*)
+                         from dateRecord
+                        where 1=1
+                         and created_at &lt; '2021-08-01')) initvars, dateRecord t
+   where 1=1
+     AND created_at between '2021-08-01' and '2021-08-31'
+) as tt
+where 1=1
+order by tt.RowNumber desc;
+
+
+</string>
 			<key>table</key>
 			<string>checklists</string>
 			<key>view</key>
