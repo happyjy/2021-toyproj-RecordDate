@@ -14,8 +14,8 @@
 
 .pageHeader1 {
   z-index: 100;
-  background: '#fff';
-  position: 'fixed';
+  background: #fff;
+  position: fixed;
   max-width: 1400px;
   width: 100%;
 }

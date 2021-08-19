@@ -5,7 +5,8 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  height: 100vh;
+  /* height: 100vh; */
+  height: auto;
 `;
 const SectionContainer = styled.section`
   display: flex;
@@ -16,7 +17,8 @@ const SectionContainer = styled.section`
   margin-right: auto;
   max-width: 1400px;
   width: 100%;
-  height: 100vh;
+  /* height: 100vh; */
+  height: auto;
   margin-bottom: 50px;
 `;
 

@@ -5,7 +5,6 @@ import {
   PageHeader,
   Button,
   DatePicker,
-  Space,
   Input,
   Dropdown,
   Menu,
@@ -19,10 +18,11 @@ import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { debounce, getDateFormatSearchType } from '../../redux/utils';
 
 const Container = styled.div`
+  /* border: 5px red solid; */
   position: relative;
+  top: 64px;
   display: flex;
   flex-direction: row;
-  /* margin-top: 62px; */
   height: 100%;
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
@@ -37,9 +37,12 @@ const Container = styled.div`
   }
 `;
 const MapContainer = styled.div`
+  /* border: 5px blue solid; */
+  height: calc(100vh - 64px);
   position: sticky;
-  width: 100%;
-  z-index: 100;
+  top: 64px;
+  flex-basis: 60%;
+  /* z-index: 100; */
   @media (max-width: 768px) {
     position: initial;
     /* width: 100%; */
@@ -48,18 +51,25 @@ const MapContainer = styled.div`
 const MapSpace = styled.div`
   width: 100%;
   height: 100%;
-  position: 'relative';
-  overflow: 'hidden';
+  position: relative;
+  overflow: hidden;
   @media (max-width: 768px) {
     height: 50vh;
     position: initial;
   }
 `;
-const ListContainer = styled.div``;
+const ListContainer = styled.div`
+  /* border: 5px black solid; */
+  flex-basis: 40%;
+`;
 const ConditionContainer = styled.div`
   display: flex;
   flex-direction: column;
   padding: 0 16px;
+  position: sticky;
+  top: 64px;
+  z-index: 1000;
+  background: #fff;
 
   & > * {
     &:not(:last-child) {
@@ -250,7 +260,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     };
   });
 
-  /* 조회 이벤트 */
+  // 조회 이벤트
   const onChangeDatePicker = function (_, rangeDate: string[]) {
     setSearchOption((option) => {
       return { ...option, rangeDate };
@@ -265,7 +275,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     });
   };
   const { RangePicker } = DatePicker;
-  const menu = (
+  const dropdownMenu = (
     <Menu>
       <Menu.Item>
         <div onClick={() => onClickSortButton('desc')}>내림차순 정렬</div>
@@ -366,7 +376,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
                 ]}
               ></RangePicker>
               <FilterOutlinedContainer className="FilterOutlinedContainer">
-                <Dropdown overlay={menu} placement="bottomCenter">
+                <Dropdown overlay={dropdownMenu} placement="bottomCenter">
                   <Button>
                     <FilterOutlined />
                   </Button>
