@@ -16,23 +16,38 @@ import map from '../map';
 import useFileUpload from '../../hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 
-const ListContainer = styled.div`
+const Container = styled.div`
+  /* border: 5px red solid; */
   position: relative;
   display: flex;
   flex-direction: row;
-  height: auto;
+  height: calc(100vh - 64px);
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    @media (max-width: 768px) {
+      & > * {
+        &:not(:last-child) {
+          margin-bottom: 20px;
+        }
+      }
+    }
   }
 `;
 const MapContainer = styled.div`
-  width: 70%;
+  flex-basis: 70%;
   height: auto;
   padding: 0px 10px 0px 0px;
   @media (max-width: 768px) {
     position: initial;
     width: auto;
+  }
+`;
+const ListContainer = styled.div`
+  flex-basis: 30%;
+  padding: 0px 24px 16px;
+  @media (max-width: 768px) {
+    flex-direction: column;
   }
 `;
 const MapSpace = styled.div`
@@ -46,7 +61,6 @@ const MapSpace = styled.div`
 const FormContainer = styled.div`
   border-radius: 5px;
   padding: 0px 0px 0px 10px;
-  width: 30%;
   @media (max-width: 768px) {
     width: 100%;
   }
@@ -255,7 +269,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
         ]}
       />
 
-      <ListContainer>
+      <Container className="Container">
         <MapContainer className="MapContainer">
           <div
             className={mapStyles.map_wrap}
@@ -287,46 +301,46 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             </div>
           </div>
         </MapContainer>
+        <ListContainer>
+          <FormContainer>
+            <label>Title</label>
+            <InputEl
+              defaultValue={dateRecord.title}
+              type="text"
+              id="title"
+              name="title"
+              placeholder="title..."
+              ref={titleRef}
+            />
 
-        <FormContainer>
-          <label>Title</label>
-          <InputEl
-            defaultValue={dateRecord.title}
-            type="text"
-            id="title"
-            name="title"
-            placeholder="title..."
-            ref={titleRef}
-          />
+            <label>place</label>
+            <Chips
+              placeList={placeList}
+              setPlaceList={setPlaceList}
+              placeMarkerList={placeMarkerList}
+              showDelIcon={true}
+            ></Chips>
 
-          <label>place</label>
-          <Chips
-            placeList={placeList}
-            setPlaceList={setPlaceList}
-            placeMarkerList={placeMarkerList}
-            showDelIcon={true}
-          ></Chips>
+            <label>Image uplaod</label>
+            <FileUpload
+              imageFile={imageFile}
+              setImagefile={setImagefile}
+              fileText={fileText}
+              setFileText={setFileText}
+              // loadImageFiles={loadImageFiles}
+              // setLoadImageFiles={setLoadImageFiles}
+              onChangeFileupload={onChangeFileupload}
+            ></FileUpload>
 
-          <label>Image uplaod</label>
-          <FileUpload
-            imageFile={imageFile}
-            setImagefile={setImagefile}
-            fileText={fileText}
-            setFileText={setFileText}
-            // loadImageFiles={loadImageFiles}
-            // setLoadImageFiles={setLoadImageFiles}
-            onChangeFileupload={onChangeFileupload}
-          ></FileUpload>
-
-          <label>description</label>
-          <TextAreaEl
-            defaultValue={dateRecord.description}
-            rows={4}
-            placeholder="Comment"
-            ref={descriptionRef}
-            className={styles.input}
-          />
-          {/* {dateRecord.dateImageList.length > 0 && (
+            <label>description</label>
+            <TextAreaEl
+              defaultValue={dateRecord.description}
+              rows={4}
+              placeholder="Comment"
+              ref={descriptionRef}
+              className={styles.input}
+            />
+            {/* {dateRecord.dateImageList.length > 0 && (
             <ContainerImageLayout>
               {dateRecord.dateImageList.map((image, i) => (
                 <ContainerThumbnail key={image.id}>
@@ -338,13 +352,14 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             </ContainerImageLayout>
           )} */}
 
-          <InputSubmitContainer>
-            <InputSubmit type="submit" value="Add" onClick={click}>
-              Update
-            </InputSubmit>
-          </InputSubmitContainer>
-        </FormContainer>
-      </ListContainer>
+            <InputSubmitContainer>
+              <InputSubmit type="submit" value="Add" onClick={click}>
+                Update
+              </InputSubmit>
+            </InputSubmitContainer>
+          </FormContainer>
+        </ListContainer>
+      </Container>
     </Layout>
   );
 

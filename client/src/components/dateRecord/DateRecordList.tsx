@@ -46,7 +46,7 @@ const MapContainer = styled.div`
   height: calc(100vh - 64px);
   position: sticky;
   top: 64px;
-  flex-basis: 50%;
+  flex-basis: 60%;
   /* z-index: 100; */
   @media (max-width: 768px) {
     position: initial;
@@ -65,7 +65,7 @@ const MapSpace = styled.div`
 `;
 const ListContainer = styled.div`
   /* border: 5px black solid; */
-  flex-basis: 50%;
+  flex-basis: 40%;
 `;
 const ConditionContainer = styled.div`
   display: flex;
@@ -356,13 +356,17 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const bounds = new window.kakao.maps.LatLngBounds();
     const imageSrc =
       'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-    const imageSize = new window.kakao.maps.Size(24, 35);
+    const imageSrc1 =
+      'https://image.flaticon.com/icons/png/512/2107/2107845.png'; // red heart
+    const imageSrc2 =
+      'https://image.flaticon.com/icons/png/512/1405/1405351.png'; // heart*3
+    const imageSize = new window.kakao.maps.Size(24, 24);
 
     if (filterDateRecordList && placeList && placeList?.length > 0) {
       for (let i = 0; i < placeList.length; i++) {
         // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
         const markerImage = new window.kakao.maps.MarkerImage(
-          imageSrc,
+          imageSrc1,
           imageSize,
         );
 
@@ -408,7 +412,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           </Button>,
         ]}
       />
-      <Container>
+      <Container className="Container">
         <MapContainer className="MapContainer">
           <MapSpace id="map"></MapSpace>
           {/* <button
@@ -421,9 +425,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
             클릭
           </button> */}
         </MapContainer>
-
-        <ListContainer>
-          <ConditionContainer>
+        <ListContainer className="ListContainer">
+          <ConditionContainer className="ConditionContainer">
             <FilterContainer>
               <RangePicker
                 picker="month"
@@ -455,7 +458,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
               </InputContainer>
             </SearchContainer>
           </ConditionContainer>
-          <TableContainer>
+          <TableContainer className="TableContainer">
             <Table
               style={{ marginTop: 0 }}
               dataSource={dateRecordListState || []}

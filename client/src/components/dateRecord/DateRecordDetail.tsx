@@ -8,18 +8,26 @@ import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/chipsComponent';
 import Carousel from '../Carousel/Carousel';
 
-const ListContainer = styled.div`
+const Container = styled.div`
+  /* border: 5px red solid; */
   position: relative;
   display: flex;
   flex-direction: row;
-  height: auto;
+  height: calc(100vh - 64px);
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    @media (max-width: 768px) {
+      & > * {
+        &:not(:last-child) {
+          margin-bottom: 20px;
+        }
+      }
+    }
   }
 `;
 const MapContainer = styled.div`
-  width: 70%;
+  flex-basis: 70%;
   height: auto;
   padding: 0px 10px 0px 0px;
   @media (max-width: 768px) {
@@ -27,6 +35,14 @@ const MapContainer = styled.div`
     width: auto;
   }
 `;
+
+const ListContainer = styled.div`
+  flex-basis: 30%;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 const MapSpace = styled.div`
   width: 100%;
   height: 100%;
@@ -38,7 +54,6 @@ const MapSpace = styled.div`
 const FormContainer = styled.div`
   border-radius: 5px;
   padding: 0px 0px 0px 10px;
-  width: 30%;
   @media (max-width: 768px) {
     width: 100%;
   }
@@ -199,52 +214,46 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         ]}
       />
 
-      <ListContainer>
+      <Container className="Container">
         <MapContainer>
           <MapSpace id="map"></MapSpace>
         </MapContainer>
-        {/* <div id="map" style={{ height: '600px' }}></div> */}
+        <ListContainer>
+          <FormContainer>
+            <label>Title</label>
+            <InputEl
+              value={dateRecord.title}
+              type="text"
+              id="title"
+              name="title"
+              placeholder="title..."
+              readOnly
+            />
 
-        {/* {dateRecord.dateImageList.length > 0 && (
-        <div style={{ width: '350px', height: '350px', margin: '0 auto' }}>
-          <Carousel images={dateRecord.dateImageList} />
-        </div>
-      )} */}
-
-        <FormContainer>
-          <label>Title</label>
-          <InputEl
-            value={dateRecord.title}
-            type="text"
-            id="title"
-            name="title"
-            placeholder="title..."
-            readOnly
-          />
-
-          <label>place</label>
-          <Chips placeList={dateRecord.placeList}></Chips>
-          <label>description</label>
-          <TextAreaEl
-            value={dateRecord.description}
-            rows={4}
-            placeholder="Comment"
-            className={styles.input}
-            readOnly
-          />
-          {dateRecord.dateImageList.length > 0 && (
-            <ContainerImageLayout>
-              {dateRecord.dateImageList.map((image, i) => (
-                <ContainerThumbnail key={image.id}>
-                  <ThumbnailImg
-                    src={'http://localhost:5000' + image.dateImageName}
-                  ></ThumbnailImg>
-                </ContainerThumbnail>
-              ))}
-            </ContainerImageLayout>
-          )}
-        </FormContainer>
-      </ListContainer>
+            <label>place</label>
+            <Chips placeList={dateRecord.placeList}></Chips>
+            <label>description</label>
+            <TextAreaEl
+              value={dateRecord.description}
+              rows={4}
+              placeholder="Comment"
+              className={styles.input}
+              readOnly
+            />
+            {dateRecord.dateImageList.length > 0 && (
+              <ContainerImageLayout>
+                {dateRecord.dateImageList.map((image, i) => (
+                  <ContainerThumbnail key={image.id}>
+                    <ThumbnailImg
+                      src={'http://localhost:5000' + image.dateImageName}
+                    ></ThumbnailImg>
+                  </ContainerThumbnail>
+                ))}
+              </ContainerImageLayout>
+            )}
+          </FormContainer>
+        </ListContainer>
+      </Container>
     </Layout>
   );
 

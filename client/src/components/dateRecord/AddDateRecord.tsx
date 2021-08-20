@@ -11,18 +11,26 @@ import map from '../map';
 import useFileUpload from '../../hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 
-const ListContainer = styled.div`
+const Container = styled.div`
+  /* border: 5px red solid; */
   position: relative;
   display: flex;
   flex-direction: row;
-  height: auto;
+  height: calc(100vh - 64px);
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    @media (max-width: 768px) {
+      & > * {
+        &:not(:last-child) {
+          margin-bottom: 20px;
+        }
+      }
+    }
   }
 `;
 const MapContainer = styled.div`
-  width: 70%;
+  flex-basis: 70%;
   height: auto;
   padding: 0px 10px 0px 0px;
   @media (max-width: 768px) {
@@ -30,6 +38,13 @@ const MapContainer = styled.div`
     width: 100%;
   }
 `;
+const ListContainer = styled.div`
+  flex-basis: 30%;
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+`;
+
 const MapSpace = styled.div`
   width: 100%;
   height: 100%;
@@ -41,7 +56,6 @@ const MapSpace = styled.div`
 const FormContainer = styled.div`
   border-radius: 5px;
   padding: 0px 0px 0px 10px;
-  width: 30%;
   @media (max-width: 768px) {
     width: 100%;
   }
@@ -184,7 +198,7 @@ const AddDateRecord: React.FC<AddProps> = ({
           </Button>,
         ]}
       />
-      <ListContainer>
+      <Container className="Container">
         <MapContainer className="MapContainer">
           <div
             className={mapStyles.map_wrap}
@@ -216,46 +230,47 @@ const AddDateRecord: React.FC<AddProps> = ({
             </div>
           </div>
         </MapContainer>
+        <ListContainer className="ListContainer">
+          <FormContainer className="FormContainer">
+            <label>Title</label>
+            <InputEl
+              type="text"
+              id="title"
+              name="title"
+              placeholder="title..."
+              ref={titleRef}
+            />
 
-        <FormContainer>
-          <label>Title</label>
-          <InputEl
-            type="text"
-            id="title"
-            name="title"
-            placeholder="title..."
-            ref={titleRef}
-          />
+            <label>place</label>
+            <Chips placeList={placeList} setPlaceList={setPlaceList}></Chips>
 
-          <label>place</label>
-          <Chips placeList={placeList} setPlaceList={setPlaceList}></Chips>
+            <label>Image uplaod</label>
+            <FileUpload
+              imageFile={imageFile}
+              setImagefile={setImagefile}
+              fileText={fileText}
+              setFileText={setFileText}
+              onChangeFileupload={onChangeFileupload}
+            ></FileUpload>
 
-          <label>Image uplaod</label>
-          <FileUpload
-            imageFile={imageFile}
-            setImagefile={setImagefile}
-            fileText={fileText}
-            setFileText={setFileText}
-            onChangeFileupload={onChangeFileupload}
-          ></FileUpload>
+            <label>description</label>
+            <TextAreaEl
+              onChange={(e) => setText(e.target.value)}
+              value={text}
+              rows={4}
+              placeholder="Comment"
+              ref={descriptionRef}
+              className={styles.input}
+            />
 
-          <label>description</label>
-          <TextAreaEl
-            onChange={(e) => setText(e.target.value)}
-            value={text}
-            rows={4}
-            placeholder="Comment"
-            ref={descriptionRef}
-            className={styles.input}
-          />
-
-          <InputSubmitContainer>
-            <InputSubmit type="submit" value="Add" onClick={onAddDateRecord}>
-              Add
-            </InputSubmit>
-          </InputSubmitContainer>
-        </FormContainer>
-      </ListContainer>
+            <InputSubmitContainer>
+              <InputSubmit type="submit" value="Add" onClick={onAddDateRecord}>
+                Add
+              </InputSubmit>
+            </InputSubmitContainer>
+          </FormContainer>
+        </ListContainer>
+      </Container>
     </Layout>
   );
 
