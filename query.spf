@@ -89,7 +89,7 @@
 FROM DATERECORD
 WHERE ISDELETED = 0;
 AND DATERECORD_ID ='7'
-;
+;dd
 
 select * from place
 where 1=1 
@@ -115,37 +115,24 @@ AND created_at between '2021-08-02' and TIMESTAMP('2021-08-11 23:59:59');
 -- and created_at &lt;= TIMESTAMP('2021-08-11 23:59:59');
 
 -- numbering 전략
-select @n:=@n+1 RowNumber, t.dateRecord_id
-                           , t.title
-                           , t.description
-                           , t.image
-                           , t.created_at
-    from (select @n:=( select count(*)
-                         from dateRecord
-                        where 1=1
-                         and created_at &lt; '2021-08-01')) initvars, dateRecord t
-   where 1=1
-     AND created_at between '2021-08-01' and '2021-08-31'
-     order by RowNumber desc;
-
-
-select * 
-from (
-select @n:=@n+1 RowNumber, t.dateRecord_id
-                           , t.title
-                           , t.description
-                           , t.image
-                           , t.created_at
-    from (select @n:=( select count(*)
-                         from dateRecord
-                        where 1=1
-                         and created_at &lt; '2021-08-01')) initvars, dateRecord t
-   where 1=1
-     AND created_at between '2021-08-01' and '2021-08-31'
-) as tt
-where 1=1
-order by tt.RowNumber desc;
-
+SELECT @n:=@n+1 dateCnt, t.dateRecord_id
+                          , t.dateTime
+                          , t.title
+                          , t.description
+                          , t.image
+                          , t.created_at
+    FROM (SELECT @n:=( SELECT count(*)
+                        FROM dateRecord
+                        WHERE 1=1
+                        AND ISDELETED = 0
+                        AND dateTime &lt; '2021-02-01')) initvars, (SELECT *
+                                                        FROM dateRecord
+                                                        WHERE 1=1
+                                                          AND ISDELETED = 0
+                                                          AND dateTime BETWEEN '2021-02-01' AND '2021-08-31'
+                                                    ORDER BY dateTime ASC) t
+  WHERE 1=1
+  ORDER BY DATECNT desc;
 
 </string>
 			<key>table</key>

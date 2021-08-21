@@ -32,25 +32,28 @@ const DateRecord: React.FC<DateProps> = React.memo(
     resetMapByDateRecord,
   }) => {
     return (
-      <div className={styles.book}>
-        <div className={styles.dateCnt}>
-          <span
-            className={styles.spanDateCnt}
-            onClick={(e) => resetMapByDateRecord(e, dateRecord_id)}
-          >
-            [{dateCnt}번째]
-          </span>
+      <div className={styles.tdItemContainer}>
+        <div className={styles.firstCell}>
+          <div className={styles.dateCnt}>
+            <span
+              className={styles.spanDateCnt}
+              onClick={(e) => resetMapByDateRecord(e, dateRecord_id)}
+            >
+              [{dateCnt}번째]
+            </span>
+          </div>
+          <div className={styles.title}>
+            <Link
+              key={dateRecord_id}
+              to={`/dateRecord/${dateRecord_id}`}
+              className={styles.link_detail_title}
+            >
+              {/* <BookOutlined />  */}
+              {title}
+            </Link>
+          </div>
         </div>
-        <div className={styles.title}>
-          <Link
-            key={dateRecord_id}
-            to={`/dateRecord/${dateRecord_id}`}
-            className={styles.link_detail_title}
-          >
-            {/* <BookOutlined />  */}
-            {title}
-          </Link>
-        </div>
+
         <div className={styles.author}>
           <Link
             to={`/dateRecord/${dateRecord_id}`}
@@ -62,30 +65,33 @@ const DateRecord: React.FC<DateProps> = React.memo(
             })}
           </Link>
         </div>
-        <div className={styles.dateTime}>
-          {moment(dateTime).format('YYYY-MM-DD')}
-          {/* {moment(created_at).format('YYYY-MM-DD hh:mm a')} */}
-        </div>
-        <div className={styles.tooltips}>
-          <Tooltip title="Edit">
-            <Button
-              size="small"
-              shape="circle"
-              onClick={clickEdit}
-              icon={<EditOutlined />}
-              className={styles.button_edit}
-            />
-          </Tooltip>
-          <Tooltip title="Delete">
-            <Button
-              size="small"
-              type="primary"
-              shape="circle"
-              danger
-              onClick={click}
-              icon={<DeleteOutlined />}
-            />
-          </Tooltip>
+        <div className={styles.lastCell}>
+          {' '}
+          <div className={styles.dateTime}>
+            <span>{moment(dateTime).format('YYYY-MM-DD')}</span>
+            {/* {moment(created_at).format('YYYY-MM-DD hh:mm a')} */}
+          </div>
+          <div className={styles.tooltips}>
+            <Tooltip title="Edit">
+              <Button
+                size="small"
+                shape="circle"
+                onClick={clickEdit}
+                icon={<EditOutlined />}
+                className={styles.button_edit}
+              />
+            </Tooltip>
+            <Tooltip title="Delete">
+              <Button
+                size="small"
+                type="primary"
+                shape="circle"
+                danger
+                onClick={click}
+                icon={<DeleteOutlined />}
+              />
+            </Tooltip>
+          </div>
         </div>
       </div>
     );

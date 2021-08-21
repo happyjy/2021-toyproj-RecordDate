@@ -78,21 +78,9 @@ app.get("/api/dateRecord", (req, res) => {
 
   // NUMBERING
   // const numbering
-  const temp = `
- SELECT dateRecord_id,
-        title,
-        description,
-        image,
-        created_at
-   FROM DATERECORD
-  WHERE ISDELETED = 0
-    AND created_at between ? and ?
-    // AND created_at >= ?
-    // AND created_at <= TIMESTAMP(?)
-  order by created_at ${selectParam[3] == "desc" ? "desc" : "asc"}
-`;
   const selectQuery = `
   SELECT @n:=@n+1 dateCnt, t.dateRecord_id
+                          , t.dateTime
                           , t.title
                           , t.description
                           , t.image
@@ -101,10 +89,13 @@ app.get("/api/dateRecord", (req, res) => {
                         FROM dateRecord
                         WHERE 1=1
                         AND ISDELETED = 0
-                        AND created_at < ?)) initvars, dateRecord t
+                        AND dateTime < ?)) initvars, (SELECT *
+                                                        FROM dateRecord
+                                                        WHERE 1=1
+                                                          AND ISDELETED = 0
+                                                          AND dateTime BETWEEN ? AND ?
+                                                    ORDER BY dateTime ASC) t
   WHERE 1=1
-    AND ISDELETED = 0
-    AND CREATED_AT BETWEEN ? AND ?
   ORDER BY DATECNT ${selectParam[3] == "desc" ? "desc" : "asc"};
 
     SELECT place_id,

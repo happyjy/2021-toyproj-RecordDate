@@ -1,6 +1,8 @@
-.book {
-  display: table;
-  overflow: hidden;
+.tdItemContainer {
+  display: flex;
+  justify-content: space-between;
+  /* display: table;
+  overflow: hidden; */
 }
 
 .dateCnt{
@@ -39,6 +41,7 @@
   font-size: 14px;
   font-weight: bold;
   padding-left: 10px;
+  width: 100%;
 }
 
 .link_detail_author {
@@ -47,7 +50,7 @@
 
 .dateTime {
   color: #999999;
-  display: table-cell;
+  /* display: table-cell; */
   vertical-align: middle;
   font-size: 14px;
   padding-left: 10px;
@@ -63,11 +66,13 @@
 
 .tooltips {
   color: #999999;
-  display: table-cell;
+  /* display: table-cell; */
   vertical-align: middle;
   font-size: 14px;
   padding-left: 10px;
   min-width: 64px;
+  position: absolute;
+  right: 7px;
 }
 
 .link_url {
@@ -80,4 +85,8 @@
 
 .button_edit {
   margin-right: 5px;
+}
+
+.lastCell{
+  position: relative;
 }
