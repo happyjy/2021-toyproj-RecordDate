@@ -16,6 +16,7 @@ import {
   searchOptionType,
   keywordSearchType,
   placeListType,
+  TypeWillMarkedPlaceList,
 } from '../../types';
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
@@ -146,8 +147,11 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   goEdit,
 }) => {
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
-  const [initBoundsState, setInitBoundsState] = useState(); // 위치 객체
+  const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
   const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
+  // const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
+  //   [],
+  // ); // 선택한 위치의 picker 객체
 
   const [dateRecordListState, setDateRecordListState] = useState<
     dateRecordListExtendType[] | null
@@ -184,79 +188,102 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   // 다음 지도
   useEffect(() => {
-    const mapContainer = document.getElementById('map'), // 지도를 표시할 div
-      mapOption = {
-        center: new window.kakao.maps.LatLng(
-          37.52279639598579,
-          126.88244947391755,
-        ), // 지도의 중심좌표
-        level: 5, // 지도의 확대 레벨
-      };
-
+    const mapContainer = document.getElementById('map'); // 지도를 표시할 div
+    const mapOption = {
+      center: new window.kakao.maps.LatLng(
+        37.52279639598579,
+        126.88244947391755,
+      ), // 지도의 중심좌표
+      level: 5, // 지도의 확대 레벨
+    };
     const kakaoMapObj = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
-    let willMarkedPlaceList: { title: string; latlng: any }[] = [];
+    let willMarkedPlaceList: TypeWillMarkedPlaceList[] = []; // 마커표시에 사용될 객체 list
     dateRecordList?.forEach((dateRecord) => {
+      const dateCnt = dateRecord.dateCnt;
+
       dateRecord.placeList.forEach((place) => {
         if (!!place.latLong) {
           const latLongSplit = place.latLong.split(',');
-          const lat = latLongSplit[0];
-          const long = latLongSplit[1];
+
           willMarkedPlaceList.push({
+            dateCnt,
             title: place.placeName,
-            latlng: new window.kakao.maps.LatLng(lat, long),
+            latlng: new window.kakao.maps.LatLng(
+              latLongSplit[0],
+              latLongSplit[1],
+            ),
+            lat: latLongSplit[0],
+            lng: latLongSplit[1],
           });
         }
       });
     });
 
-    // 마커 이미지의 이미지 주소입니다
-    // var imageSrc =
-    //   'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+    /* 커스텀 오버레이 설정 */
+    for (let i = 0; i < willMarkedPlaceList.length; i++) {
+      var content = `<div class="mapCustomOvelay"
+      style="background: #e91e63;
+      border-radius: 50%;
+      font-weight: 800;
+      color: #ffeb3b;
+      width: 20px;
+      height: 20px;
+      text-align: center;">${willMarkedPlaceList[i].dateCnt}</div>`;
 
-    // for (var i = 0; i < willMarkedPlaceList.length; i++) {
-    //   // 마커 이미지의 이미지 크기 입니다
-    //   var imageSize = new window.kakao.maps.Size(24, 35);
+      // 커스텀 오버레이를 생성합니다
+      var customOverlay = new window.kakao.maps.CustomOverlay({
+        position: willMarkedPlaceList[i].latlng,
+        content: content,
+      });
 
-    //   // 마커 이미지를 생성합니다
-    //   var markerImage = new window.kakao.maps.MarkerImage(imageSrc, imageSize);
+      // 커스텀 오버레이를 지도에 표시합니다
+      customOverlay.setMap(kakaoMapObj);
+    }
 
-    //   // 마커를 생성합니다
-    //   new window.kakao.maps.Marker({
-    //     map: map, // 마커를 표시할 지도
-    //     position: willMarkedPlaceList[i].latlng, // 마커를 표시할 위치
-    //     title: willMarkedPlaceList[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-    //     image: markerImage, // 마커 이미지
-    //   });
-    // }
-    const bounds = new window.kakao.maps.LatLngBounds();
+    /* 마커, 인포윈도우 설정 */
+    /* const bounds = new window.kakao.maps.LatLngBounds();
     const imageSrc =
       'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
     const imageSize = new window.kakao.maps.Size(24, 35);
-
     let initMarkerArr: any = [];
+
     for (let i = 0; i < willMarkedPlaceList.length; i++) {
-      // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
+      // 마커 설정
       const markerImage = new window.kakao.maps.MarkerImage(
         imageSrc,
         imageSize,
       );
-
       let marker = new window.kakao.maps.Marker({
         position: willMarkedPlaceList[i].latlng,
         title: willMarkedPlaceList[i].title, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
         image: markerImage, // 마커 이미지
       });
+      marker.setMap(kakaoMapObj);
+
+      // 인포윈도우 설정
+      var iwContent = '<div style="padding:5px;">Hello World!</div>',
+        iwPosition = new window.kakao.maps.LatLng(33.450701, 126.570667); //인포윈도우 표시 위치입니다
+
+      // 인포윈도우를 생성합니다
+      var infowindow = new window.kakao.maps.InfoWindow({
+        position: iwPosition,
+        content: iwContent,
+      });
+
+      // 마커 위에 인포윈도우를 표시합니다. 두번째 파라미터인 marker를 넣어주지 않으면 지도 위에 표시됩니다
+      infowindow.open(kakaoMapObj, marker);
+
+      // bound 설정
+      bounds.extend(willMarkedPlaceList[i].latlng);
 
       initMarkerArr.push(marker);
-      marker.setMap(kakaoMapObj);
-      bounds.extend(willMarkedPlaceList[i].latlng);
-    }
+    } */
 
     setKakaoMapObjState(kakaoMapObj);
-    setInitBoundsState(bounds);
-    setInitMarkerArrState(initMarkerArr);
-    kakaoMapObj.setBounds(bounds);
+    // setInitBoundsState(bounds);
+    // setInitMarkerArrState(initMarkerArr);
+    // kakaoMapObj.setBounds(bounds);
   }, [dateRecordList]);
 
   // 지도 범위 재설정 적용
@@ -338,13 +365,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   // reset marker, bound
   const resetMapByDateRecord = function (e, clickedDateRecordId) {
-    console.log('### resetMapByDateRecord');
     // 기존 marker 제거
-    // initMarkerArrState?.forEach((marker) => {
+    // clickedPlacePickerList?.forEach((marker) => {
     //   marker.setMap(null);
     // });
 
-    // reset marker, bound
+    /* reset marker, bound */
     const filterDateRecordList: dateRecordListExtendType | undefined =
       dateRecordListState?.filter(
         (v) => v.dateRecord_id === clickedDateRecordId,
@@ -353,9 +379,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const placeList: placeListType[] | undefined =
       filterDateRecordList?.placeList;
 
+    // https://www.flaticon.com/search?word=heart&type=icon&license=selection&order_by=4
     const bounds = new window.kakao.maps.LatLngBounds();
     const imageSrc =
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png'; // star
     const imageSrc1 =
       'https://image.flaticon.com/icons/png/512/2107/2107845.png'; // red heart
     const imageSrc2 =
@@ -366,7 +393,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       for (let i = 0; i < placeList.length; i++) {
         // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
         const markerImage = new window.kakao.maps.MarkerImage(
-          imageSrc1,
+          imageSrc2,
           imageSize,
         );
 
@@ -383,11 +410,17 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
         marker.setMap(kakaoMapObjState);
         bounds.extend(mapLatLng);
+
+        // setClickedPlacePickerList((clickedPlacePicker) => [
+        //   ...clickedPlacePicker,
+        //   marker,
+        // ]);
       }
 
       kakaoMapObjState?.setBounds(bounds);
     }
   };
+
   return (
     <Layout>
       <PageHeader

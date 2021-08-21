@@ -83,6 +83,15 @@ export interface searchOptionType {
   sort: string | undefined;
 }
 
+// map
+export type TypeWillMarkedPlaceList = {
+  dateCnt: number;
+  title: string;
+  latlng: any;
+  lat: string;
+  lng: string;
+};
+
 // Books
 export interface BookReqType {
   title: string;

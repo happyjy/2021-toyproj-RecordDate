@@ -169,7 +169,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   }, [error, onClickLogout]);
 
   // 다음 지도
-  /* useEffect(() => {
+  useEffect(() => {
     const mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
         center: new window.kakao.maps.LatLng(
@@ -205,7 +205,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
       bounds.extend(placePosition1);
     }
     map.setBounds(bounds);
-  }); */
+  });
 
   /* cycalendar */
   useEffect(() => {
@@ -215,13 +215,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     const month = dateTimeDateObj && dateTimeDateObj?.getMonth();
     const year = dateTimeDateObj && dateTimeDateObj?.getFullYear();
     const date = dateTimeDateObj && dateTimeDateObj?.getDate();
-    // const setDatedateFn = function (date) {
-    //   setDateTime(moment(new Date(date)).format('YYYY-MM-DD'));
-    // };
 
     dycalendar.draw({
       target: '#dycalendar',
-      // type: 'day',
       type: 'month',
       dayformat: 'full',
       monthformat: 'ddd',
@@ -230,8 +226,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
       date,
       highlighttargetdate: true,
       readOnly: true,
-      // prevnextbutton: 'show',
-      // setDatedate: setDatedateFn,
     });
 
     return () => {
