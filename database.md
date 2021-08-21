@@ -19,7 +19,7 @@ SHOW TABLES;
 
 ```
   CREATE DATEBASE record_date
-  
+
   use record_date;
 
   CREATE TABLE CUSTOMER (
@@ -29,7 +29,7 @@ SHOW TABLES;
     birthday VARCHAR(64),
     gender VARCHAR(64),
     job VARCHAR(64)
-  );  
+  );
 
   CREATE TABLE CUSTOMER (
     id INT PRIMARY KEY AUTO_INCREMENT,
@@ -56,7 +56,8 @@ DROP TABLE place;
 
 CREATE TABLE IF NOT EXISTS dateRecord (
     dateRecord_id INT AUTO_INCREMENT PRIMARY KEY,
-    
+
+    dateTime date NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
     image VARCHAR(255),
@@ -87,7 +88,7 @@ CREATE TABLE IF NOT EXISTS dateImage (
     dateRecord_id INT,
 
     dateImage_name VARCHAR(255) NOT NULL,
-    
+
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
 
@@ -105,17 +106,20 @@ ALTER TABLE dateRecord RENAME COLUMN description TO comment;
 ALTER TABLE dateRecord MODIFY placeId VARCHAR(255);
 ALTER TABLE dateRecord DROP COLUMN placeId;
 ALTER TABLE dateRecord modify isDelete BOOLEAN NOT NULL DEFAULT 0;
-ALTER TABLE dateImage RENAME COLUMN file_name TO dateImage_name;
+ALTER TABLE dateRecord ADD COLUMN dateTime DATE NOT NULL DEFAULT '2021-08-20' AFTER dateRecord_id;
+ALTER TABLE dateRecord ALTER COLUMN dateTime SET DEFAULT date;
+
+
 
 DELETE FROM dateRecord WHERE dateRecord_id=2;
-DELETE FROM place where 
 
 ALTER TABLE place modify latLong VARCHAR(255);
 ALTER TABLE place modify latLong VARCHAR(255);
-
 ALTER TABLE place ADD COLUMN address VARCHAR(100) AFTER place_name;
 ALTER TABLE place DROP COLUMN isDeleted;
 ALTER TABLE place ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER latLong;
+
+ALTER TABLE dateImage RENAME COLUMN file_name TO dateImage_name;
 ALTER TABLE dateImage ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER dateImage_name;
 
 update dateRecord set isDelete = 0;
@@ -138,7 +142,7 @@ update dateImage set isDeleted = '1' where dateImage_id = 23;
   INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (24, '한강진리틀넥', '123.000, 321.000');
   INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (25, '양평동롯데마드 채선당', '123.000, 321.000');
   INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (25, '유니네', '123.000, 321.000');
-  
+
 
 
 SELECT * FROM dateRecord;
@@ -177,7 +181,7 @@ SELECT dateRecord_id,
        description,
        image,
        created_at
-  FROM DATERECORD 
+  FROM DATERECORD
  WHERE ISDELETED = 0
    AND created_at >= '2021-01-01'
    AND created_at <= '2021-07-01'

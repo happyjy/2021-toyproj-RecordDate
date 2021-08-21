@@ -3,7 +3,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { goBack, push } from 'connected-react-router';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../redux/modules/rootReducer';
-import { dateType } from '../../types';
+import { dateRecordListExtendType } from '../../types';
 
 import { logout as logoutSaga } from '../../redux/modules/auth';
 import { getDatelist as getDateListSaga } from '../../redux/modules/dateRecord';
@@ -12,9 +12,10 @@ import DateRecordDetail from '../../components/DateRecord/DateRecordDetail';
 const DateRecordDetailContainer = () => {
   const { id } = useParams();
   const dateId = Number(id) || -1;
-  const dateRecordList = useSelector<RootState, dateType[] | null>(
-    (state) => state.dateRecord.dateRecordList,
-  );
+  const dateRecordList = useSelector<
+    RootState,
+    dateRecordListExtendType[] | null
+  >((state) => state.dateRecord.dateRecordList);
 
   const error = useSelector<RootState, Error | null>(
     (state) => state.books.error,

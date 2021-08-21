@@ -4,7 +4,7 @@ import { push } from 'connected-react-router';
 
 import DateRecordList from '../../components/DateRecord/DateRecordList';
 import { RootState } from '../../redux/modules/rootReducer';
-import { dateType, searchOptionType } from '../../types';
+import { dateRecordListExtendType, searchOptionType } from '../../types';
 import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import {
@@ -13,9 +13,10 @@ import {
 } from '../../redux/modules/dateRecord';
 
 const DateRecordListContainer: React.FC = (props) => {
-  const dateRecordList = useSelector<RootState, dateType[] | null>(
-    (state) => state.dateRecord.dateRecordList,
-  );
+  const dateRecordList = useSelector<
+    RootState,
+    dateRecordListExtendType[] | null
+  >((state) => state.dateRecord.dateRecordList);
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
   );

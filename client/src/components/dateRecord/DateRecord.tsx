@@ -12,7 +12,7 @@ interface DateProps {
   dateRecord_id: number;
   title: string;
   description: string;
-  created_at: string;
+  dateTime: string;
   placeList: placeListType[];
   deleteRecordDate: (recordDateId: number) => void;
   goEdit: (recordDateId: number) => void;
@@ -26,7 +26,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
     title,
     description,
     placeList,
-    created_at,
+    dateTime,
     deleteRecordDate,
     goEdit,
     resetMapByDateRecord,
@@ -38,7 +38,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
             className={styles.spanDateCnt}
             onClick={(e) => resetMapByDateRecord(e, dateRecord_id)}
           >
-            [{dateCnt} 번째 데이트]
+            [{dateCnt}번째]
           </span>
         </div>
         <div className={styles.title}>
@@ -57,13 +57,13 @@ const DateRecord: React.FC<DateProps> = React.memo(
             className={styles.link_detail_author}
           >
             {placeList?.map((v, i) => {
-              if (i === 0) return <span>{v.placeName}</span>;
-              if (i !== 0) return <span>, {v.placeName}</span>;
+              if (i === 0) return <span key={v.id}>{v.placeName}</span>;
+              if (i !== 0) return <span key={v.id}>, {v.placeName}</span>;
             })}
           </Link>
         </div>
-        <div className={styles.created}>
-          {moment(created_at).format('YYYY-MM-DD')}
+        <div className={styles.dateTime}>
+          {moment(dateTime).format('YYYY-MM-DD')}
           {/* {moment(created_at).format('YYYY-MM-DD hh:mm a')} */}
         </div>
         <div className={styles.tooltips}>

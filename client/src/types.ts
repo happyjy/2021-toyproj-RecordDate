@@ -1,18 +1,16 @@
 // DateList
-export interface DateResType2 {
-  date: dateType[];
-  place: placeType[];
-}
-
-export interface dateType {
+export interface dateRecordListType {
   dateCnt: number;
   dateRecord_id: number;
+  dateTime: string;
   title: string;
   description: string;
   image: string;
   isDeleted: string;
   created_at: string;
   updated_at: string;
+}
+export interface dateRecordListExtendType extends dateRecordListType {
   placeList: placeListType[];
   dateImageList: dateImageListType[];
 }
@@ -55,6 +53,7 @@ export interface DateResType {
 }
 
 export interface DateRecordReqDefaultType {
+  dateTime: string;
   title: string;
   description: string;
 }
@@ -67,8 +66,6 @@ export interface EditDateRecordReqType extends DateRecordReqDefaultType {
   delPlaceList: placeListType[];
   addPlaceList: placeListType[];
   newImageFileList: File[];
-  // newImageFileList: any[];
-  // newImageFileList: dateImageListType[];
   delImageFileIdList: number[];
 }
 

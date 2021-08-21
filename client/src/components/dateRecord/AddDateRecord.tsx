@@ -10,6 +10,8 @@ import Chips from '../ChipsComponent/chipsComponent';
 import map from '../map';
 import useFileUpload from '../../hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
+import dycalendar from '../Calendar/dyCalendar';
+import moment from 'moment';
 
 const Container = styled.div`
   /* border: 5px red solid; */
@@ -44,7 +46,6 @@ const ListContainer = styled.div`
     flex-direction: column;
   }
 `;
-
 const MapSpace = styled.div`
   width: 100%;
   height: 100%;
@@ -60,7 +61,6 @@ const FormContainer = styled.div`
     width: 100%;
   }
 `;
-
 const commonFormProperty = css`
   width: 100%;
   padding: 12px 20px;
@@ -70,25 +70,20 @@ const commonFormProperty = css`
   border-radius: 4px;
   box-sizing: border-box;
 `;
-
 // https://stackoverflow.com/questions/56378356/how-do-i-convert-css-to-styled-components-with-inputtype-submit-attribute
 const InputEl = styled.input.attrs({ type: 'text' })`
   ${commonFormProperty};
 `;
-
 const TextAreaEl = styled.textarea`
   ${commonFormProperty};
 `;
-
 // const SelectEl = styled.select`
 //   ${commonFormProperty};
 // `;
-
 const InputSubmitContainer = styled.div`
   text-align: right;
   margin-top: 20px;
 `;
-
 const InputSubmit = styled.button`
   width: 100%;
   border-color: #28546a;
@@ -126,15 +121,19 @@ const AddDateRecord: React.FC<AddProps> = ({
   back,
   logout,
 }) => {
+  /* 데이트기록 form feild */
+  const [dateTime, setDateTime] = useState<string>('');
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [text, setText] = React.useState<string>();
 
+  /* 카카오지도 */
   const inputEl = useRef<HTMLInputElement>(null);
   const mapRef = useRef<HTMLDivElement>(null);
   const [keyword, setKeyword] = useState('문래역');
   const [searchPlaces, setSearchPlaces] = useState(() => () => {}); // 지도 검색
 
+  /* 파일 얼로드 */
   const { imageFile, setImagefile, fileText, setFileText, onChangeFileupload } =
     useFileUpload();
 
@@ -144,15 +143,22 @@ const AddDateRecord: React.FC<AddProps> = ({
       * https://www.codegrepper.com/code-examples/typescript/typescript+usestate+array+type
   */
   const [placeList, setPlaceList] = useState<placeListType[]>([]);
+
+  /* 카카오맵 */
   /*
-    # event trigger시 useEffect 안에 있는 함수 호출해야함
+    # 카카오맵 api 붙이는 작업
+      * event trigger시 useEffect 안에 있는 함수 호출해야함
       * 돔 생성 이후에 생성된 돔에 붙이는 과정과 이벤트 동작이 묶여 있는 상황
       * 돔 이벤트 발생시 useEffect안에 있는 함수 호출 해야 하는 상황
       * 힘요한 함수만 useEffect 밖으로 빼내기 위해서 useState 사용
       * useState에 함수 설정방법
         * https://medium.com/swlh/how-to-store-a-function-with-the-usestate-hook-in-react-8a88dd4eede1
   */
+  useEffect(() => {
+    map(mapRef, inputEl, setSearchPlaces, placeList, setPlaceList);
+  }, [placeList]);
 
+  /* 카카오맵 검색 이벤트 */
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
       searchPlace();
@@ -161,21 +167,59 @@ const AddDateRecord: React.FC<AddProps> = ({
   const inputEvent = (e: any) => {
     setKeyword(e.target.value);
   };
-
   const searchPlace = () => {
     searchPlaces();
   };
+
+  /* cycalendar */
+  useEffect(() => {
+    const setDatedateFn = function (date) {
+      console.log(
+        '# setDatedateFn: ',
+        moment(new Date(date)).format('YYYY-MM-DD'),
+      );
+      setDateTime(moment(new Date(date)).format('YYYY-MM-DD'));
+    };
+
+    dycalendar.draw({
+      target: '#dycalendar',
+      type: 'month',
+      dayformat: 'full',
+      monthformat: 'ddd',
+      // monthformat: 'full',
+      highlighttargetdate: true,
+      prevnextbutton: 'show',
+      setDatedate: setDatedateFn,
+    });
+
+    return () => {
+      dycalendar.remove();
+    };
+  }, []);
+
+  /* add button event */
+  function onAddDateRecord() {
+    const title = titleRef.current!.value;
+    const description = descriptionRef.current!.value;
+    if (!title || !placeList.length || !description) {
+      messageDialog.error('Please fill out all inputs');
+      return;
+    }
+
+    addDateRecord({
+      dateTime,
+      title,
+      placeList,
+      description,
+      imageFile,
+    });
+  }
 
   useEffect(() => {
     if (error) {
       logout();
     }
   }, [error, logout]);
-
-  // 카카오맵
-  useEffect(() => {
-    map(mapRef, inputEl, setSearchPlaces, placeList, setPlaceList);
-  }, [placeList]);
 
   return (
     <Layout>
@@ -232,6 +276,13 @@ const AddDateRecord: React.FC<AddProps> = ({
         </MapContainer>
         <ListContainer className="ListContainer">
           <FormContainer className="FormContainer">
+            <label>날짜</label>
+            {/* <div id="dycalendar" style={{ background: '#a1a1a1' }}></div> */}
+            <div
+              id="dycalendar"
+              style={{ background: 'rgb(161, 161, 161, 0.7)' }}
+            ></div>
+            {/* {datedate} */}
             <label>Title</label>
             <InputEl
               type="text"
@@ -242,7 +293,11 @@ const AddDateRecord: React.FC<AddProps> = ({
             />
 
             <label>place</label>
-            <Chips placeList={placeList} setPlaceList={setPlaceList}></Chips>
+            <Chips
+              placeList={placeList}
+              setPlaceList={setPlaceList}
+              showDelIcon={true}
+            ></Chips>
 
             <label>Image uplaod</label>
             <FileUpload
@@ -273,25 +328,5 @@ const AddDateRecord: React.FC<AddProps> = ({
       </Container>
     </Layout>
   );
-
-  function onAddDateRecord() {
-    const title = titleRef.current!.value;
-    const description = descriptionRef.current!.value;
-    if (
-      title === undefined ||
-      placeList === undefined ||
-      description === undefined
-    ) {
-      messageDialog.error('Please fill out all inputs');
-      return;
-    }
-
-    addDateRecord({
-      title,
-      placeList,
-      description,
-      imageFile,
-    });
-  }
 };
 export default AddDateRecord;

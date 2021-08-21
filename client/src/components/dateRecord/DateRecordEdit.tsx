@@ -4,7 +4,7 @@ import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import {
   dateImageListType,
-  dateType,
+  dateRecordListExtendType,
   EditDateRecordReqType,
   placeListType,
 } from '../../types';
@@ -135,7 +135,7 @@ const InputSubmit = styled.button`
 // `;
 
 interface DateRecordEditProps {
-  dateRecord: dateType | null | undefined;
+  dateRecord: dateRecordListExtendType | null | undefined;
   getDateList: () => void;
   editDateRecord: (dateRecord: EditDateRecordReqType) => void;
   loading: boolean;
@@ -153,10 +153,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   back,
   logout,
 }) => {
-  useEffect(() => {
-    getDateList();
-  }, [getDateList]);
-
+  const [dateTime, setDateTime] = useState<string>('');
   const titleRef = useRef<HTMLInputElement>(null);
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
   const [placeList, setPlaceList] = useState<placeListType[]>(
@@ -171,6 +168,10 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   const [keyword, setKeyword] = useState('오목교역');
   const [SearchPlacesCb, setSearchPlacesCb] = useState(() => () => {});
   const [placeMarkerList, setPlaceMarkerList] = useState<any[]>([]);
+
+  useEffect(() => {
+    getDateList();
+  }, [getDateList]);
 
   const {
     imageFile,
@@ -443,6 +444,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
     // console.log({ imageFile, fileText });
 
     editDateRecord({
+      dateTime,
       title,
       description,
       delPlaceList,

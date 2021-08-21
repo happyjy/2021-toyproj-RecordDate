@@ -4,7 +4,7 @@ import { useParams } from 'react-router-dom';
 import { goBack } from 'connected-react-router';
 
 import { RootState } from '../../redux/modules/rootReducer';
-import { dateType } from '../../types';
+import { dateRecordListExtendType, EditDateRecordReqType } from '../../types';
 import { logout as logoutSaga } from '../../redux/modules/auth';
 import {
   getDatelist as getDateListSaga,
@@ -15,9 +15,10 @@ import DateRecordEdit from '../../components/DateRecord/DateRecordEdit';
 const DateRecordEditContainer = () => {
   const { id } = useParams();
   const dateId = Number(id) || -1;
-  const dateRecordList = useSelector<RootState, dateType[] | null>(
-    (state) => state.dateRecord.dateRecordList,
-  );
+  const dateRecordList = useSelector<
+    RootState,
+    dateRecordListExtendType[] | null
+  >((state) => state.dateRecord.dateRecordList);
 
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
@@ -33,7 +34,7 @@ const DateRecordEditContainer = () => {
   }, [dispatch]);
 
   const editDateRecord = useCallback(
-    (dateRecord) => {
+    (dateRecord: EditDateRecordReqType) => {
       dispatch(editDateRecordsaga(dateId, dateRecord));
     },
     [dispatch, dateId],

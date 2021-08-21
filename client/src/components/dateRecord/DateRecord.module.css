@@ -5,8 +5,9 @@
 
 .dateCnt{
   /* display: table-cell; */
+  min-width: 85px;
   vertical-align: middle;
-  font-size: 1.2rem;
+  font-size: 1.15rem;
   font-weight: bold;
   padding-left: 10px;
 }
@@ -44,6 +45,14 @@
   color: #28546a;
 }
 
+.dateTime {
+  color: #999999;
+  display: table-cell;
+  vertical-align: middle;
+  font-size: 14px;
+  padding-left: 10px;
+  min-width: 100px;
+}
 .created {
   color: #999999;
   display: table-cell;
@@ -58,6 +67,7 @@
   vertical-align: middle;
   font-size: 14px;
   padding-left: 10px;
+  min-width: 64px;
 }
 
 .link_url {

@@ -85,8 +85,12 @@
 			<key>isToolbarVisible</key>
 			<true/>
 			<key>queries</key>
-			<string>select * from dateRecord;
-78
+			<string>SELECT *
+FROM DATERECORD
+WHERE ISDELETED = 0;
+AND DATERECORD_ID ='7'
+;
+
 select * from place
 where 1=1 
 -- and dateRecord_id = '80'

@@ -3,7 +3,7 @@ import {
   BookResType,
   dateImageListType,
   dateIamgeType,
-  dateType,
+  dateRecordListExtendType,
   placeListType,
   placeType,
 } from '../types';
@@ -12,7 +12,9 @@ export function getTokenFromState(state: RootState): string | null {
   return state.auth.token;
 }
 
-export function getDateRecordFromState(state: RootState): dateType[] | null {
+export function getDateRecordFromState(
+  state: RootState,
+): dateRecordListExtendType[] | null {
   return state.dateRecord.dateRecordList;
 }
 
@@ -21,11 +23,11 @@ export function getBooksFromState(state: RootState): BookResType[] | null {
 }
 
 export function makeDate(
-  dateRecordList: dateType[],
+  dateRecordList: dateRecordListExtendType[],
   placeListFromTable: placeType[],
   imageListFromTable?: dateIamgeType[],
-) {
-  dateRecordList.map((dateRecord: dateType) => {
+): dateRecordListExtendType[] {
+  dateRecordList.map((dateRecord: dateRecordListExtendType) => {
     let placeList: placeListType[] = [];
     let dateImageList: dateImageListType[] = [];
 

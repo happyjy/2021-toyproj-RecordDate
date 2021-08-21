@@ -93,35 +93,34 @@ app.get("/api/dateRecord", (req, res) => {
 `;
   const selectQuery = `
   SELECT @n:=@n+1 dateCnt, t.dateRecord_id
-                           , t.title
-                           , t.description
-                           , t.image
-                           , t.created_at
+                          , t.title
+                          , t.description
+                          , t.image
+                          , t.created_at
     FROM (SELECT @n:=( SELECT count(*)
-                         FROM dateRecord
+                        FROM dateRecord
                         WHERE 1=1
-                         AND ISDELETED = 0
-                         AND created_at < ?)) initvars, dateRecord t
-   WHERE 1=1
-     AND ISDELETED = 0
-     AND CREATED_AT BETWEEN ? AND ?
-ORDER BY DATECNT ${selectParam[3] == "desc" ? "desc" : "asc"};
+                        AND ISDELETED = 0
+                        AND created_at < ?)) initvars, dateRecord t
+  WHERE 1=1
+    AND ISDELETED = 0
+    AND CREATED_AT BETWEEN ? AND ?
+  ORDER BY DATECNT ${selectParam[3] == "desc" ? "desc" : "asc"};
 
-     SELECT place_id,
+    SELECT place_id,
             dateRecord_id,
             place_name,
             latLong
-       FROM PLACE
+      FROM PLACE
       WHERE ISDELETED = 0;
 
-     SELECT dateImage_id,
+    SELECT dateImage_id,
             dateRecord_id,
             dateImage_name
-       FROM DATEIMAGE
+      FROM DATEIMAGE
       WHERE ISDELETED = 0;`;
 
   // console.log(selectQuery);
-
   connection.query(selectQuery, selectParam, function (err, results) {
     if (err) throw err;
     // console.log(results[0]);
@@ -139,16 +138,17 @@ app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
   console.log(req?.files);
 
   let insertDateRecord =
-    "INSERT INTO dateRecord(title, description) VALUES (?, ?);";
+    "INSERT INTO dateRecord(dateTime, title, description) VALUES (?, ?, ?);";
   let insertPlace =
     "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
   let insertDateImage =
     "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
+  let dateTime = req.body.dateTime;
   let title = req.body.title;
   let description = req.body.description;
   let placeList = JSON.parse(req.body.placeList);
   let images = req.files;
-  let insertDateRecordParams = [title, description];
+  let insertDateRecordParams = [dateTime, title, description];
 
   let insertDateRecordid;
   connection.query(

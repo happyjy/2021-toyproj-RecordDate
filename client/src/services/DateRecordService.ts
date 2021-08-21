@@ -4,7 +4,7 @@ import { makeDate } from '../redux/utils';
 import {
   dateIamgeType,
   DateRecordReqType,
-  dateType,
+  dateRecordListExtendType,
   EditDateRecordReqType,
   placeType,
   searchOptionType,
@@ -16,9 +16,9 @@ export default class DateRecordService {
   public static async getDateRecordList(
     token: string,
     searchOption: searchOptionType,
-  ): Promise<dateType[]> {
+  ): Promise<dateRecordListExtendType[]> {
     const response = await axios.get<
-      [dateType[], placeType[], dateIamgeType[]]
+      [dateRecordListExtendType[], placeType[], dateIamgeType[]]
     >(DATERECORD_API_URL, {
       params: { searchOption },
       headers: {
@@ -35,8 +35,9 @@ export default class DateRecordService {
   public static async addDateRecord(
     token: string,
     dateRecord: DateRecordReqType,
-  ): Promise<dateType> {
+  ): Promise<dateRecordListExtendType> {
     const formData = new FormData();
+    formData.append('dateTime', dateRecord.dateTime);
     formData.append('title', dateRecord.title);
     formData.append('description', dateRecord.description);
     formData.append('placeList', JSON.stringify(dateRecord.placeList));
@@ -44,12 +45,16 @@ export default class DateRecordService {
       formData.append('imageFile', v);
     });
 
-    const response = await axios.post<dateType>(DATERECORD_API_URL, formData, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        'content-type': 'multipart/form-data',
+    const response = await axios.post<dateRecordListExtendType>(
+      DATERECORD_API_URL,
+      formData,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'content-type': 'multipart/form-data',
+        },
       },
-    });
+    );
     return response.data;
   }
 
@@ -57,7 +62,7 @@ export default class DateRecordService {
     token: string,
     dateRecordId: number,
     dateRecord: EditDateRecordReqType,
-  ): Promise<dateType> {
+  ): Promise<dateRecordListExtendType> {
     const formData = new FormData();
     formData.append('title', dateRecord.title);
     formData.append('description', dateRecord.description);
@@ -72,16 +77,14 @@ export default class DateRecordService {
         formData.append('newImageFileList', v);
       });
 
-    const response = await axios.patch<[dateType[], placeType[]]>(
-      `${DATERECORD_API_URL}/${dateRecordId}`,
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'content-type': 'multipart/form-data',
-        },
+    const response = await axios.patch<
+      [dateRecordListExtendType[], placeType[]]
+    >(`${DATERECORD_API_URL}/${dateRecordId}`, formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'content-type': 'multipart/form-data',
       },
-    );
+    });
 
     const dateRecordList = response.data[0];
     const placeListFromTable = response.data[1];
@@ -91,8 +94,8 @@ export default class DateRecordService {
   public static async deleteDateRecord(
     token: string,
     dateRecordId: number,
-  ): Promise<dateType> {
-    const response = await axios.delete<dateType>(
+  ): Promise<dateRecordListExtendType> {
+    const response = await axios.delete<dateRecordListExtendType>(
       `${DATERECORD_API_URL}/${dateRecordId}`,
       {
         headers: { Authorization: `Bearer ${token}` },

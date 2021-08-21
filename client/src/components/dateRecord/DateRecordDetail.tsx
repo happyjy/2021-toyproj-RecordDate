@@ -2,7 +2,7 @@ import React, { useEffect } from 'react';
 import { PageHeader, Button } from 'antd';
 import { BookOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
-import { dateType } from '../../types';
+import { dateRecordListExtendType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/chipsComponent';
@@ -108,7 +108,7 @@ const ThumbnailImg = styled.img`
 `;
 
 interface DetailProps {
-  dateRecord: dateType | null | undefined;
+  dateRecord: dateRecordListExtendType | null | undefined;
   error: Error | null;
   back: () => void;
   edit: () => void;

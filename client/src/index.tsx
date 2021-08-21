@@ -2,6 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import 'antd/dist/antd.css';
 import './index.css';
+import './dyCalendar.css';
+import './dyCalendarCustomStyling.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
 import create from './redux/create';

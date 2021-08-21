@@ -6,14 +6,14 @@ import DateRecordService from '../../services/DateRecordService';
 import {
   DateRecordReqType,
   DateResType,
-  dateType,
+  dateRecordListExtendType,
   EditDateRecordReqType,
   searchOptionType,
 } from '../../types';
 import { getDateRecordFromState, getTokenFromState } from '../utils';
 
 export interface DateRecordState {
-  dateRecordList: dateType[] | null;
+  dateRecordList: dateRecordListExtendType[] | null;
   loading: boolean;
   error: Error | null;
 }
@@ -112,14 +112,16 @@ function* addDateSaga(action: AddDateRecordSagaAction) {
     yield put(pending());
     //[ ] getTokenFromState 인자값은 어떻게 관리되는지 분석글 작성하기
     const token: string = yield select(getTokenFromState);
-    // const dateRecord: dateType = yield call(
+    // const dateRecord: dateRecordListExtendType = yield call(
     yield call(
       DateRecordService.addDateRecord,
       token,
       action.payload.dateRecord,
     );
     //[ ] getDateRecordFromState 인자값은 어떻게 관리되는지 분석글 작성하기
-    const dateRecordList: dateType[] = yield select(getDateRecordFromState);
+    const dateRecordList: dateRecordListExtendType[] = yield select(
+      getDateRecordFromState,
+    );
     console.log({ dateRecordList });
     // [todo] response data structure 맞춰 success 완성 시키기
     // yield put(success([...dateRecordList, dateRecord]));
@@ -139,7 +141,7 @@ function* getDateListSaga(action: getDateListSagaAction) {
   try {
     yield put(pending());
     const token: string = yield select((state) => state.auth.token);
-    const dateRecordList: dateType[] = yield call(
+    const dateRecordList: dateRecordListExtendType[] = yield call(
       DateRecordService.getDateRecordList,
       token,
       action.payload.searchOption,
@@ -160,7 +162,7 @@ function* editDateRecord(action: EditDateRecordSagaAction) {
   try {
     yield put(pending());
     const token: string = yield select(getTokenFromState);
-    const newDateRecord: dateType = yield call(
+    const newDateRecord: dateRecordListExtendType = yield call(
       DateRecordService.editDateRecord,
       token,
       action.payload.dateRecordId,

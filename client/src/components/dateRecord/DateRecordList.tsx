@@ -12,7 +12,7 @@ import {
 import styles from './DateRecordList.module.css';
 import Layout from '../Layout';
 import {
-  dateType,
+  dateRecordListExtendType,
   searchOptionType,
   keywordSearchType,
   placeListType,
@@ -125,7 +125,7 @@ const SearchOutlinedContainer = styled.div`
 `;
 
 interface DateRecordsProps {
-  dateRecordList: dateType[] | null;
+  dateRecordList: dateRecordListExtendType[] | null;
   loading: boolean;
   error: Error | null;
   getDateList: (searchOption: searchOptionType) => void;
@@ -150,7 +150,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
 
   const [dateRecordListState, setDateRecordListState] = useState<
-    dateType[] | null
+    dateRecordListExtendType[] | null
   >(dateRecordList); // list state
 
   const targetDate = new Date();
@@ -315,13 +315,13 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   };
 
   const keywordSearch = function (value) {
-    let restultFromTitle: dateType[] = [];
+    let restultFromTitle: dateRecordListExtendType[] = [];
     restultFromTitle =
       dateRecordList?.filter((v) => {
         return v.title.includes(value);
       }) || [];
 
-    let resultFromPlaceList: dateType[] = [];
+    let resultFromPlaceList: dateRecordListExtendType[] = [];
     dateRecordList?.forEach((v) => {
       let result = v.placeList?.filter((v) =>
         v.placeName.includes(value),
@@ -345,7 +345,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     // });
 
     // reset marker, bound
-    const filterDateRecordList: dateType | undefined =
+    const filterDateRecordList: dateRecordListExtendType | undefined =
       dateRecordListState?.filter(
         (v) => v.dateRecord_id === clickedDateRecordId,
       )[0];
