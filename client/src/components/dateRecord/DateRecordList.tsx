@@ -149,9 +149,9 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
   const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
-  // const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
-  //   [],
-  // ); // 선택한 위치의 picker 객체
+  const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
+    [],
+  ); // 선택한 위치의 picker 객체
 
   const [dateRecordListState, setDateRecordListState] = useState<
     dateRecordListExtendType[] | null
@@ -366,9 +366,9 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   // reset marker, bound
   const resetMapByDateRecord = function (e, clickedDateRecordId) {
     // 기존 marker 제거
-    // clickedPlacePickerList?.forEach((marker) => {
-    //   marker.setMap(null);
-    // });
+    clickedPlacePickerList?.forEach((marker) => {
+      marker.setMap(null);
+    });
 
     /* reset marker, bound */
     const filterDateRecordList: dateRecordListExtendType | undefined =
@@ -411,10 +411,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         marker.setMap(kakaoMapObjState);
         bounds.extend(mapLatLng);
 
-        // setClickedPlacePickerList((clickedPlacePicker) => [
-        //   ...clickedPlacePicker,
-        //   marker,
-        // ]);
+        setClickedPlacePickerList((clickedPlacePicker) => [
+          ...clickedPlacePicker,
+          marker,
+        ]);
       }
 
       kakaoMapObjState?.setBounds(bounds);
