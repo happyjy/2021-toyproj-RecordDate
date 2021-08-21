@@ -7,6 +7,8 @@ import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/chipsComponent';
 import Carousel from '../Carousel/Carousel';
+import dycalendar from '../Calendar/dyCalendar';
+import moment from 'moment';
 
 const Container = styled.div`
   /* border: 5px red solid; */
@@ -107,6 +109,38 @@ const ThumbnailImg = styled.img`
   object-fit: cover;
 `;
 
+const CalendarContainer = styled.div`
+  position: relative;
+  background: #161623;
+  overflow: hidden;
+  border-radius: 5px;
+  &:before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(#ffc107, #e91e63);
+    border-radius: 50%;
+    transform: translate(-250px, -120px);
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(#2196f3, #31ff38);
+    border-radius: 50%;
+    transform: translate(180px, -110px);
+  }
+`;
+
+const Calendar = styled.div`
+  position: relative;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(25px);
+`;
+
 interface DetailProps {
   dateRecord: dateRecordListExtendType | null | undefined;
   error: Error | null;
@@ -135,7 +169,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   }, [error, onClickLogout]);
 
   // 다음 지도
-  useEffect(() => {
+  /* useEffect(() => {
     const mapContainer = document.getElementById('map'), // 지도를 표시할 div
       mapOption = {
         center: new window.kakao.maps.LatLng(
@@ -171,7 +205,39 @@ const DateRecordDetail: React.FC<DetailProps> = ({
       bounds.extend(placePosition1);
     }
     map.setBounds(bounds);
-  });
+  }); */
+
+  /* cycalendar */
+  useEffect(() => {
+    console.log(dateRecord);
+    const dateTimeDateObj =
+      dateRecord?.dateTime && new Date(dateRecord?.dateTime);
+    const month = dateTimeDateObj && dateTimeDateObj?.getMonth();
+    const year = dateTimeDateObj && dateTimeDateObj?.getFullYear();
+    const date = dateTimeDateObj && dateTimeDateObj?.getDate();
+    // const setDatedateFn = function (date) {
+    //   setDateTime(moment(new Date(date)).format('YYYY-MM-DD'));
+    // };
+
+    dycalendar.draw({
+      target: '#dycalendar',
+      // type: 'day',
+      type: 'month',
+      dayformat: 'full',
+      monthformat: 'ddd',
+      month,
+      year,
+      date,
+      highlighttargetdate: true,
+      readOnly: true,
+      // prevnextbutton: 'show',
+      // setDatedate: setDatedateFn,
+    });
+
+    return () => {
+      dycalendar.remove();
+    };
+  }, []);
 
   if (dateRecord === null) {
     return null;
@@ -220,6 +286,10 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         </MapContainer>
         <ListContainer>
           <FormContainer>
+            <label>날짜</label>
+            <CalendarContainer>
+              <Calendar id="dycalendar"></Calendar>
+            </CalendarContainer>
             <label>Title</label>
             <InputEl
               value={dateRecord.title}

@@ -100,6 +100,38 @@ const InputSubmit = styled.button`
   }
 `;
 
+const CalendarContainer = styled.div`
+  position: relative;
+  background: #161623;
+  overflow: hidden;
+  border-radius: 5px;
+  &:before {
+    content: '';
+    position: absolute;
+    width: 400px;
+    height: 400px;
+    background: linear-gradient(#ffc107, #e91e63);
+    border-radius: 50%;
+    transform: translate(-250px, -120px);
+  }
+  &:after {
+    content: '';
+    position: absolute;
+    width: 350px;
+    height: 350px;
+    background: linear-gradient(#2196f3, #31ff38);
+    border-radius: 50%;
+    transform: translate(180px, -110px);
+  }
+`;
+
+const Calendar = styled.div`
+  position: relative;
+  z-index: 1000;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(25px);
+`;
+
 declare global {
   interface Window {
     kakao: any;
@@ -174,10 +206,6 @@ const AddDateRecord: React.FC<AddProps> = ({
   /* cycalendar */
   useEffect(() => {
     const setDatedateFn = function (date) {
-      console.log(
-        '# setDatedateFn: ',
-        moment(new Date(date)).format('YYYY-MM-DD'),
-      );
       setDateTime(moment(new Date(date)).format('YYYY-MM-DD'));
     };
 
@@ -252,7 +280,6 @@ const AddDateRecord: React.FC<AddProps> = ({
             }}
           >
             <MapSpace ref={mapRef} id="map"></MapSpace>
-
             <div id={mapStyles.menu_wrap} className={mapStyles.bg_white}>
               <div className={mapStyles.option}>
                 <div>
@@ -277,11 +304,9 @@ const AddDateRecord: React.FC<AddProps> = ({
         <ListContainer className="ListContainer">
           <FormContainer className="FormContainer">
             <label>날짜</label>
-            {/* <div id="dycalendar" style={{ background: '#a1a1a1' }}></div> */}
-            <div
-              id="dycalendar"
-              style={{ background: 'rgb(161, 161, 161, 0.7)' }}
-            ></div>
+            <CalendarContainer>
+              <Calendar id="dycalendar"></Calendar>
+            </CalendarContainer>
             {/* {datedate} */}
             <label>Title</label>
             <InputEl

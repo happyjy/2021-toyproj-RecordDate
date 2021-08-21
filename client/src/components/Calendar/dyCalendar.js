@@ -125,6 +125,9 @@ const cycalendar = (function (global) {
     var table, tr, td, r, c, count;
 
     table = document.createElement('table');
+    if (!option.readOnly) {
+      table.classList.add('enableHover');
+    }
     tr = document.createElement('tr');
 
     //create 1st row for the day letters
@@ -543,7 +546,7 @@ const cycalendar = (function (global) {
         // dycalendar객에 date 설정2: prev-next button click
         dycalendar.setCurrentMonth = parseInt(month + 1);
         dycalendar.setCurrentYear = parseInt(year);
-        dycalendar.setDatedate(dycalendar.today);
+        dycalendar.setDatedate && dycalendar.setDatedate(dycalendar.today);
 
         drawCalendar(option);
       }
@@ -568,7 +571,7 @@ const cycalendar = (function (global) {
         dycalendar.setCurrentDate = parseInt(option.date + 1);
         dycalendar.setCurrentMonth = parseInt(option.month + 1);
         dycalendar.setCurrentYear = parseInt(option.year);
-        dycalendar.setDatedate(dycalendar.today);
+        dycalendar.setDatedate && dycalendar.setDatedate(dycalendar.today);
 
         drawCalendar(option);
       }
@@ -585,7 +588,7 @@ const cycalendar = (function (global) {
 
         // dycalendar객에 date 설정1 - date click
         dycalendar.setCurrentDate = parseInt(targetDomObject.dataset.datenum);
-        dycalendar.setDatedate(dycalendar.today);
+        dycalendar.setDatedate && dycalendar.setDatedate(dycalendar.today);
       }
     };
   }
@@ -647,14 +650,23 @@ const cycalendar = (function (global) {
 
     // setDatedate = setDatedate ? setDatedate : option.setDatedate;
     // self = closure dycalendar
-    self.setDatedate = option.setDatedate;
-    self.setDatedate(formatDate);
+    if (option.setDatedate) {
+      self.setDatedate = option.setDatedate;
+      self.setDatedate(formatDate);
+    }
     self.today = formatDate;
 
     //extend user options with predefined options
     option = extendSource(option, defaults);
 
     drawCalendar(option);
+
+    //events
+    if (!option.readOnly) {
+      onClick();
+    } else {
+      container.onclick = () => {};
+    }
   };
 
   //------------------------------ dycalendar.draw() ends here ------------
@@ -706,7 +718,8 @@ const cycalendar = (function (global) {
 
     //draw calendar
     if (targetedElementBy === 'id') {
-      document.getElementById(targetElem).append(calendarHTML);
+      document.getElementById(targetElem) &&
+        document.getElementById(targetElem).append(calendarHTML);
       // document.getElementById(targetElem).innerHTML = calendarHTML.outerHTML;
     } else if (targetedElementBy === 'class') {
       elemArr = document.getElementsByClassName(targetElem);
@@ -728,9 +741,6 @@ const cycalendar = (function (global) {
     const DSTRING = D.toString().padStart(2, '0');
     return `${YSTRING}-${MSTRING}-${DSTRING}`;
   }
-
-  //events
-  onClick();
 
   //attach to global window object
   global.dycalendar = dycalendar;

@@ -95,13 +95,13 @@ section::after{
   border-radius: 4px;
   font-weight: 600;
 }
-#dycalendar table td{
+#dycalendar table tr td{
   color: #fff;
   padding: 10px;
   cursor: pointer;
 }
 
-#dycalendar table td:hover{
+#dycalendar table.enableHover tr td:hover{
   background: #fff;
   color: #111 !important;
 }
