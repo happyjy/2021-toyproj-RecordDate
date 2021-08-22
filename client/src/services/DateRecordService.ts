@@ -11,6 +11,7 @@ import {
 } from '../types';
 
 const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
+// const DATERECORD_API_URL = 'https://133e-121-141-1-66.ngrok.io/api/dateRecord';
 
 export default class DateRecordService {
   public static async getDateRecordList(

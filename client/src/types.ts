@@ -85,7 +85,7 @@ export interface searchOptionType {
 
 // map
 export type TypeWillMarkedPlaceList = {
-  dateCnt: number;
+  dateCnt: number | number[];
   title: string;
   latlng: any;
   lat: string;

@@ -50,7 +50,12 @@ const MapContainer = styled.div`
   flex-basis: 60%;
   /* z-index: 100; */
   @media (max-width: 768px) {
-    position: initial;
+    position: relative;
+    top: 0px;
+    /* display: block; */
+    height: 100%;
+    /* height: 100px; */
+    /* width: 300px; */
     /* width: 100%; */
   }
 `;
@@ -211,30 +216,75 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
             title: place.placeName,
             latlng: new window.kakao.maps.LatLng(
               latLongSplit[0],
-              latLongSplit[1],
+              latLongSplit[1].trim(),
             ),
             lat: latLongSplit[0],
-            lng: latLongSplit[1],
+            lng: latLongSplit[1].trim(),
           });
         }
       });
     });
 
+    // 위치 중복 재설정
+    // lat, lng이 같으면 dateCnt를 배열 타입으로 변경시킨다.
+    let mapMarkList = [];
+    willMarkedPlaceList.forEach((v) => {
+      if (!mapMarkList[v.lat + v.lng]) {
+        mapMarkList[v.lat + v.lng] = v;
+      } else {
+        console.log(mapMarkList);
+        if (typeof mapMarkList[v.lat + v.lng].dateCnt === 'number') {
+          mapMarkList[v.lat + v.lng].dateCnt = [
+            mapMarkList[v.lat + v.lng].dateCnt,
+            v.dateCnt,
+          ];
+        } else {
+          mapMarkList[v.lat + v.lng].dateCnt = [
+            ...mapMarkList[v.lat + v.lng].dateCnt,
+            v.dateCnt,
+          ];
+        }
+      }
+    });
+
+    const result: TypeWillMarkedPlaceList[] = Object.values(mapMarkList);
+
     /* 커스텀 오버레이 설정 */
-    for (let i = 0; i < willMarkedPlaceList.length; i++) {
-      var content = `<div class="mapCustomOvelay"
-      style="background: #e91e63;
-      border-radius: 50%;
-      font-weight: 800;
-      color: #ffeb3b;
-      width: 20px;
-      height: 20px;
-      text-align: center;">${willMarkedPlaceList[i].dateCnt}</div>`;
+    for (let i = 0; i < result.length; i++) {
+      let content = '';
+      if (typeof result[i].dateCnt === 'number') {
+        // 1회 방문
+        content = `<div class="mapCustomOverlay"
+                      style="background: #e91e63;
+                      border-radius: 50%;
+                      font-weight: 800;
+                      color: #ffeb3b;
+                      width: 20px;
+                      height: 20px;
+                      text-align: center;
+                      opacity: 0.7;
+                      ">${result[i].dateCnt}</div>`;
+      } else {
+        // 중복되는 데이트 장소
+        content = `<div class="mapCustomOverlay"
+                      style="background: #511ee9;
+                      // border-radius: 50%;
+                      font-weight: 800;
+                      color: #ffffff;
+                      padding: 1px 2px;
+                      // width: 20px;
+                      // height: 20px;
+                      text-align: center;
+                      opacity: 0.6;
+                      font-size: 0.5rem;
+                      ">${result[i].dateCnt.toString()}</div>`;
+      }
 
       // 커스텀 오버레이를 생성합니다
       var customOverlay = new window.kakao.maps.CustomOverlay({
-        position: willMarkedPlaceList[i].latlng,
+        position: result[i].latlng,
         content: content,
+        yAnchor: 0,
       });
 
       // 커스텀 오버레이를 지도에 표시합니다
@@ -416,8 +466,9 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           marker,
         ]);
       }
-
       kakaoMapObjState?.setBounds(bounds);
+      kakaoMapObjState.setMinLevel(1);
+      kakaoMapObjState.setMaxLevel(20);
     }
   };
 
