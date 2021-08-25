@@ -19,6 +19,8 @@ const create = () => {
     {
       auth: {
         token,
+        profileImageUrl: '',
+        thumbnailImageUrl: '',
         loading: false,
         error: null,
       },

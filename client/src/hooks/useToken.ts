@@ -7,6 +7,5 @@ export default function useToken() {
     (state) => state.auth.token,
   );
 
-  // console.log('### userToken > token: ', token);
   return token;
 }

@@ -11,8 +11,13 @@ import {
   getDatelist as getDateListSaga,
   deleteDaterecord as deleteDateRecordSaga,
 } from '../../redux/modules/dateRecord';
+import useProfileUrl from '../../hooks/useProfileUrl';
 
 const DateRecordListContainer: React.FC = (props) => {
+  const [profileUrl, numnailUrl] = useProfileUrl();
+  debugger;
+  console.log('### url', profileUrl, numnailUrl);
+
   const dateRecordList = useSelector<
     RootState,
     dateRecordListExtendType[] | null

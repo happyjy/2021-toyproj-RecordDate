@@ -20,8 +20,24 @@ const SigninContainer: React.FC = () => {
   const dispatch = useDispatch();
 
   const snsLogin = useCallback(
-    ({ email, nickname, birthday, gender }: SnsLoginReqType) => {
-      dispatch(snsLoginSaga({ email, nickname, birthday, gender }));
+    ({
+      email,
+      nickname,
+      birthday,
+      gender,
+      profileImageUrl,
+      thumbnailImageUrl,
+    }: SnsLoginReqType) => {
+      dispatch(
+        snsLoginSaga({
+          email,
+          nickname,
+          birthday,
+          gender,
+          profileImageUrl,
+          thumbnailImageUrl,
+        }),
+      );
     },
     [dispatch],
   );

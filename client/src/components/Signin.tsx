@@ -48,11 +48,18 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
             console.log(kakao_account);
             const {
               email,
-              profile: { nickname },
+              profile: { nickname, profile_image_url, thumbnail_image_url },
               birthday,
               gender,
             } = kakao_account;
-            snsLogin({ email, nickname, birthday, gender });
+            snsLogin({
+              email,
+              nickname,
+              birthday,
+              gender,
+              profileImageUrl: profile_image_url,
+              thumbnailImageUrl: thumbnail_image_url,
+            });
             /*
               birthday: "0109"
               email: "okwoyjy@gmail.com"

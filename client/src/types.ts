@@ -99,6 +99,9 @@ export interface SnsLoginReqType {
   birthday: string;
   nickname: string;
   gender: string;
+
+  profileImageUrl: string;
+  thumbnailImageUrl: string;
 }
 export interface SnsLoginResType {
   token: string;

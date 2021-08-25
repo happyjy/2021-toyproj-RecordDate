@@ -11,12 +11,16 @@ import TokenService from '../../services/TokenService';
 
 export interface AuthState {
   token: string | null;
+  profileImageUrl: string | null;
+  thumbnailImageUrl: string | null;
   loading: boolean;
   error: Error | null;
 }
 
 const initialState: AuthState = {
   token: null,
+  profileImageUrl: '',
+  thumbnailImageUrl: '',
   loading: false,
   error: null,
 };
@@ -27,7 +31,11 @@ const options = {
 
 export const { success, pending, fail } = createActions(
   {
-    SUCCESS: (token: string) => ({ token }),
+    SUCCESS: (
+      token: string,
+      profileImageUrl: string,
+      thumbnailImageUrl: string,
+    ) => ({ token, profileImageUrl, thumbnailImageUrl }),
   },
   'PENDING',
   'FAIL',
@@ -44,6 +52,8 @@ const reducer = handleActions<AuthState, any>(
     SUCCESS: (state, action) => ({
       ...state,
       token: action.payload.token,
+      profileImageUrl: action.payload.profileImageUrl,
+      thumbnailImageUrl: action.payload.thumbnailImageUrl,
       loading: false,
       error: null,
     }),
@@ -61,11 +71,20 @@ export default reducer;
 
 export const { snslogin, login, logout } = createActions(
   {
-    SNSLOGIN: ({ email, nickname, birthday, gender }: SnsLoginReqType) => ({
+    SNSLOGIN: ({
       email,
       nickname,
       birthday,
       gender,
+      profileImageUrl,
+      thumbnailImageUrl,
+    }: SnsLoginReqType) => ({
+      email,
+      nickname,
+      birthday,
+      gender,
+      profileImageUrl,
+      thumbnailImageUrl,
     }),
     LOGIN: ({ email, password }: LoginReqType) => ({
       email,
@@ -91,7 +110,13 @@ function* snsLoginSaga(action: SnsLoginSagaAction) {
     yield put(pending());
     const token: string = yield call(UserService.snsLogin, action.payload);
     TokenService.set(token);
-    yield put(success(token));
+    yield put(
+      success(
+        token,
+        action.payload.profileImageUrl,
+        action.payload.thumbnailImageUrl,
+      ),
+    );
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
