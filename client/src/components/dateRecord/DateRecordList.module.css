@@ -1,26 +1,28 @@
 .button {
-  border-color: #28546a;
-  background-color: #28546a;
+  /* bluemana, neonblue */
+  border: none;
+  background-color: var(--bluemana);
   text-transform: uppercase;
   border-radius: 1px;
   border-width: 2px;
   color: white;
 }
 
+.button:hover{
+  background-color: var(--neonblue);
+}
+
 .table {
   margin-top: 30px;
 }
-
-
 .pageHeader1 {
   z-index: 100;
+  color: var(--blue);
   background: #fff;
   position: fixed;
   max-width: 1400px;
   width: 100%;
 }
-
-
 @media (max-width: 768px){
   .pageHeader1 > .ant-page-header-heading{
     border : 1px blue solid;
@@ -32,4 +34,17 @@
     width: initial;
     padding: 0;
   }
+}
+
+.filterOutlinedContainer{
+  display: flex;
+  justify-content: center;
+}
+
+.searchBtn{
+  display: flex;
+  align-items: center;
+}
+.pageTitle{
+  color: var(--blueberry);
 }

@@ -1,10 +1,28 @@
 import axios from 'axios';
 
-import { LoginReqType, LoginResType } from '../types';
+import {
+  LoginReqType,
+  LoginResType,
+  SnsLoginReqType,
+  SnsLoginResType,
+} from '../types';
 
 const USER_API_URL = 'https://api.marktube.tv/v1/me';
+const DATERECORD_API_URL = 'http://localhost:5000/api/login';
 
 export default class UserService {
+  public static async snsLogin({
+    email,
+    nickname,
+    birthday,
+    gender,
+  }: SnsLoginReqType): Promise<string> {
+    const response = await axios.post<SnsLoginResType>(DATERECORD_API_URL, {
+      param: { email, nickname, birthday, gender },
+    });
+    return response.data.token;
+  }
+
   public static async login({
     email,
     password,

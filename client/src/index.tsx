@@ -8,6 +8,19 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import create from './redux/create';
 import { Provider } from 'react-redux';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+/* init kakao map, login  */
+// kaako map
+// const kakaoMapScript = document.createElement('script');
+// kakaoMapScript.type = 'text/javascript';
+// kakaoMapScript.src = `//dapi.kakao.com/v2/maps/sdk.js?appkey=${process.env.REACT_APP_KAKAO_MAP_KEY}&libraries=services,clusterer,drawing`;
+// document.head.appendChild(kakaoMapScript);
+
+// kaako login
+window.Kakao.init(process.env.REACT_APP_KAKAO_MAP_KEY);
 
 const store = create();
 

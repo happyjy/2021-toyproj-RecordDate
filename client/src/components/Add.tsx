@@ -135,7 +135,6 @@ const Add: React.FC<AddProps> = ({
 
   function click() {
     const title = titleRef.current!.state.value;
-    debugger;
     console.log(taRef);
     console.log(text);
     const message = taRef.current!.value;

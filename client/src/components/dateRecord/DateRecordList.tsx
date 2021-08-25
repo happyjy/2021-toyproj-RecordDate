@@ -103,6 +103,8 @@ const FilterContainer = styled.div`
   justify-content: space-between;
 `;
 const FilterOutlinedContainer = styled.div`
+  display: flex;
+  justify-content: center;
   /* position: absolute;
   margin: 0;
   right: 12px;
@@ -232,7 +234,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       if (!mapMarkList[v.lat + v.lng]) {
         mapMarkList[v.lat + v.lng] = v;
       } else {
-        console.log(mapMarkList);
         if (typeof mapMarkList[v.lat + v.lng].dateCnt === 'number') {
           mapMarkList[v.lat + v.lng].dateCnt = [
             mapMarkList[v.lat + v.lng].dateCnt,
@@ -476,7 +477,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     <Layout>
       <PageHeader
         className={styles.pageHeader1}
-        title={<div>Date List</div>}
+        title={<div className={styles.pageTitle}>Date List</div>}
         extra={[
           <Button
             key="2"
@@ -526,7 +527,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
                     <FilterOutlined />
                   </Button>
                 </Dropdown>
-                <SearchOutlined onClick={onClickSearchButton} />
+                <SearchOutlined
+                  className={styles.searchBtn}
+                  onClick={onClickSearchButton}
+                />
               </FilterOutlinedContainer>
             </FilterContainer>
             <SearchContainer>

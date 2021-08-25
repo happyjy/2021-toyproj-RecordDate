@@ -3,7 +3,7 @@ import { createActions, handleActions } from 'redux-actions';
 import { takeEvery, put, call, select } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
-import { LoginReqType } from '../../types';
+import { LoginReqType, SnsLoginReqType } from '../../types';
 import { getTokenFromState } from '../utils';
 import { success as booksSuccess } from './books';
 import UserService from '../../services/UserService';
@@ -59,8 +59,14 @@ const reducer = handleActions<AuthState, any>(
 
 export default reducer;
 
-export const { login, logout } = createActions(
+export const { snslogin, login, logout } = createActions(
   {
+    SNSLOGIN: ({ email, nickname, birthday, gender }: SnsLoginReqType) => ({
+      email,
+      nickname,
+      birthday,
+      gender,
+    }),
     LOGIN: ({ email, password }: LoginReqType) => ({
       email,
       password,
@@ -71,10 +77,26 @@ export const { login, logout } = createActions(
 );
 
 export function* sagas() {
+  yield takeEvery(`${options.prefix}/SNSLOGIN`, snsLoginSaga);
   yield takeEvery(`${options.prefix}/LOGIN`, loginSaga);
   yield takeEvery(`${options.prefix}/LOGOUT`, logoutSaga);
 }
 
+interface SnsLoginSagaAction extends AnyAction {
+  payload: SnsLoginReqType;
+}
+
+function* snsLoginSaga(action: SnsLoginSagaAction) {
+  try {
+    yield put(pending());
+    const token: string = yield call(UserService.snsLogin, action.payload);
+    TokenService.set(token);
+    yield put(success(token));
+    yield put(push('/'));
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+  }
+}
 interface LoginSagaAction extends AnyAction {
   payload: LoginReqType;
 }

@@ -17,6 +17,7 @@ import AddDateRecord from './pages/AddDateRecord';
 declare global {
   interface Window {
     kakao: any;
+    Kakao: any;
   }
 }
 

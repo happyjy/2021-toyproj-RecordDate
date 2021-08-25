@@ -1,4 +1,4 @@
-// DateList
+// # DateList
 export interface dateRecordListType {
   dateCnt: number;
   dateRecord_id: number;
@@ -69,7 +69,7 @@ export interface EditDateRecordReqType extends DateRecordReqDefaultType {
   delImageFileIdList: number[];
 }
 
-// 검색 조건
+// # search Option
 export interface keywordSearchType {
   key: string;
   target: { value: string };
@@ -83,7 +83,7 @@ export interface searchOptionType {
   sort: string | undefined;
 }
 
-// map
+// # map
 export type TypeWillMarkedPlaceList = {
   dateCnt: number | number[];
   title: string;
@@ -91,6 +91,18 @@ export type TypeWillMarkedPlaceList = {
   lat: string;
   lng: string;
 };
+
+// # login
+
+export interface SnsLoginReqType {
+  email: string;
+  birthday: string;
+  nickname: string;
+  gender: string;
+}
+export interface SnsLoginResType {
+  token: string;
+}
 
 // Books
 export interface BookReqType {

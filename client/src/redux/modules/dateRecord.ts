@@ -46,7 +46,10 @@ const reducer = handleActions<DateRecordState, any>(
       error: null,
     }),
     SUCCESS: (state, action) => {
-      console.log('SUCCESS: ', { state, action });
+      console.log('# modules > dateRecord.ts > reducer > SUCCESS: ', {
+        state,
+        action,
+      });
       return {
         dateRecordList: action.payload.dateRecordList,
         loading: false,
@@ -83,7 +86,6 @@ export const { addDaterecord, getDatelist, deleteDaterecord, editDaterecord } =
         return { searchOption };
       },
     },
-    // 'GET_DATELIST',
     options,
   );
 

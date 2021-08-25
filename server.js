@@ -1,7 +1,9 @@
+require("dotenv").config();
 const fs = require("fs");
 const cors = require("cors");
 const express = require("express");
 const bodyParser = require("body-parser");
+const jwt = require("jsonwebtoken");
 
 const app = express();
 const port = process.env.PORT || 5000;
@@ -42,6 +44,7 @@ app.get("/api/test", (req, res) => {
   ]);
 });
 
+// # DB connection
 const data = fs.readFileSync("./database.json");
 const conf = JSON.parse(data);
 const mysql = require("mysql");
@@ -54,12 +57,51 @@ const connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-// # DATE RECORD SELECT
-app.get("/api/dateRecord", (req, res) => {
-  const searchOption = JSON.parse(req.query.searchOption);
-  console.log(searchOption.rangeDate);
-  console.log(searchOption.sort);
+// # sql
+const { loginSql, findUser } = require("./sql");
 
+// # USER - LOGIN
+app.post("/api/login", (req, res) => {
+  const reqParam = req?.body.param;
+  const email = reqParam.email;
+  const nickname = reqParam.nickname;
+  const birthday = reqParam.birthday;
+  const gender = reqParam.gender;
+
+  const responseValue = {};
+  connection.query(findUser, [email], (err, rows, field) => {
+    if (err) throw err;
+
+    const findUserResult = rows;
+    if (!findUserResult.length) {
+      // 계정이 없는 경우
+      const jwtToken = jwt.sign(
+        { id: reqParam.email },
+        process.env.PRIVATE_KEY
+      );
+      const token = jwtToken;
+
+      connection.query(
+        loginSql,
+        [token, email, nickname, birthday, gender],
+        (err, rows, field) => {
+          if (err) throw err;
+          responseValue.token = jwtToken;
+          res.send(responseValue);
+        }
+      );
+    } else {
+      // 계정이 있는 경우
+      responseValue.token = rows[0].token;
+      res.send(responseValue);
+    }
+  });
+});
+
+// # DATE - RECORD SELECT
+app.get("/api/dateRecord", (req, res) => {
+  const token = req.header("authorization").split(" ")[1];
+  const searchOption = JSON.parse(req.query.searchOption);
   const endOfRange = searchOption.rangeDate[1];
   const splitedEndOfRange = endOfRange.split("-");
   const lastDateEndOfRange = new Date(
@@ -70,11 +112,11 @@ app.get("/api/dateRecord", (req, res) => {
 
   let selectParam = [
     searchOption.rangeDate[0] + "-01",
+    token,
+    token,
     searchOption.rangeDate[0] + "-01",
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
-    searchOption.sort,
   ];
-  console.log(selectParam);
 
   // NUMBERING
   // const numbering
@@ -93,10 +135,21 @@ app.get("/api/dateRecord", (req, res) => {
                                                         FROM dateRecord
                                                         WHERE 1=1
                                                           AND ISDELETED = 0
+                                                          AND couple_id = (
+                                                            select couple_id
+                                                            from couple
+                                                            where 1=1
+                                                            and couple1_id = (
+                                                              select user_id from users where token = ?
+                                                            )
+                                                            or couple2_id = (
+                                                              select user_id from users where token = ?
+                                                            )
+                                                          )
                                                           AND dateTime BETWEEN ? AND ?
-                                                    ORDER BY dateTime ASC) t
+                                                     ORDER BY dateTime ASC) t
   WHERE 1=1
-  ORDER BY DATECNT ${selectParam[3] == "desc" ? "desc" : "asc"};
+  ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
 
     SELECT place_id,
             dateRecord_id,
@@ -111,69 +164,101 @@ app.get("/api/dateRecord", (req, res) => {
       FROM DATEIMAGE
       WHERE ISDELETED = 0;`;
 
-  // console.log(selectQuery);
-  connection.query(selectQuery, selectParam, function (err, results) {
+  connection.query(selectQuery, selectParam, function (err, rows) {
     if (err) throw err;
-    // console.log(results[0]);
-    res.send(results);
+    res.send(rows);
   });
 });
 
+// # 파일업로드
 const multer = require("multer");
+const { JsonWebTokenError } = require("jsonwebtoken");
+
 const upload = multer({ dest: "./upload" });
 app.use("/image", express.static("upload"));
 
-// # DATE RECORD INSERT
-app.post("/api/dateRecord", upload.array("imageFile"), (req, res) => {
-  console.log("# req.files");
-  console.log(req?.files);
+// # DATE - RECORD INSERT
+app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
+  const token = req.header("authorization").split(" ")[1];
 
-  let insertDateRecord =
-    "INSERT INTO dateRecord(dateTime, title, description) VALUES (?, ?, ?);";
+  const hasUser = "select * from users where token = ?";
+  let resultHasUser = "";
+  try {
+    const result = await new Promise((resolve, reject) => {
+      connection.query(hasUser, [token], (err, rows, fields) => {
+        if (err) throw err;
+        resultHasUser = rows;
+        resolve(rows);
+      });
+    });
+
+    if (result.length == 0) {
+      res.send("not exist user");
+      return;
+    }
+  } catch (error) {
+    throw error;
+  }
+
+  let insertDateRecord = `INSERT INTO dateRecord(couple_id, dateTime, title, description)
+      SELECT couple_id, ? as dateTime, ? as title, ? as description
+        FROM couple
+       WHERE 1=1
+         AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
+          OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+  `;
   let insertPlace =
     "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
   let insertDateImage =
     "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
+
   let dateTime = req.body.dateTime;
   let title = req.body.title;
   let description = req.body.description;
   let placeList = JSON.parse(req.body.placeList);
   let images = req.files;
-  let insertDateRecordParams = [dateTime, title, description];
+  let insertDateRecordParams = [dateTime, title, description, token, token];
 
   let insertDateRecordid;
-  connection.query(
-    insertDateRecord,
-    insertDateRecordParams,
-    (err, rows, fields) => {
-      console.log(rows);
-      insertDateRecordid = rows.insertId;
-      if (err) throw err;
 
-      for (var i = 0; i < placeList.length; i++) {
-        let insertParam = [
-          insertDateRecordid,
-          placeList[i].placeName,
-          placeList[i].address,
-          placeList[i].latLong,
-        ];
-        connection.query(insertPlace, insertParam, (err, rows, field) => {
-          if (err) throw err;
-        });
-      }
+  try {
+    await connection.query(
+      insertDateRecord,
+      insertDateRecordParams,
+      (err, rows, fields) => {
+        insertDateRecordid = rows.insertId;
+        if (err) throw err;
 
-      for (var j = 0; j < images.length; j++) {
-        let insertParam = [insertDateRecordid, "/image/" + images[j].filename];
-        connection.query(insertDateImage, insertParam, (err, rows, field) => {
-          if (err) throw err;
-        });
+        for (var i = 0; i < placeList.length; i++) {
+          let insertParam = [
+            insertDateRecordid,
+            placeList[i].placeName,
+            placeList[i].address,
+            placeList[i].latLong,
+          ];
+          connection.query(insertPlace, insertParam, (err, rows, field) => {
+            if (err) throw err;
+          });
+        }
+
+        for (var j = 0; j < images.length; j++) {
+          let insertParam = [
+            insertDateRecordid,
+            "/image/" + images[j].filename,
+          ];
+          connection.query(insertDateImage, insertParam, (err, rows, field) => {
+            if (err) throw err;
+          });
+        }
+        res.send(rows);
       }
-      res.send(rows);
-    }
-  );
+    );
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-// # DATE RECORD UPDATE
+// # DATE - RECORD UPDATE
 app.patch(
   "/api/dateRecord/:id",
   upload.array("newImageFileList"),
@@ -260,7 +345,7 @@ app.patch(
   }
 );
 
-// # DATE RECORD DELETE
+// # DATE - RECORD DELETE
 app.delete("/api/dateRecord/:id", (req, res) => {
   let deleteDateRecord =
     "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";

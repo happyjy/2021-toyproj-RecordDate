@@ -22,3 +22,116 @@ body {
   border: initial;
   padding: 4px 12px;
 }
+
+
+
+:root{
+  --blueberry: #6D71F9;
+  --malibu: #54C1FB;
+
+  --bluemana: #6a6ef4; /* 버튼 */
+  --neonblue: #575BEB; /* 버튼: mouseover */
+
+  --martinique: #272848;  /* 마르티니크 */
+  --deuteranopia: #6C6D8A;  /* 듀테라노피아 */
+
+  --white: #FFFFFF;
+  --coral: #ff7165;
+
+  --white: #fff;
+  --light: #f8f9fa;
+  --dark: #343a40;
+
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: #6c6d8a;
+  --secondary: #272848;
+
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+
+
+  /*
+  --blue: #007bff;
+  --indigo: #6610f2;
+  --purple: #6f42c1;
+  --pink: #e83e8c;
+  --red: #dc3545;
+  --orange: #fd7e14;
+  --yellow: #ffc107;
+  --green: #28a745;
+  --teal: #20c997;
+  --cyan: #17a2b8;
+
+  --gray: #6c757d;
+  --gray-dark: #343a40;
+  --primary: #6c6d8a;
+  --secondary: #272848;
+
+  --success: #28a745;
+  --info: #17a2b8;
+  --warning: #ffc107;
+  --danger: #dc3545;
+
+  --white: #fff;
+  --light: #f8f9fa;
+  --dark: #343a40;
+  */
+}
+
+.palettes-color1{
+  color: #6D71F9;
+}
+.palettes-color2{
+  color: #54C1FB;
+}
+.palettes-color3{
+  color: #272848;
+}
+.palettes-color4{
+  color: #6C6D8A;
+}
+.palettes-color5{
+  color: #FFFFFF;
+}
+.palettes-color6{
+  color: #ff7165;
+}
+
+/*
+  # live
+  https://finezjo.pl/
+*/
+/* https://dribbble.com/shots/15595097-Finezjo-Dashboard-interactions */
+
+.palettes-color10{
+  color: #F3F2F8;
+}
+.palettes-color20{
+  color: #ABAECE;
+}
+.palettes-color30{
+  color: #080815;
+}
+.palettes-color40{
+  color: #9293B7;
+}
+.palettes-color50{
+  color: #EFB1AF;
+}
+.palettes-color60{
+  color: #6163B5;
+}
+.palettes-color70{
+  color: #8C7C82;
+}
+.palettes-color80{
+  color: #575466;
+}
+
+
+
+
+

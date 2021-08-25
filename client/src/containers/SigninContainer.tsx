@@ -3,8 +3,11 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import Signin from '../components/Signin';
 import { RootState } from '../redux/modules/rootReducer';
-import { login as loginSaga } from '../redux/modules/auth';
-import { LoginReqType } from '../types';
+import {
+  login as loginSaga,
+  snslogin as snsLoginSaga,
+} from '../redux/modules/auth';
+import { LoginReqType, SnsLoginReqType } from '../types';
 
 const SigninContainer: React.FC = () => {
   const loading = useSelector<RootState, boolean>(
@@ -13,7 +16,15 @@ const SigninContainer: React.FC = () => {
   const error = useSelector<RootState, Error | null>(
     (state) => state.auth.error,
   );
+
   const dispatch = useDispatch();
+
+  const snsLogin = useCallback(
+    ({ email, nickname, birthday, gender }: SnsLoginReqType) => {
+      dispatch(snsLoginSaga({ email, nickname, birthday, gender }));
+    },
+    [dispatch],
+  );
 
   const login = useCallback(
     ({ email, password }: LoginReqType) => {
@@ -22,7 +33,9 @@ const SigninContainer: React.FC = () => {
     [dispatch],
   );
 
-  return <Signin loading={loading} error={error} login={login} />;
+  return (
+    <Signin loading={loading} error={error} snsLogin={snsLogin} login={login} />
+  );
 };
 
 export default SigninContainer;

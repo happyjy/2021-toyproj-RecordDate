@@ -53,6 +53,7 @@ const DateRecordListContainer: React.FC = (props) => {
 
   const logout = useCallback(() => {
     dispatch(logoutSaga());
+    window.Kakao.Auth.logout();
   }, [dispatch]);
 
   return (
