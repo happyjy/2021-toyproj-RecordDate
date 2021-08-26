@@ -14,7 +14,6 @@ import dycalendar from '../Calendar/dyCalendar';
 import moment from 'moment';
 
 const Container = styled.div`
-  /* border: 5px red solid; */
   position: relative;
   display: flex;
   flex-direction: row;
@@ -101,6 +100,7 @@ const InputSubmit = styled.button`
 `;
 
 const CalendarContainer = styled.div`
+  z-index: 500;
   position: relative;
   background: #161623;
   overflow: hidden;

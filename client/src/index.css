@@ -35,10 +35,11 @@ body {
   --bluemana: #6a6ef4; /* 버튼 */
   --neonblue: #575BEB; /* 버튼: mouseover */
 
+  --darkGrayishBlue: #212529; /* 다크그레이쉬블루: body color*/
   --martinique: #272848;  /* 마르티니크 */
-  --deuteranopia: #6C6D8A;  /* 듀테라노피아 */
+  --deuteranopia: #6C6D8A;  /* 듀테라노피아: 텍스트 */
 
-  --white: #FFFFFF;
+  /* --white: #FFFFFF; */
   --coral: #ff7165;
 
   --white: #fff;

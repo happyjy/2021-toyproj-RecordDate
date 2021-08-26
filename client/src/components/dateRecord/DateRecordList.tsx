@@ -79,7 +79,7 @@ const ConditionContainer = styled.div`
   padding-left: 16px;
   position: sticky;
   top: 64px;
-  z-index: 1000;
+  z-index: 500;
   background: #fff;
 
   & > * {
@@ -193,7 +193,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     }
   }, [error, logout]);
 
-  // 다음 지도
+  // # 카카오 지도
   useEffect(() => {
     const mapContainer = document.getElementById('map'); // 지도를 표시할 div
     const mapOption = {
