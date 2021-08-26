@@ -1,5 +1,4 @@
 import { useSelector } from 'react-redux';
-
 import { RootState } from '../redux/modules/rootReducer';
 
 export default function useToken() {

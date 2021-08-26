@@ -76,7 +76,7 @@ const ListContainer = styled.div`
 const ConditionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 0 16px;
+  padding-left: 16px;
   position: sticky;
   top: 64px;
   z-index: 1000;
@@ -475,7 +475,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   return (
     <Layout>
-      <PageHeader
+      {/* <PageHeader
         className={styles.pageHeader1}
         title={<div className={styles.pageTitle}>Date List</div>}
         extra={[
@@ -496,7 +496,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
             Logout
           </Button>,
         ]}
-      />
+      /> */}
       <Container className="Container">
         <MapContainer className="MapContainer">
           <MapSpace id="map"></MapSpace>

@@ -14,9 +14,7 @@ import {
 import useProfileUrl from '../../hooks/useProfileUrl';
 
 const DateRecordListContainer: React.FC = (props) => {
-  const [profileUrl, numnailUrl] = useProfileUrl();
-  debugger;
-  console.log('### url', profileUrl, numnailUrl);
+  const [profileUrl, thumbnail] = useProfileUrl();
 
   const dateRecordList = useSelector<
     RootState,
