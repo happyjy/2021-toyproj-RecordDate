@@ -85,8 +85,6 @@ const DateRecordListContainer: React.FC = (props) => {
       goAdd={goAdd}
       goEdit={goEdit}
       logout={logout}
-      user={user}
-      getUser={getUser}
     />
   );
 };

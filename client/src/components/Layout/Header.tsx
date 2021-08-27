@@ -5,11 +5,15 @@ import {
   UserOutlined,
 } from '@ant-design/icons';
 import { push } from 'connected-react-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import { logout as logoutSaga } from '../../redux/modules/auth';
+import {
+  logout as logoutSaga,
+  getuser as getUserSaga,
+} from '../../redux/modules/auth';
 import { RootState } from '../../redux/modules/rootReducer';
+import TokenService from '../../services/TokenService';
 import { getUserResType } from '../../types';
 import styles from './Header.module.css';
 
@@ -187,6 +191,19 @@ const ProfileMenu: React.FC = () => {
   const onClickProfile = (e) => {
     setToggleProfile((props) => !props);
   };
+  const getUser = useCallback(
+    (token: String) => {
+      dispatch(getUserSaga(token));
+    },
+    [dispatch],
+  );
+
+  // 유저 정보: user
+  const token = TokenService.get();
+  useEffect(() => {
+    token && getUser(token);
+  }, [getUser]);
+
   const user = useSelector<RootState, getUserResType | null>(
     (state) => state.auth.user,
   );

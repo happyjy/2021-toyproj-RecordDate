@@ -144,8 +144,6 @@ interface DateRecordsProps {
   goAdd: () => void;
   goEdit: (bookId: number) => void;
   logout: () => void;
-  getUser: (token: String) => void;
-  user: getUserResType | null;
 }
 
 const DateRecordList: React.FC<DateRecordsProps> = ({
@@ -157,8 +155,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   goAdd,
   goEdit,
   logout,
-  getUser,
-  user,
 }) => {
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
@@ -195,10 +191,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   }, [dateRecordList]);
 
   // 유저 정보: user
-  const token = TokenService.get();
-  useEffect(() => {
-    token && getUser(token);
-  }, [getUser]);
+  // const token = TokenService.get();
+  // useEffect(() => {
+  //   token && getUser(token);
+  // }, [getUser]);
 
   useEffect(() => {
     if (error) {
