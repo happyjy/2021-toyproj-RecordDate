@@ -17,11 +17,14 @@ import {
   keywordSearchType,
   placeListType,
   TypeWillMarkedPlaceList,
+  getUserReqType,
+  getUserResType,
 } from '../../types';
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { debounce, getDateFormatSearchType } from '../../redux/utils';
+import TokenService from '../../services/TokenService';
 
 const Container = styled.div`
   /* border: 5px red solid; */
@@ -141,6 +144,8 @@ interface DateRecordsProps {
   goAdd: () => void;
   goEdit: (bookId: number) => void;
   logout: () => void;
+  getUser: (token: String) => void;
+  user: getUserResType | null;
 }
 
 const DateRecordList: React.FC<DateRecordsProps> = ({
@@ -150,8 +155,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   loading,
   deleteRecordDate,
   goAdd,
-  logout,
   goEdit,
+  logout,
+  getUser,
+  user,
 }) => {
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
@@ -186,6 +193,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   useEffect(() => {
     setDateRecordListState(dateRecordList);
   }, [dateRecordList]);
+
+  // 유저 정보: user
+  const token = TokenService.get();
+  useEffect(() => {
+    token && getUser(token);
+  }, [getUser]);
 
   useEffect(() => {
     if (error) {

@@ -6,10 +6,11 @@ import {
 } from '@ant-design/icons';
 import { push } from 'connected-react-router';
 import React, { useCallback, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import styled from 'styled-components';
-import useProfileUrl from '../../hooks/useProfileUrl';
 import { logout as logoutSaga } from '../../redux/modules/auth';
+import { RootState } from '../../redux/modules/rootReducer';
+import { getUserResType } from '../../types';
 import styles from './Header.module.css';
 
 const TitleContainer = styled.div``;
@@ -162,7 +163,6 @@ const MenuListLink = styled.span`
 
 const ProfileMenu: React.FC = () => {
   const [toggleProfile, setToggleProfile] = useState<Boolean>(false);
-  const [profileUrl, thumbnail] = useProfileUrl();
 
   const dispatch = useDispatch();
 
@@ -187,6 +187,10 @@ const ProfileMenu: React.FC = () => {
   const onClickProfile = (e) => {
     setToggleProfile((props) => !props);
   };
+  const user = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth.user,
+  );
+
   return (
     <>
       <TitleContainer className="TitleContainer">
@@ -202,7 +206,8 @@ const ProfileMenu: React.FC = () => {
             onClick={onClickProfile}
             className="ProfileImgContainer"
           >
-            <ProfileImg src="http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg"></ProfileImg>
+            {/* <ProfileImg src="http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg"></ProfileImg> */}
+            <ProfileImg src={user?.thumbnailImageUrl}></ProfileImg>
           </ProfileImgContainer>
           <MenuContainer isActive={toggleProfile} className="MenuContainer">
             <MenuTitle isActive={toggleProfile} className="MenuTitle">

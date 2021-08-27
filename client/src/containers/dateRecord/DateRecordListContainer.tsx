@@ -4,30 +4,45 @@ import { push } from 'connected-react-router';
 
 import DateRecordList from '../../components/DateRecord/DateRecordList';
 import { RootState } from '../../redux/modules/rootReducer';
-import { dateRecordListExtendType, searchOptionType } from '../../types';
-import { logout as logoutSaga } from '../../redux/modules/auth';
+import {
+  dateRecordListExtendType,
+  getUserResType,
+  searchOptionType,
+} from '../../types';
+import {
+  logout as logoutSaga,
+  getuser as getUserSaga,
+} from '../../redux/modules/auth';
 
 import {
   getDatelist as getDateListSaga,
   deleteDaterecord as deleteDateRecordSaga,
 } from '../../redux/modules/dateRecord';
-import useProfileUrl from '../../hooks/useProfileUrl';
 
 const DateRecordListContainer: React.FC = (props) => {
-  const [profileUrl, thumbnail] = useProfileUrl();
-
   const dateRecordList = useSelector<
     RootState,
     dateRecordListExtendType[] | null
   >((state) => state.dateRecord.dateRecordList);
+
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
   );
   const error = useSelector<RootState, Error | null>(
     (state) => state.books.error,
   );
+  const user = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth.user,
+  );
 
   const dispatch = useDispatch();
+
+  const getUser = useCallback(
+    (token: String) => {
+      dispatch(getUserSaga(token));
+    },
+    [dispatch],
+  );
 
   const getDateList = useCallback(
     (searchOption: searchOptionType) => {
@@ -70,6 +85,8 @@ const DateRecordListContainer: React.FC = (props) => {
       goAdd={goAdd}
       goEdit={goEdit}
       logout={logout}
+      user={user}
+      getUser={getUser}
     />
   );
 };

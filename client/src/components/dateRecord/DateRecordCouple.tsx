@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { message as messageDialog, PageHeader, Button } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
-import { DateRecordReqType, placeListType } from '../../types';
+import { DateRecordReqType, getUserResType, placeListType } from '../../types';
 import styles from './DateRecordAdd.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
@@ -147,6 +147,7 @@ const CoupleCard2Container = styled.div`
 `;
 
 interface AddProps {
+  user: getUserResType | null;
   addDateRecord: (dateRecord: DateRecordReqType) => void;
   loading: boolean;
   error: Error | null;
@@ -155,6 +156,7 @@ interface AddProps {
 }
 
 const DateRecordCouple: React.FC<AddProps> = ({
+  user,
   addDateRecord,
   loading,
   error,
@@ -177,7 +179,7 @@ const DateRecordCouple: React.FC<AddProps> = ({
 
               <CoupleContainer className="CoupleContainer">
                 <CoupleCard1Container className="Couple1Container">
-                  <CoupleCard1Img src="http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg"></CoupleCard1Img>
+                  <CoupleCard1Img src={user?.profileImageUrl}></CoupleCard1Img>
                 </CoupleCard1Container>
                 <CoupleCard2Container className="Couple2Container">
                   <CoupleCard1Img src="http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg"></CoupleCard1Img>

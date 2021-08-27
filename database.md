@@ -48,6 +48,8 @@ CREATE TABLE IF NOT EXISTS users (
     nickname VARCHAR(100) NOT NULL,
     birthday VARCHAR(100),
     gender VARCHAR(10),
+    profileImageUrl VARCHAR(255) NOT NULL,
+    thumbnailImageUrl VARCHAR(255) NOT NULL,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;

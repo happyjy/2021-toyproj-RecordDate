@@ -58,43 +58,85 @@ const connection = mysql.createConnection({
 });
 
 // # sql
-const { loginSql, findUser } = require("./sql");
+const {
+  loginSql,
+  findUser,
+  updateUserProfileImgUrl,
+  getUserByToken,
+} = require("./sql");
 
 // # USER - LOGIN
-app.post("/api/login", (req, res) => {
+app.post("/api/login", async (req, res) => {
   const reqParam = req?.body.param;
   const email = reqParam.email;
   const nickname = reqParam.nickname;
   const birthday = reqParam.birthday;
   const gender = reqParam.gender;
+  const profileImageUrl = reqParam.profileImageUrl;
+  const thumbnailImageUrl = reqParam.thumbnailImageUrl;
+
+  const resultQueryFindUserResult = await new Promise((resolve, reject) => {
+    connection.query(findUser, [email], (err, rows, field) => {
+      if (err) throw err;
+      // const findUserResult = rows;
+      // 계정 여부에 따른 로그인 처리
+      resolve(rows);
+    });
+  });
 
   const responseValue = {};
-  connection.query(findUser, [email], (err, rows, field) => {
+  if (!resultQueryFindUserResult.length) {
+    // 계정이 없는 경우
+    const jwtToken = jwt.sign({ id: reqParam.email }, process.env.PRIVATE_KEY);
+    const token = jwtToken;
+
+    connection.query(
+      loginSql,
+      [
+        token,
+        email,
+        nickname,
+        birthday,
+        gender,
+        profileImageUrl,
+        thumbnailImageUrl,
+      ],
+      (err, rows, field) => {
+        if (err) throw err;
+        responseValue.token = jwtToken;
+        res.send(responseValue);
+      }
+    );
+  } else {
+    // 계정이 있는 경우
+    connection.query(
+      updateUserProfileImgUrl,
+      [
+        resultQueryFindUserResult[0].user_id,
+        resultQueryFindUserResult[0].token,
+        email,
+        nickname,
+        birthday,
+        gender,
+        profileImageUrl,
+        thumbnailImageUrl,
+      ],
+      (err, rows, field) => {
+        if (err) throw err;
+        responseValue.token = resultQueryFindUserResult[0].token;
+        res.send(responseValue);
+      }
+    );
+  }
+});
+
+// # USER - GETUSER
+app.get("/api/GETUSER", async (req, res) => {
+  // const reqParamsToken = req?.query.token;
+  const token = getAuthorization(req);
+  connection.query(getUserByToken, [token], function (err, rows) {
     if (err) throw err;
-
-    const findUserResult = rows;
-    if (!findUserResult.length) {
-      // 계정이 없는 경우
-      const jwtToken = jwt.sign(
-        { id: reqParam.email },
-        process.env.PRIVATE_KEY
-      );
-      const token = jwtToken;
-
-      connection.query(
-        loginSql,
-        [token, email, nickname, birthday, gender],
-        (err, rows, field) => {
-          if (err) throw err;
-          responseValue.token = jwtToken;
-          res.send(responseValue);
-        }
-      );
-    } else {
-      // 계정이 있는 경우
-      responseValue.token = rows[0].token;
-      res.send(responseValue);
-    }
+    res.send(rows);
   });
 });
 
@@ -175,6 +217,7 @@ app.get("/api/dateRecord", (req, res) => {
 // # 파일업로드
 const multer = require("multer");
 const { JsonWebTokenError } = require("jsonwebtoken");
+const { getAuthorization } = require("./util");
 
 const upload = multer({ dest: "./upload" });
 app.use("/image", express.static("upload"));

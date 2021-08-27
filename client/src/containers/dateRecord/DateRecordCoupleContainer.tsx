@@ -6,7 +6,7 @@ import { RootState } from '../../redux/modules/rootReducer';
 import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
-import { DateRecordReqType } from '../../types';
+import { DateRecordReqType, getUserResType } from '../../types';
 import DateRecordCouple from '../../components/DateRecord/DateRecordCouple';
 
 const DateRecordCoupleContainer = () => {
@@ -16,6 +16,10 @@ const DateRecordCoupleContainer = () => {
   const error = useSelector<RootState, Error | null>(
     (state) => state.books.error,
   );
+  const user = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth.user,
+  );
+
   const dispatch = useDispatch();
 
   const addDateRecord = useCallback(
@@ -35,6 +39,7 @@ const DateRecordCoupleContainer = () => {
 
   return (
     <DateRecordCouple
+      user={user}
       addDateRecord={addDateRecord}
       loading={loading}
       error={error}

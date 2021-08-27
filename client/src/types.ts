@@ -130,3 +130,16 @@ export interface LoginReqType {
 export interface LoginResType {
   token: string;
 }
+
+export interface getUserReqType {
+  token: string;
+}
+export interface getUserResType {
+  email: string;
+  birthday: string;
+  nickname: string;
+  gender: string;
+
+  profileImageUrl: string;
+  thumbnailImageUrl: string;
+}

@@ -7,6 +7,8 @@ import createSagaMiddleware from 'redux-saga';
 import rootReducer from './modules/rootReducer';
 import rootSaga from './modules/rootSaga';
 import TokenService from '../services/TokenService';
+import UserService from '../services/UserService';
+import { getUserResType } from '../types';
 
 export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware(); // 2. saga 미들웨어 생성
@@ -14,13 +16,19 @@ const sagaMiddleware = createSagaMiddleware(); // 2. saga 미들웨어 생성
 const create = () => {
   const token = TokenService.get();
 
+  // let user: getUserResType;
+  // if (token) {
+  //   // user = UserService.getUserByToken(token);
+  //   UserService.getUserByToken(token);
+  // }
+  // debugger;
+
   const store = createStore(
     rootReducer(history),
     {
       auth: {
         token,
-        profileImageUrl: '',
-        thumbnailImageUrl: '',
+        user: null,
         loading: false,
         error: null,
       },
