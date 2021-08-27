@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import ProfileMenu from './Layout/ProfileMenu';
+import Header from './Layout/Header';
 
 const Container = styled.div`
   display: flex;
@@ -16,12 +16,18 @@ const SectionContainer = styled.section`
 
   margin-left: auto;
   margin-right: auto;
-  max-width: 1400px;
+  /* max-width: 1400px; */
   width: 100%;
   height: auto;
+  /*
+    [중요] hegith: auto
+      - 지도 화면에 유지 하는데 중요한 property
+      - map position은 sticky로 설정
+        : 영역은 차지 하면서 브라우저 고정된 위치에 위치 되어야 하기 때문
+  */
 `;
 
-const Header = styled.div`
+const HeaderContainer = styled.div`
   display: flex;
   justify-content: space-between;
   width: 100%;
@@ -33,13 +39,17 @@ const Header = styled.div`
   z-index: 1000;
 `;
 
-const Layout: React.FC = ({ children }) => {
+interface LayoutProps {
+  children: any | any[];
+  menuType?: String;
+}
+const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <Container>
-      <Header className="Header">
-        <ProfileMenu></ProfileMenu>
-      </Header>
-      <SectionContainer className="SectionContainer"></SectionContainer>
+      <HeaderContainer className="Header">
+        <Header></Header>
+      </HeaderContainer>
+      {/* <SectionContainer className="SectionContainer"></SectionContainer> */}
       <SectionContainer>{children}</SectionContainer>
     </Container>
   );

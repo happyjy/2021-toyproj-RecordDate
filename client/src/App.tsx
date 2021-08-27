@@ -13,7 +13,8 @@ import Edit from './pages/Edit';
 
 import DateRecordDetail from './pages/DateRecordDetail';
 import DateRecordEdit from './pages/DateRecordEdit';
-import AddDateRecord from './pages/AddDateRecord';
+import DateRecordAdd from './pages/DateRecordAdd';
+import Couple from './pages/Couple';
 declare global {
   interface Window {
     kakao: any;
@@ -29,12 +30,13 @@ const App = () => (
         <Route exact path="/book/:id" component={Detail} />
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/add" component={Add} />
+        <Route exact path="/couple" component={Couple} />
 
         <Route exact path="/dateRecord/:id" component={DateRecordDetail} />
-        <Route exact path="/addDateRecord" component={AddDateRecord} />
+        <Route exact path="/addDateRecord" component={DateRecordAdd} />
         <Route exact path="/editDateRecord/:id" component={DateRecordEdit} />
         <Route exact path="/" component={Home} />
-        {/* <Route exact path="/" component={AddDateRecord} /> */}
+        {/* <Route exact path="/" component={DateRecordAdd} /> */}
         <Route component={NotFound} />
       </Switch>
     </ConnectedRouter>

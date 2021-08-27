@@ -102,6 +102,8 @@ app.post("/api/login", (req, res) => {
 app.get("/api/dateRecord", (req, res) => {
   const token = req.header("authorization").split(" ")[1];
   const searchOption = JSON.parse(req.query.searchOption);
+
+  console.log("### searchOption: ", searchOption);
   const endOfRange = searchOption.rangeDate[1];
   const splitedEndOfRange = endOfRange.split("-");
   const lastDateEndOfRange = new Date(

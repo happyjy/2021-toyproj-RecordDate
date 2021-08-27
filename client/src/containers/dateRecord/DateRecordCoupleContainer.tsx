@@ -7,9 +7,9 @@ import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
 import { DateRecordReqType } from '../../types';
-import AddDateRecord from '../../components/DateRecord/AddDateRecord';
+import DateRecordCouple from '../../components/DateRecord/DateRecordCouple';
 
-const AddDateRecordContainer = () => {
+const DateRecordCoupleContainer = () => {
   const loading = useSelector<RootState, boolean>(
     (state) => state.books.loading,
   );
@@ -34,7 +34,7 @@ const AddDateRecordContainer = () => {
   }, [dispatch]);
 
   return (
-    <AddDateRecord
+    <DateRecordCouple
       addDateRecord={addDateRecord}
       loading={loading}
       error={error}
@@ -44,4 +44,4 @@ const AddDateRecordContainer = () => {
   );
 };
 
-export default AddDateRecordContainer;
+export default DateRecordCoupleContainer;

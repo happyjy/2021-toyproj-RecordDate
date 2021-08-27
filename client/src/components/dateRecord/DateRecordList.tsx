@@ -251,6 +251,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const result: TypeWillMarkedPlaceList[] = Object.values(mapMarkList);
 
     /* 커스텀 오버레이 설정 */
+    const bounds = new window.kakao.maps.LatLngBounds();
     for (let i = 0; i < result.length; i++) {
       let content = '';
       if (typeof result[i].dateCnt === 'number') {
@@ -287,10 +288,13 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         content: content,
         yAnchor: 0,
       });
+      bounds.extend(result[i].latlng);
 
       // 커스텀 오버레이를 지도에 표시합니다
       customOverlay.setMap(kakaoMapObj);
     }
+    // browser resize시 사용
+    setInitBoundsState(bounds);
 
     /* 마커, 인포윈도우 설정 */
     /* const bounds = new window.kakao.maps.LatLngBounds();
@@ -340,6 +344,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   // 지도 범위 재설정 적용
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
+      debugger;
       kakaoMapObjState?.setBounds(initBoundsState);
     }, 1000);
     window.addEventListener('resize', debouncedHandleResize);

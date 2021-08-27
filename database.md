@@ -2,10 +2,11 @@
   - [테이블 리스트](#테이블-리스트)
   - [테이블 쿼리](#테이블-쿼리)
 - [modify column](#modify-column)
-  - [user Table](#user-table)
+  - [users Table](#users-table)
   - [dateRecord Table](#daterecord-table)
   - [place Table](#place-table)
   - [dateImage Table](#dateimage-table)
+  - [usersProfileImage Table](#usersprofileimage-table)
 - [insert data](#insert-data)
 - [select query](#select-query)
   - [dateRecord query list](#daterecord-query-list)
@@ -15,7 +16,7 @@
 
 ## 테이블 리스트
 
-    - user
+    - users
     - dateRecord
     - place
     - image
@@ -32,7 +33,7 @@ SHOW TABLES;
 
 ```sql
 
-DROP TABLE user;
+DROP TABLE users;
 DROP TABLE couple;
 
 DROP TABLE dateRecord;
@@ -40,7 +41,7 @@ DROP TABLE place;
 DROP TABLE image;
 
 
-CREATE TABLE IF NOT EXISTS user (
+CREATE TABLE IF NOT EXISTS users (
     user_id INT AUTO_INCREMENT PRIMARY KEY,
     token VARCHAR(255) NOT NULL,
     email VARCHAR(255) NOT NULL,
@@ -99,11 +100,23 @@ CREATE TABLE IF NOT EXISTS dateImage (
         REFERENCES dateRecord (dateRecord_id)
         ON UPDATE RESTRICT ON DELETE CASCADE
 );
+
+CREATE TABLE IF NOT EXISTS userProfileImage (
+    userProfileImage_id INT AUTO_INCREMENT,
+    user_id INT,
+    dateImage_name VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    PRIMARY KEY (userProfileImage_id, user_id),
+    FOREIGN KEY (user_id)
+        REFERENCES users (user_id)
+);
+        -- ON UPDATE RESTRICT ON DELETE CASCADE
 ```
 
 # modify column
 
-## user Table
+## users Table
 
 ```
 ALTER TABLE user RENAME TO users;
@@ -166,6 +179,12 @@ update dateImage set isDeleted = '1' where dateImage_id = 23;
 
 ```
 
+## usersProfileImage Table
+
+```
+ALTER TABLE userProfileImage RENAME TO usersProfileImage;
+```
+
 # insert data
 
 ```sql
@@ -200,11 +219,11 @@ SELECT @n:=@n+1 dateCnt, t.dateRecord_id
                         WHERE 1=1
                         AND ISDELETED = 0
                         AND dateTime < '2021-02-01')) initvars, (SELECT *
-                                                        FROM dateRecord
-                                                        WHERE 1=1
-                                                          AND ISDELETED = 0
-                                                          AND dateTime BETWEEN '2021-02-01' AND '2021-08-31'
-                                                    ORDER BY dateTime ASC) t
+                                                                   FROM dateRecord
+                                                                  WHERE 1=1
+                                                                    AND ISDELETED = 0
+                                                                    AND dateTime BETWEEN '2021-02-01' AND '2021-08-31'
+                                                              ORDER BY dateTime ASC) t
   WHERE 1=1
   ORDER BY DATECNT desc;
 ```

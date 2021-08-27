@@ -3,7 +3,7 @@ import { message as messageDialog, PageHeader, Button } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import { DateRecordReqType, placeListType } from '../../types';
-import styles from './AddDateRecord.module.css';
+import styles from './DateRecordAdd.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/chipsComponent';
@@ -146,7 +146,7 @@ interface AddProps {
   logout: () => void;
 }
 
-const AddDateRecord: React.FC<AddProps> = ({
+const DateRecordAdd: React.FC<AddProps> = ({
   addDateRecord,
   loading,
   error,
@@ -354,4 +354,4 @@ const AddDateRecord: React.FC<AddProps> = ({
     </Layout>
   );
 };
-export default AddDateRecord;
+export default DateRecordAdd;

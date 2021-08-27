@@ -10,11 +10,12 @@ import { useDispatch } from 'react-redux';
 import styled from 'styled-components';
 import useProfileUrl from '../../hooks/useProfileUrl';
 import { logout as logoutSaga } from '../../redux/modules/auth';
-import styles from './ProfileMenu.module.css';
+import styles from './Header.module.css';
 
 const TitleContainer = styled.div``;
 
 const Title = styled.label`
+  cursor: pointer;
   color: var(--blueberry);
   font-weight: 600;
   font-size: 20px;
@@ -165,6 +166,10 @@ const ProfileMenu: React.FC = () => {
 
   const dispatch = useDispatch();
 
+  const goHome = useCallback(() => {
+    dispatch(push('/'));
+  }, [dispatch]);
+
   const goAdd = useCallback(() => {
     dispatch(push('/addDateRecord'));
   }, [dispatch]);
@@ -175,8 +180,6 @@ const ProfileMenu: React.FC = () => {
   }, [dispatch]);
 
   const couple = useCallback(() => {
-    debugger;
-    console.log('!23');
     dispatch(push('/couple'));
     setToggleProfile((props) => !props);
   }, [dispatch]);
@@ -187,7 +190,9 @@ const ProfileMenu: React.FC = () => {
   return (
     <>
       <TitleContainer className="TitleContainer">
-        <Title className="Title">Date List</Title>
+        <Title onClick={goHome} className="Title">
+          Date List
+        </Title>
       </TitleContainer>
       <RightHeaderContainer className="RightHeaderContainer">
         <Button onClick={goAdd}>Add Date</Button>
