@@ -131,10 +131,17 @@ export interface LoginResType {
   token: string;
 }
 
+// getUser By "Token"
 export interface getUserReqType {
   token: string;
 }
+export interface getUserByEmailReqType {
+  email: string;
+  token: string | undefined;
+}
 export interface getUserResType {
+  user_id: string;
+  token: string | undefined;
   email: string;
   birthday: string;
   nickname: string;

@@ -80,10 +80,10 @@ const ProfileImgContainer = styled.div`
 const ProfileImg = styled.img`
   height: 100%;
 `;
+
 type MenuContainerType = {
   isActive: Boolean;
 };
-
 const MenuContainer = styled.div<MenuContainerType>`
   visibility: ${(props) => (props.isActive ? 'visible' : 'hidden')};
   background: ${(props) => (props.isActive ? 'var(--coral)' : 'white')};

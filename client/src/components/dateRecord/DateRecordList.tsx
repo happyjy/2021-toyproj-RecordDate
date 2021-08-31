@@ -17,8 +17,6 @@ import {
   keywordSearchType,
   placeListType,
   TypeWillMarkedPlaceList,
-  getUserReqType,
-  getUserResType,
 } from '../../types';
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
@@ -190,12 +188,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     setDateRecordListState(dateRecordList);
   }, [dateRecordList]);
 
-  // 유저 정보: user
-  // const token = TokenService.get();
-  // useEffect(() => {
-  //   token && getUser(token);
-  // }, [getUser]);
-
   useEffect(() => {
     if (error) {
       logout();
@@ -263,6 +255,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const bounds = new window.kakao.maps.LatLngBounds();
     for (let i = 0; i < result.length; i++) {
       let content = '';
+      console.log('### result[i]: ', result[i]);
       if (typeof result[i].dateCnt === 'number') {
         // 1회 방문
         content = `<div class="mapCustomOverlay"
@@ -353,7 +346,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   // 지도 범위 재설정 적용
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
-      debugger;
       kakaoMapObjState?.setBounds(initBoundsState);
     }, 1000);
     window.addEventListener('resize', debouncedHandleResize);

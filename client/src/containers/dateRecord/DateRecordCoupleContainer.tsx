@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
 
@@ -8,6 +8,8 @@ import { logout as logoutSaga } from '../../redux/modules/auth';
 import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
 import { DateRecordReqType, getUserResType } from '../../types';
 import DateRecordCouple from '../../components/DateRecord/DateRecordCouple';
+import { debounce } from '../../redux/utils';
+import UserService from '../../services/UserService';
 
 const DateRecordCoupleContainer = () => {
   const loading = useSelector<RootState, boolean>(
@@ -19,6 +21,22 @@ const DateRecordCoupleContainer = () => {
   const user = useSelector<RootState, getUserResType | null>(
     (state) => state.auth.user,
   );
+
+  // email 검색 요청
+  const [searchLoading, setSearchLoading] = useState<boolean>(false);
+  const [userList, setUserList] = useState<getUserResType[]>([]);
+  const onSearchUser = debounce(async (e) => {
+    // 유저 검색 saga호출(container, action, saga, service)
+    if (!e.target.value.trim()) return;
+
+    setSearchLoading(true);
+    const userList = await UserService.getUserByEmail({
+      email: e.target.value,
+      token: user?.token,
+    });
+    setSearchLoading(false);
+    setUserList((list) => [...userList]);
+  }, 500);
 
   const dispatch = useDispatch();
 
@@ -39,6 +57,9 @@ const DateRecordCoupleContainer = () => {
 
   return (
     <DateRecordCouple
+      searchLoading={searchLoading}
+      userList={userList}
+      onSearchUser={onSearchUser}
       user={user}
       addDateRecord={addDateRecord}
       loading={loading}

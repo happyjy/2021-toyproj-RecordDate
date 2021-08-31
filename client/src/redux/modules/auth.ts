@@ -4,6 +4,7 @@ import { takeEvery, put, call, select } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
 import {
+  getUserByEmailReqType,
   getUserReqType,
   getUserResType,
   LoginReqType,
@@ -52,7 +53,6 @@ const reducer = handleActions<AuthState, any>(
       error: null,
     }),
     SUCCESS: (state, action) => {
-      debugger;
       return {
         ...state,
         token: action.payload.token,
@@ -73,42 +73,63 @@ const reducer = handleActions<AuthState, any>(
 
 export default reducer;
 
-export const { getuser, snslogin, login, logout } = createActions(
-  {
-    GETUSER: (token: String) => ({
-      token,
-    }),
-    SNSLOGIN: ({
-      email,
-      nickname,
-      birthday,
-      gender,
-      profileImageUrl,
-      thumbnailImageUrl,
-    }: SnsLoginReqType) => ({
-      email,
-      nickname,
-      birthday,
-      gender,
-      profileImageUrl,
-      thumbnailImageUrl,
-    }),
-    LOGIN: ({ email, password }: LoginReqType) => ({
-      email,
-      password,
-    }),
-  },
-  'LOGOUT',
-  options,
-);
+export const { getusebyemail, getuser, snslogin, login, logout } =
+  createActions(
+    {
+      // GETUSEBYEMAIL: (email: String, token: String) => ({
+      GETUSEBYEMAIL: (getUserOpt: getUserByEmailReqType) => getUserOpt,
+      GETUSER: (token: String) => ({
+        token,
+      }),
+      SNSLOGIN: ({
+        email,
+        nickname,
+        birthday,
+        gender,
+        profileImageUrl,
+        thumbnailImageUrl,
+      }: SnsLoginReqType) => ({
+        email,
+        nickname,
+        birthday,
+        gender,
+        profileImageUrl,
+        thumbnailImageUrl,
+      }),
+      LOGIN: ({ email, password }: LoginReqType) => ({
+        email,
+        password,
+      }),
+    },
+    'LOGOUT',
+    options,
+  );
 
 export function* sagas() {
+  yield takeEvery(`${options.prefix}/GETUSERBYEMAIL`, getUserByEmailSaga);
   yield takeEvery(`${options.prefix}/GETUSER`, getUserSaga);
   yield takeEvery(`${options.prefix}/SNSLOGIN`, snsLoginSaga);
   // yield takeEvery(`${options.prefix}/LOGIN`, loginSaga);
   yield takeEvery(`${options.prefix}/LOGOUT`, logoutSaga);
 }
 
+interface getUserByEmailSagaAction extends AnyAction {
+  payload: getUserByEmailReqType;
+}
+
+function* getUserByEmailSaga(action: getUserByEmailSagaAction) {
+  try {
+    yield put(pending());
+    const user: getUserResType[] = yield call(
+      UserService.getUserByEmail,
+      action.payload,
+    );
+    console.log('### getUserByEmailSaga: ');
+    // yield put(success(action.payload.token, user));
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+  }
+}
 interface getUserSagaAction extends AnyAction {
   payload: getUserReqType;
 }

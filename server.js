@@ -16,6 +16,16 @@ app.use(express.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get("/api/test", (req, res) => {
+  /*
+    # authorization
+      => req.header("authorization")
+  */
+  /*
+    # url query
+    http://localhost:5000/api/test?searchKeyword=111&user=999
+     => req.query: { searchKeyword: '111', user: '999' }
+  */
+  console.log(req.query);
   res.send([
     {
       bookId: 1,
@@ -57,12 +67,13 @@ const connection = mysql.createConnection({
   multipleStatements: true,
 });
 
-// # sql
+// # require: sql query
 const {
   loginSql,
   findUser,
   updateUserProfileImgUrl,
   getUserByToken,
+  getUserByEmail,
 } = require("./sql");
 
 // # USER - LOGIN
@@ -131,10 +142,23 @@ app.post("/api/login", async (req, res) => {
 });
 
 // # USER - GETUSER
-app.get("/api/GETUSER", async (req, res) => {
+app.get("/api/getUser", async (req, res) => {
   // const reqParamsToken = req?.query.token;
   const token = getAuthorization(req);
   connection.query(getUserByToken, [token], function (err, rows) {
+    if (err) throw err;
+    res.send(rows);
+  });
+});
+
+// # USER - SEARCH USER BY EMAIL
+app.get("/api/getUser/email", async (req, res) => {
+  console.log("### /api/getUser/email");
+  // res.send(["반환"]);
+  console.log(req.query);
+  const selectParam = [req.query.email];
+  console.log("### /api/getUser/email: ", getUserByEmail(req.query.email));
+  connection.query(getUserByEmail(req.query.email), [], function (err, rows) {
     if (err) throw err;
     res.send(rows);
   });

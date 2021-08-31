@@ -59,14 +59,15 @@ export function makeDate(
   return dateRecordList;
 }
 
-export function debounce(fn, ms) {
-  let timer: any;
-  return () => {
-    clearTimeout(timer);
-    timer = setTimeout(function () {
-      timer = null;
-      // fn.apply(this, arguments);
-      fn.apply(fn, arguments);
+export function debounce(fn, ms = 1000) {
+  let timerId: any = null;
+  return (...args) => {
+    if (timerId) clearTimeout(timerId);
+
+    timerId = setTimeout(function () {
+      console.log('### UTIL > DEBOUNCE');
+      console.log({ fn, args });
+      fn(...args);
     }, ms);
   };
 }

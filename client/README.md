@@ -27,12 +27,3 @@ npm ci
 ```
 npm start
 ```
-
-# 2021-toyproj-RecordDate
-
-<https://my-books.vercel.app/signin>
-로그인계정
-mark@test.com
-fastcampus
-
-    // "start": "HOST=0.0.0.0 PORT=443 react-scripts start",

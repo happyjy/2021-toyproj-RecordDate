@@ -1,6 +1,7 @@
 import axios from 'axios';
 
 import {
+  getUserByEmailReqType,
   getUserReqType,
   getUserResType,
   LoginReqType,
@@ -11,7 +12,7 @@ import {
 
 const USER_API_URL = 'https://api.marktube.tv/v1/me';
 const DATERECORD_API_URL = 'http://localhost:5000/api/login';
-const GETUSER_API_URL = 'http://localhost:5000/api/GETUSER';
+const GETUSER_API_URL = 'http://localhost:5000/api/getUser';
 
 export default class UserService {
   public static async snsLogin({
@@ -44,6 +45,22 @@ export default class UserService {
     });
 
     return response.data[0];
+  }
+
+  public static async getUserByEmail(
+    searchOption: getUserByEmailReqType,
+  ): Promise<getUserResType[]> {
+    const response = await axios.get<getUserResType[]>(
+      `${GETUSER_API_URL}/email`,
+      {
+        params: { email: searchOption.email },
+        headers: {
+          Authorization: `Bearer ${searchOption.token}`,
+        },
+      },
+    );
+    debugger;
+    return response.data;
   }
 
   public static async login({
