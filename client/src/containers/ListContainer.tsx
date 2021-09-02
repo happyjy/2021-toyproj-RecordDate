@@ -3,13 +3,13 @@ import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import List from '../Components/List';
-import { RootState } from '../Redux/modules/rootReducer';
+import { RootState } from '../Redux/Modules/rootReducer';
 import { BookResType } from '../types';
-import { logout as logoutSaga } from '../Redux/modules/auth';
+import { logout as logoutSaga } from '../Redux/Modules/auth';
 import {
   getBooks as getBooksSaga,
   deleteBook as deleteBookSaga,
-} from '../Redux/modules/books';
+} from '../Redux/Modules/books';
 
 const ListContainer: React.FC = (props) => {
   const books = useSelector<RootState, BookResType[] | null>(

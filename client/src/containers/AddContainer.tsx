@@ -3,12 +3,12 @@ import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
 
 import Add from '../Components/Add';
-import { RootState } from '../Redux/modules/rootReducer';
-import { logout as logoutSaga } from '../Redux/modules/auth';
+import { RootState } from '../Redux/Modules/rootReducer';
+import { logout as logoutSaga } from '../Redux/Modules/auth';
 import {
   addBook as addBookSaga,
   getBooks as getBooksSaga,
-} from '../Redux/modules/books';
+} from '../Redux/Modules/books';
 import { BookReqType, BookResType } from '../types';
 
 const AddContainer = () => {

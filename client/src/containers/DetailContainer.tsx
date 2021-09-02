@@ -4,10 +4,10 @@ import { goBack, push } from 'connected-react-router';
 import { useParams } from 'react-router-dom';
 
 import Detail from '../Components/Detail';
-import { RootState } from '../Redux/modules/rootReducer';
+import { RootState } from '../Redux/Modules/rootReducer';
 import { BookResType } from '../types';
-import { logout as logoutSaga } from '../Redux/modules/auth';
-import { getBooks as getBooksSaga } from '../Redux/modules/books';
+import { logout as logoutSaga } from '../Redux/Modules/auth';
+import { getBooks as getBooksSaga } from '../Redux/Modules/books';
 
 const DetailContainer = () => {
   const { id } = useParams();

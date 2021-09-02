@@ -7,7 +7,7 @@ import NotFound from './Pages/NotFound';
 import Error from './Pages/Error';
 import ErrorBoundary from 'react-error-boundary';
 import { ConnectedRouter } from 'connected-react-router';
-import { history } from './Redux/create';
+import { history } from './Redux/Create';
 import Detail from './Pages/Detail';
 import Edit from './Pages/Edit';
 

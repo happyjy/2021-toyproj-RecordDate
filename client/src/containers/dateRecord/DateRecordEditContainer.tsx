@@ -3,13 +3,13 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useParams } from 'react-router-dom';
 import { goBack } from 'connected-react-router';
 
-import { RootState } from '../../Redux/modules/rootReducer';
+import { RootState } from '../../Redux/Modules/rootReducer';
 import { dateRecordListExtendType, EditDateRecordReqType } from '../../types';
-import { logout as logoutSaga } from '../../Redux/modules/auth';
+import { logout as logoutSaga } from '../../Redux/Modules/auth';
 import {
   getDatelist as getDateListSaga,
   editDaterecord as editDateRecordsaga,
-} from '../../Redux/modules/dateRecord';
+} from '../../Redux/Modules/dateRecord';
 import DateRecordEdit from '../../Components/DateRecord/DateRecordEdit';
 
 const DateRecordEditContainer = () => {

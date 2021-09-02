@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
-import { RootState } from '../../Redux/modules/rootReducer';
+import { RootState } from '../../Redux/Modules/rootReducer';
 import {
   dateRecordListExtendType,
   getUserResType,
@@ -11,12 +11,12 @@ import {
 import {
   logout as logoutSaga,
   getuser as getUserSaga,
-} from '../../Redux/modules/auth';
+} from '../../Redux/Modules/auth';
 
 import {
   getDatelist as getDateListSaga,
   deleteDaterecord as deleteDateRecordSaga,
-} from '../../Redux/modules/dateRecord';
+} from '../../Redux/Modules/dateRecord';
 import DateRecordList from '../../Components/DateRecord/DateRecordList';
 
 const DateRecordListContainer: React.FC = (props) => {

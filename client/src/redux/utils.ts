@@ -1,4 +1,4 @@
-import { RootState } from './modules/rootReducer';
+import { RootState } from './Modules/rootReducer';
 import {
   BookResType,
   dateImageListType,

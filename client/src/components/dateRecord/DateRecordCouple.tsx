@@ -7,7 +7,7 @@ import {
 } from '../../types';
 import styled, { keyframes } from 'styled-components';
 import confirm from 'antd/lib/modal/confirm';
-import { COUPLESTATUS } from '../../constants';
+import { COUPLESTATUS } from '../../Constants';
 
 const Container = styled.div`
   margin-top: 64px;
