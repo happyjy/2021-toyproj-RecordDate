@@ -17,5 +17,5 @@
     "downlevelIteration": true,
     "noImplicitAny": false
   },
-  "include": ["src"]
+  "include": ["Src"]
 }
