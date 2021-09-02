@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack, push } from 'connected-react-router';
 import { useParams } from 'react-router-dom';
-import { RootState } from '../../redux/modules/rootReducer';
+import { RootState } from '../../Redux/modules/rootReducer';
 import { dateRecordListExtendType } from '../../types';
 
-import { logout as logoutSaga } from '../../redux/modules/auth';
-import { getDatelist as getDateListSaga } from '../../redux/modules/dateRecord';
+import { logout as logoutSaga } from '../../Redux/modules/auth';
+import { getDatelist as getDateListSaga } from '../../Redux/modules/dateRecord';
 import DateRecordDetail from '../../Components/DateRecord/DateRecordDetail';
 
 const DateRecordDetailContainer = () => {

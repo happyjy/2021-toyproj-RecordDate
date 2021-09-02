@@ -3,7 +3,7 @@ import { createActions, handleActions } from 'redux-actions';
 import { put, call, takeEvery, select } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
-import BookService from '../../services/BookService';
+import BookService from '../../Services/BookService';
 import { BookResType, BookReqType } from '../../types';
 import { getTokenFromState, getBooksFromState } from '../utils';
 

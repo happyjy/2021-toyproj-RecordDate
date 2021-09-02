@@ -13,8 +13,8 @@ import {
 } from '../../types';
 import { getTokenFromState } from '../utils';
 import { success as booksSuccess } from './books';
-import UserService from '../../services/UserService';
-import TokenService from '../../services/TokenService';
+import UserService from '../../Services/UserService';
+import TokenService from '../../Services/TokenService';
 import produce from 'immer';
 
 export interface AuthState {

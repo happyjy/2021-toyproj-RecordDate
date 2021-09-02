@@ -8,7 +8,7 @@ import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/chipsComponent';
 import map from '../map';
-import useFileUpload from '../../hooks/useFileUplaod';
+import useFileUpload from '../../Hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 import dycalendar from '../Calendar/dyCalendar';
 import moment from 'moment';

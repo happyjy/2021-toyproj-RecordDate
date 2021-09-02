@@ -21,8 +21,8 @@ import {
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
-import { debounce, getDateFormatSearchType } from '../../redux/utils';
-import TokenService from '../../services/TokenService';
+import { debounce, getDateFormatSearchType } from '../../Redux/utils';
+import TokenService from '../../Services/TokenService';
 
 const Container = styled.div`
   /* border: 5px red solid; */

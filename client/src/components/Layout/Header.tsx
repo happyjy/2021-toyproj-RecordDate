@@ -11,9 +11,9 @@ import styled from 'styled-components';
 import {
   logout as logoutSaga,
   getuser as getUserSaga,
-} from '../../redux/modules/auth';
-import { RootState } from '../../redux/modules/rootReducer';
-import TokenService from '../../services/TokenService';
+} from '../../Redux/modules/auth';
+import { RootState } from '../../Redux/modules/rootReducer';
+import TokenService from '../../Services/TokenService';
 import { getUserResType } from '../../types';
 import styles from './Header.module.css';
 

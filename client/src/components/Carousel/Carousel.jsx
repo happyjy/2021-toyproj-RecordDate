@@ -1,5 +1,5 @@
 import React from 'react';
-import useCarousel from '../../hooks/useCarousel';
+import useCarousel from '../../Hooks/useCarousel';
 import styled from 'styled-components';
 
 /* 캐러셀의 window 역할을 한다. */
@@ -30,13 +30,13 @@ const Img = styled.img`
 `;
 
 const Control = styled.button`
-  /* 
-    # POINT: transform: translate가 필요한 이유 
-      * positon: absolute, top, left: 50%로인해 중앙에 온다 
+  /*
+    # POINT: transform: translate가 필요한 이유
+      * positon: absolute, top, left: 50%로인해 중앙에 온다
       * 하지만 화살표 버튼 왼쪽 상단이 .clock el의 중앙에 위치(position: top 설정 한거니까)
         (=> Control el이 Container el중앙에 위치 하지 않는다.)
-      * Control el의 height의 -50% 만큼 이동해야 
-        Container el이 정중앙에 올 수 있게 된다. 
+      * Control el의 height의 -50% 만큼 이동해야
+        Container el이 정중앙에 올 수 있게 된다.
           - dom 구조
             Contriner
               ㄴ PrevControl(Control상속)

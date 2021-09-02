@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
-import { RootState } from '../../redux/modules/rootReducer';
+import { RootState } from '../../Redux/modules/rootReducer';
 import {
   acceptcouple as acceptCoupleSaga,
   requestcouple as requestCoupleSaga,
   logout as logoutSaga,
-} from '../../redux/modules/auth';
+} from '../../Redux/modules/auth';
 
 import {
   getUserResType,
@@ -14,8 +14,8 @@ import {
   requsetCoupleReqType,
 } from '../../types';
 import DateRecordCouple from '../../Components/DateRecord/DateRecordCouple';
-import { debounce } from '../../redux/utils';
-import UserService from '../../services/UserService';
+import { debounce } from '../../Redux/utils';
+import UserService from '../../Services/UserService';
 
 const DateRecordCoupleContainer = () => {
   const loading = useSelector<RootState, boolean>(
