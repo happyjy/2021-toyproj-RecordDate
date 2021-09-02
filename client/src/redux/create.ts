@@ -6,7 +6,7 @@ import createSagaMiddleware from 'redux-saga';
 
 import rootReducer from './modules/rootReducer';
 import rootSaga from './modules/rootSaga';
-import TokenService from '../services/TokenService';
+import TokenService from '../Services/TokenService';
 
 export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware(); // 2. saga 미들웨어 생성

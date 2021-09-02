@@ -1,7 +1,7 @@
 import React from 'react';
 import { Redirect } from 'react-router-dom';
 
-import useToken from '../hooks/useToken';
+import useToken from '../Hooks/useToken';
 import DetailContainer from '../Containers/DetailContainer';
 
 const Detail = () => {

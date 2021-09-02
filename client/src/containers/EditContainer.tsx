@@ -4,13 +4,13 @@ import { useParams } from 'react-router-dom';
 import { goBack } from 'connected-react-router';
 
 import Edit from '../Components/Edit';
-import { RootState } from '../redux/modules/rootReducer';
+import { RootState } from '../Redux/modules/rootReducer';
 import { BookResType } from '../types';
-import { logout as logoutSaga } from '../redux/modules/auth';
+import { logout as logoutSaga } from '../Redux/modules/auth';
 import {
   editBook as editBookSaga,
   getBooks as getBooksSaga,
-} from '../redux/modules/books';
+} from '../Redux/modules/books';
 
 const EditContainer = () => {
   const { id } = useParams();

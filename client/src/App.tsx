@@ -1,20 +1,20 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
-import Home from './pages/Home';
-import Add from './pages/Add';
-import Signin from './pages/Signin';
-import NotFound from './pages/NotFound';
-import Error from './pages/Error';
+import Home from './Pages/Home';
+import Add from './Pages/Add';
+import Signin from './Pages/Signin';
+import NotFound from './Pages/NotFound';
+import Error from './Pages/Error';
 import ErrorBoundary from 'react-error-boundary';
 import { ConnectedRouter } from 'connected-react-router';
-import { history } from './redux/create';
-import Detail from './pages/Detail';
-import Edit from './pages/Edit';
+import { history } from './Redux/create';
+import Detail from './Pages/Detail';
+import Edit from './Pages/Edit';
 
-import DateRecordDetail from './pages/DateRecordDetail';
-import DateRecordEdit from './pages/DateRecordEdit';
-import DateRecordAdd from './pages/DateRecordAdd';
-import Couple from './pages/Couple';
+import DateRecordDetail from './Pages/DateRecordDetail';
+import DateRecordEdit from './Pages/DateRecordEdit';
+import DateRecordAdd from './Pages/DateRecordAdd';
+import Couple from './Pages/Couple';
 declare global {
   interface Window {
     kakao: any;
