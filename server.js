@@ -10,6 +10,12 @@ const app = express();
 app.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(cors());
 app.use(express.json());
+// 리액트 정적 파일 제공
+app.use(express.static(path.join(__dirname, "client/build")));
+// 라우트 설정
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/build/index.html"));
+});
 
 app.get("/demo", (req, res) => {
   res.send("HELLO, JYOON");
