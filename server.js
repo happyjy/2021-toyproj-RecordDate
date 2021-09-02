@@ -5,15 +5,12 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const jwt = require("jsonwebtoken");
 
-const app = express();
 const port = process.env.PORT || 5000;
-console.log("### server.js > process.env.PORT: ", process.env.PORT);
-
+const app = express();
+app.listen(port, () => console.log(`Listening on port ${port}`));
 app.use(cors());
 app.use(express.json());
 
-// app.use(bodyParser.json());
-// app.use(bodyParser.urlencoded({ extended: true }));
 app.get("/demo", (req, res) => {
   res.send("HELLO, JYOON");
 });
@@ -27,7 +24,6 @@ app.get("/api/test", (req, res) => {
     http://localhost:5000/api/test?searchKeyword=111&user=999
      => req.query: { searchKeyword: '111', user: '999' }
   */
-  console.log(req.query);
   res.send([
     {
       bookId: 1,
@@ -68,6 +64,7 @@ const connection = mysql.createConnection({
   database: conf.database,
   multipleStatements: true,
 });
+connection.connect();
 
 // # require: sql query
 const {
@@ -194,7 +191,6 @@ app.get("/api/getUser", async (req, res) => {
     result.push(partnerUserInfo);
   }
 
-  console.log({ "### /api/getUser > result": result });
   res.send(result);
 });
 
@@ -210,16 +206,12 @@ app.get("/api/couple/request", async (req, res) => {
         [reqestUserId, receiveUserId],
         (err, result, fields) => {
           if (err) throw err;
-          console.log("### result, fields");
-          console.log({ result, fields });
           resolve({ result, fields });
         }
       );
     });
-    console.log({ reqCoupleResult });
 
     coupleId = reqCoupleResult.result.insertId;
-    console.log("### coupleId: ", { coupleId });
     // 요청한 사람: reqestUserId
     await new Promise((resolve, reject) => {
       connection.query(
@@ -227,7 +219,6 @@ app.get("/api/couple/request", async (req, res) => {
         [coupleId, reqestUserId],
         (err, result, fields) => {
           if (err) throw err;
-          console.log({ err, result, fields });
           resolve({ result, fields });
         }
       );
@@ -239,7 +230,6 @@ app.get("/api/couple/request", async (req, res) => {
         [coupleId, receiveUserId],
         (err, result, fields) => {
           if (err) throw err;
-          console.log({ err, result, fields });
           resolve({ result, fields });
         }
       );
@@ -279,13 +269,11 @@ app.get("/api/couple/request", async (req, res) => {
     //   },
     // });
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 });
 // # COUPLE - ACCEPT COUPLE
 app.get("/api/couple/accept", async (req, res) => {
-  console.log("### /api/couple/accept");
-  console.log(req.query);
   const coupleId = req.query.coupleId;
   const status = 1; // # couplse request: 0: request, 1: accept
 
@@ -296,7 +284,6 @@ app.get("/api/couple/accept", async (req, res) => {
       [status, coupleId],
       (err, result, fields) => {
         if (err) throw err;
-        console.log({ err, result, fields });
         resolve(result);
       }
     );
@@ -313,7 +300,6 @@ app.get("/api/couple/accept", async (req, res) => {
       }
     );
   });
-  console.log({ result1 });
 
   // update couple_id feild dateRecord Table
   const result2 = await new Promise((resolve, reject) => {
@@ -322,18 +308,15 @@ app.get("/api/couple/accept", async (req, res) => {
       [coupleId, result1.couple1_id, result1.couple2_id],
       (err, result, fields) => {
         if (err) throw err;
-        console.log({ err, result, fields });
         resolve(result);
       }
     );
   });
-  console.log({ result2 });
 
   res.send({ coupleId, status });
 });
 // # COUPLE - SEARCH USER BY EMAIL
 app.get("/api/getUser/email", async (req, res) => {
-  console.log("### /api/getUser/email");
   connection.query(
     getUserByEmailSql(req.query.email),
     [],
@@ -414,7 +397,7 @@ app.get("/api/dateRecord", async (req, res) => {
     }
     res.send(result);
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 });
 
@@ -513,7 +496,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
       }
     );
   } catch (error) {
-    console.log(error);
+    throw error;
   }
 });
 
@@ -536,14 +519,10 @@ app.patch(
     let title = req.body.title;
     let description = req.body.description;
     let delPlaceList = JSON.parse(req.body.delPlaceList);
-    // console.log("### nextlevel: " + req.body.addPlaceList);
     let addPlaceList = JSON.parse(req.body.addPlaceList);
     let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
     let images = req.files;
     let updateDateRecordParams = [title, description, req.params.id];
-
-    console.log("### newImageFileList: ", images);
-    console.log("param: ", { title, description, delPlaceList, addPlaceList });
 
     connection.query(
       updateDateRecord,
@@ -601,7 +580,6 @@ app.patch(
       [editDateRecordId, editDateRecordId],
       (err, results) => {
         if (err) throw err;
-        console.log("### select dateRecord, place AFTER update: ", results);
         res.send(results);
       }
     );
@@ -627,6 +605,3 @@ app.delete("/api/dateRecord/:id", (req, res) => {
     res.send(results);
   });
 });
-
-connection.connect();
-app.listen(port, () => console.log(`Listening on port ${port}`));
