@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
+    "heroku-postbuild": "npx webpack",
     "nodemon": "nodemon ./server.js",
     "server": "nodemon ./server.js",
     "dev": "concurrently --kill-others-on-fail \"nodemon ./server.js\" \"yarn client\"",
