@@ -2,7 +2,6 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
-import DateRecordList from '../../components/DateRecord/DateRecordList';
 import { RootState } from '../../redux/modules/rootReducer';
 import {
   dateRecordListExtendType,
@@ -18,6 +17,7 @@ import {
   getDatelist as getDateListSaga,
   deleteDaterecord as deleteDateRecordSaga,
 } from '../../redux/modules/dateRecord';
+import DateRecordList from '../../Components/DateRecord/DateRecordList';
 
 const DateRecordListContainer: React.FC = (props) => {
   const dateRecordList = useSelector<

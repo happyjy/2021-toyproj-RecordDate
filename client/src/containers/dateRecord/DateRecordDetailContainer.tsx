@@ -7,7 +7,7 @@ import { dateRecordListExtendType } from '../../types';
 
 import { logout as logoutSaga } from '../../redux/modules/auth';
 import { getDatelist as getDateListSaga } from '../../redux/modules/dateRecord';
-import DateRecordDetail from '../../components/DateRecord/DateRecordDetail';
+import DateRecordDetail from '../../Components/DateRecord/DateRecordDetail';
 
 const DateRecordDetailContainer = () => {
   const { id } = useParams();

@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
-import List from '../components/List';
+import List from '../Components/List';
 import { RootState } from '../redux/modules/rootReducer';
 import { BookResType } from '../types';
 import { logout as logoutSaga } from '../redux/modules/auth';

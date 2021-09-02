@@ -13,7 +13,7 @@ import {
   reqAcceptCoupleType,
   requsetCoupleReqType,
 } from '../../types';
-import DateRecordCouple from '../../components/DateRecord/DateRecordCouple';
+import DateRecordCouple from '../../Components/DateRecord/DateRecordCouple';
 import { debounce } from '../../redux/utils';
 import UserService from '../../services/UserService';
 

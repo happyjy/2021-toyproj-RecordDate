@@ -2,7 +2,7 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
 
-import Add from '../components/Add';
+import Add from '../Components/Add';
 import { RootState } from '../redux/modules/rootReducer';
 import { logout as logoutSaga } from '../redux/modules/auth';
 import {

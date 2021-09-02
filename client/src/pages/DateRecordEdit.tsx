@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
-import DateRecordEditContainer from '../containers/dateRecord/DateRecordEditContainer';
+import DateRecordEditContainer from '../Containers/DateRecord/DateRecordEditContainer';
 
 const Edit = () => {
   const token = useToken();

@@ -2,7 +2,7 @@ import React from 'react';
 import { Redirect } from 'react-router-dom';
 
 import useToken from '../hooks/useToken';
-import DateRecordAddContainer from '../containers/dateRecord/DateRecordAddContainer';
+import DateRecordAddContainer from '../Containers/DateRecord/DateRecordAddContainer';
 
 const Add = () => {
   const token = useToken();
