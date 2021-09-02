@@ -123,6 +123,8 @@ export interface BookResType {
 
   createdAt: string;
 }
+
+// # login
 export interface LoginReqType {
   email: string;
   password: string;
@@ -139,14 +141,57 @@ export interface getUserByEmailReqType {
   email: string;
   token: string | undefined;
 }
+
+// redux > auth > user
 export interface getUserResType {
-  user_id: string;
+  user_id: number;
   token: string | undefined;
   email: string;
+  couple_id: number;
+  couple_status: number;
+  couple1_id: number;
+  couple2_id: number;
   birthday: string;
   nickname: string;
   gender: string;
 
   profileImageUrl: string;
   thumbnailImageUrl: string;
+}
+
+// # couple
+// ## request couple
+export interface requsetCoupleReqType {
+  reqestUserId: number;
+  receiveUserId: number;
+  token: string;
+}
+
+export interface requsetCoupleResType extends apiResultType {
+  result: {
+    insertId: number;
+    serverStatus: number;
+  };
+}
+
+// ## accept couple
+
+export interface reqAcceptCoupleType {
+  coupleId: number;
+  status: number;
+  token: string;
+}
+export interface resAcceptCoupleType {
+  coupleId: number;
+  status: number;
+}
+
+// # api result
+export interface apiResultType {
+  status: string;
+}
+
+export interface apiResponseType extends apiResultType {
+  insertId: number;
+  serverStatus: number;
 }

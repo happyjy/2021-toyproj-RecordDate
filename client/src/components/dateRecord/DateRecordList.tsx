@@ -255,7 +255,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const bounds = new window.kakao.maps.LatLngBounds();
     for (let i = 0; i < result.length; i++) {
       let content = '';
-      console.log('### result[i]: ', result[i]);
       if (typeof result[i].dateCnt === 'number') {
         // 1회 방문
         content = `<div class="mapCustomOverlay"

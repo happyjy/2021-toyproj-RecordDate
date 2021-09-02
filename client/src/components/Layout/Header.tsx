@@ -84,9 +84,23 @@ const ProfileImg = styled.img`
 type MenuContainerType = {
   isActive: Boolean;
 };
+const Triangle = styled.div<MenuContainerType>`
+  position: absolute;
+  top: ${(props) => (props.isActive ? '-20px' : '0px')};
+  right: 20px;
+  border-top: 10px transparent solid;
+  border-right: 10px transparent solid;
+  border-bottom: ${(props) =>
+    props.isActive ? '10px var(--coral) solid' : 'rgba(0, 0, 0, 0)'};
+  border-left: 10px #11ffee00 solid;
+
+  transition: 0.5s;
+`;
+
 const MenuContainer = styled.div<MenuContainerType>`
   visibility: ${(props) => (props.isActive ? 'visible' : 'hidden')};
-  background: ${(props) => (props.isActive ? 'var(--coral)' : 'white')};
+  background: ${(props) =>
+    props.isActive ? 'var(--coral)' : 'rgba(0, 0, 0, 0)'};
   top: ${(props) => (props.isActive ? '45px' : '60px')};
   opacity: ${(props) => (props.isActive ? '1' : '0.5')};
   color: ${(props) =>
@@ -100,16 +114,28 @@ const MenuContainer = styled.div<MenuContainerType>`
   box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   transition: 0.5s;
+  z-index: 200;
 
   &::before {
+    z-index: 300;
     background: inherit;
     content: '';
     position: absolute;
-    top: -5px;
-    right: 19px;
-    width: 20px;
-    height: 20px;
-    transform: rotate(45deg);
+    top: ${(props) => (props.isActive ? '-8px' : '7px')};
+    right: 22px;
+    /* width: 20px;
+    height: 20px; */
+
+    border-right: ${(props) =>
+      props.isActive ? '8px rgba(255, 255, 255, 1) solid' : 'none'};
+    border-bottom: ${(props) =>
+      props.isActive ? '8px var(--coral) solid' : 'none'};
+    border-left: ${(props) =>
+      props.isActive ? '8px rgba(255, 255, 255, 1) solid' : 'none'};
+    transition: 0.5s;
+
+    /* border-color: transparent yellow transparent; */
+    /* transform: rotate(45deg); */
   }
 `;
 
@@ -198,15 +224,18 @@ const ProfileMenu: React.FC = () => {
     [dispatch],
   );
 
+  const ownInfo = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth && state.auth.user && state.auth.user[0],
+  );
+  const partnerInfo = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth && state.auth.user && state.auth.user[1],
+  );
+
   // 유저 정보: user
   const token = TokenService.get();
   useEffect(() => {
     token && getUser(token);
   }, [getUser]);
-
-  const user = useSelector<RootState, getUserResType | null>(
-    (state) => state.auth.user,
-  );
 
   return (
     <>
@@ -223,14 +252,17 @@ const ProfileMenu: React.FC = () => {
             onClick={onClickProfile}
             className="ProfileImgContainer"
           >
-            {/* <ProfileImg src="http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg"></ProfileImg> */}
-            <ProfileImg src={user?.thumbnailImageUrl}></ProfileImg>
+            <ProfileImg src={ownInfo?.thumbnailImageUrl}></ProfileImg>
           </ProfileImgContainer>
           <MenuContainer isActive={toggleProfile} className="MenuContainer">
+            {/* <Triangle isActive={toggleProfile} className="Triangle"></Triangle> */}
             <MenuTitle isActive={toggleProfile} className="MenuTitle">
-              JaeYoon<br></br>
+              {ownInfo?.nickname}
+              <br></br>
               <MenuSubTitle isActive={toggleProfile} className="MenuSubTitle">
-                현아랑 만난지 x일
+                {partnerInfo?.nickname &&
+                  partnerInfo?.couple_status === 1 &&
+                  `❤️ ${partnerInfo?.nickname}`}
               </MenuSubTitle>
             </MenuTitle>
             <MenuListContainer className="MenuListContainer">

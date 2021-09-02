@@ -63,10 +63,7 @@ export function debounce(fn, ms = 1000) {
   let timerId: any = null;
   return (...args) => {
     if (timerId) clearTimeout(timerId);
-
     timerId = setTimeout(function () {
-      console.log('### UTIL > DEBOUNCE');
-      console.log({ fn, args });
       fn(...args);
     }, ms);
   };
@@ -76,7 +73,4 @@ export function getDateFormatSearchType(date: Date) {
   const yearNum = date.getFullYear().toString();
   const monthNum = (date.getMonth() + 1).toString().padStart(2, '0');
   return [yearNum, monthNum].join('-');
-
-  // const dateNum = date.getDate().toString().padStart(2, '0');
-  // return [yearNum, monthNum, dateNum].join('-');
 }

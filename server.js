@@ -14,7 +14,9 @@ app.use(express.json());
 
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
-
+app.get("/demo", (req, res) => {
+  res.send("HELLO, JYOON");
+});
 app.get("/api/test", (req, res) => {
   /*
     # authorization
@@ -70,10 +72,20 @@ const connection = mysql.createConnection({
 // # require: sql query
 const {
   loginSql,
-  findUser,
-  updateUserProfileImgUrl,
-  getUserByToken,
-  getUserByEmail,
+  findUserSql,
+  updateUserProfileImgUrlSql,
+  getUserCoupleByTokenSql,
+  getUserByEmailSql,
+  requestCoupleSql,
+  updateRequestCoupleUserSql,
+  getPartnerCoupleByUserIdSql,
+  updateCoupleStatusSql,
+  getUserByTokenSql,
+  getUsersByCoupleIdSql,
+  updateDateRecordCoupleIdSql,
+  selectQueryByCoupleId,
+  selectQueryByUserId,
+  getCoupleStatus,
 } = require("./sql");
 
 // # USER - LOGIN
@@ -87,11 +99,9 @@ app.post("/api/login", async (req, res) => {
   const thumbnailImageUrl = reqParam.thumbnailImageUrl;
 
   const resultQueryFindUserResult = await new Promise((resolve, reject) => {
-    connection.query(findUser, [email], (err, rows, field) => {
+    connection.query(findUserSql, [email], (err, results, field) => {
       if (err) throw err;
-      // const findUserResult = rows;
-      // 계정 여부에 따른 로그인 처리
-      resolve(rows);
+      resolve(results);
     });
   });
 
@@ -112,7 +122,7 @@ app.post("/api/login", async (req, res) => {
         profileImageUrl,
         thumbnailImageUrl,
       ],
-      (err, rows, field) => {
+      (err, results, field) => {
         if (err) throw err;
         responseValue.token = jwtToken;
         res.send(responseValue);
@@ -121,9 +131,9 @@ app.post("/api/login", async (req, res) => {
   } else {
     // 계정이 있는 경우
     connection.query(
-      updateUserProfileImgUrl,
+      updateUserProfileImgUrlSql,
       [
-        resultQueryFindUserResult[0].user_id,
+        // resultQueryFindUserResult[0].user_id,
         resultQueryFindUserResult[0].token,
         email,
         nickname,
@@ -132,7 +142,7 @@ app.post("/api/login", async (req, res) => {
         profileImageUrl,
         thumbnailImageUrl,
       ],
-      (err, rows, field) => {
+      (err, results, field) => {
         if (err) throw err;
         responseValue.token = resultQueryFindUserResult[0].token;
         res.send(responseValue);
@@ -140,36 +150,205 @@ app.post("/api/login", async (req, res) => {
     );
   }
 });
-
-// # USER - GETUSER
+// # USER - GETUSER(redux > auth > user)
 app.get("/api/getUser", async (req, res) => {
-  // const reqParamsToken = req?.query.token;
   const token = getAuthorization(req);
-  connection.query(getUserByToken, [token], function (err, rows) {
-    if (err) throw err;
-    res.send(rows);
+  let result = [];
+  // # redux로 관리되는 정보
+  //  * 커플 요청 전, 후 data type이 다르다.
+  //  * 커플 요청 전에는 로그인 유저 정보 "하나의 정보만" 배열에 하나만 설정
+  //  * 커플 요청 후에는 로그인 유저, 커플 요청한 파트너 "두명의 정보"가 배열에 설정
+  const ownUserInfoRequested = await new Promise((resolve, reject) => {
+    connection.query(
+      getUserCoupleByTokenSql,
+      [token, token],
+      function (err, results) {
+        if (err) throw err;
+        resolve(results[0]);
+      }
+    );
   });
+
+  // 커플 요청 전(유저 검색/ 커플요청해야 하는 상태)
+  if (!ownUserInfoRequested) {
+    const ownUserInfoSolo = await new Promise((resolve, reject) => {
+      connection.query(getUserByTokenSql, [token], function (err, results) {
+        if (err) throw err;
+        resolve(results[0]);
+      });
+    });
+    result.push(ownUserInfoSolo);
+  } else {
+    // 커플 요청 후
+    const partnerUserInfo = await new Promise((resolve, reject) => {
+      connection.query(
+        getPartnerCoupleByUserIdSql,
+        [ownUserInfoRequested.partner, ownUserInfoRequested.partner],
+        function (err, results) {
+          if (err) throw err;
+          resolve(results[0]);
+        }
+      );
+    });
+    result.push(ownUserInfoRequested);
+    result.push(partnerUserInfo);
+  }
+
+  console.log({ "### /api/getUser > result": result });
+  res.send(result);
 });
 
-// # USER - SEARCH USER BY EMAIL
+// # COUPLE - REQUEST COUPLE
+app.get("/api/couple/request", async (req, res) => {
+  const token = getAuthorization(req);
+  let { reqestUserId, receiveUserId } = req.query;
+  let coupleId;
+  try {
+    const reqCoupleResult = await new Promise((resolve, reject) => {
+      connection.query(
+        requestCoupleSql,
+        [reqestUserId, receiveUserId],
+        (err, result, fields) => {
+          if (err) throw err;
+          console.log("### result, fields");
+          console.log({ result, fields });
+          resolve({ result, fields });
+        }
+      );
+    });
+    console.log({ reqCoupleResult });
+
+    coupleId = reqCoupleResult.result.insertId;
+    console.log("### coupleId: ", { coupleId });
+    // 요청한 사람: reqestUserId
+    await new Promise((resolve, reject) => {
+      connection.query(
+        updateRequestCoupleUserSql,
+        [coupleId, reqestUserId],
+        (err, result, fields) => {
+          if (err) throw err;
+          console.log({ err, result, fields });
+          resolve({ result, fields });
+        }
+      );
+    });
+    // 요청받을 사람: receiveUserId
+    await new Promise((resolve, reject) => {
+      connection.query(
+        updateRequestCoupleUserSql,
+        [coupleId, receiveUserId],
+        (err, result, fields) => {
+          if (err) throw err;
+          console.log({ err, result, fields });
+          resolve({ result, fields });
+        }
+      );
+    });
+
+    let result = [];
+    const ownUserInfoRequested = await new Promise((resolve, reject) => {
+      connection.query(
+        getUserCoupleByTokenSql,
+        [token, token],
+        function (err, results) {
+          if (err) throw err;
+          resolve(results[0]);
+        }
+      );
+    });
+
+    const partnerUserInfo = await new Promise((resolve, reject) => {
+      connection.query(
+        getPartnerCoupleByUserIdSql,
+        [ownUserInfoRequested.partner, ownUserInfoRequested.partner],
+        function (err, results) {
+          if (err) throw err;
+          resolve(results[0]);
+        }
+      );
+    });
+    result.push(ownUserInfoRequested);
+    result.push(partnerUserInfo);
+
+    res.send(result);
+    // res.send({
+    //   status: "SUCCESS",
+    //   result: {
+    //     insertId: reqCoupleResult.result.insertId,
+    //     serverStatus: reqCoupleResult.result.serverStatus,
+    //   },
+    // });
+  } catch (error) {
+    console.log(error);
+  }
+});
+// # COUPLE - ACCEPT COUPLE
+app.get("/api/couple/accept", async (req, res) => {
+  console.log("### /api/couple/accept");
+  console.log(req.query);
+  const coupleId = req.query.coupleId;
+  const status = 1; // # couplse request: 0: request, 1: accept
+
+  // COUPLE status COUPLE Table
+  const result = await new Promise((resolve, reject) => {
+    connection.query(
+      updateCoupleStatusSql,
+      [status, coupleId],
+      (err, result, fields) => {
+        if (err) throw err;
+        console.log({ err, result, fields });
+        resolve(result);
+      }
+    );
+  });
+
+  // get user_id 2개 by couple_id
+  const result1 = await new Promise((resolve, reject) => {
+    connection.query(
+      getUsersByCoupleIdSql,
+      [coupleId],
+      (err, result, fields) => {
+        if (err) throw err;
+        resolve(result[0]);
+      }
+    );
+  });
+  console.log({ result1 });
+
+  // update couple_id feild dateRecord Table
+  const result2 = await new Promise((resolve, reject) => {
+    connection.query(
+      updateDateRecordCoupleIdSql,
+      [coupleId, result1.couple1_id, result1.couple2_id],
+      (err, result, fields) => {
+        if (err) throw err;
+        console.log({ err, result, fields });
+        resolve(result);
+      }
+    );
+  });
+  console.log({ result2 });
+
+  res.send({ coupleId, status });
+});
+// # COUPLE - SEARCH USER BY EMAIL
 app.get("/api/getUser/email", async (req, res) => {
   console.log("### /api/getUser/email");
-  // res.send(["반환"]);
-  console.log(req.query);
-  const selectParam = [req.query.email];
-  console.log("### /api/getUser/email: ", getUserByEmail(req.query.email));
-  connection.query(getUserByEmail(req.query.email), [], function (err, rows) {
-    if (err) throw err;
-    res.send(rows);
-  });
+  connection.query(
+    getUserByEmailSql(req.query.email),
+    [],
+    function (err, results) {
+      if (err) throw err;
+      res.send(results);
+    }
+  );
 });
 
 // # DATE - RECORD SELECT
-app.get("/api/dateRecord", (req, res) => {
+app.get("/api/dateRecord", async (req, res) => {
   const token = req.header("authorization").split(" ")[1];
   const searchOption = JSON.parse(req.query.searchOption);
 
-  console.log("### searchOption: ", searchOption);
   const endOfRange = searchOption.rangeDate[1];
   const splitedEndOfRange = endOfRange.split("-");
   const lastDateEndOfRange = new Date(
@@ -178,64 +357,65 @@ app.get("/api/dateRecord", (req, res) => {
     0
   ).getDate();
 
-  let selectParam = [
+  let selectParam1 = [
     searchOption.rangeDate[0] + "-01",
     token,
     token,
     searchOption.rangeDate[0] + "-01",
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
   ];
+  let selectParam2 = [
+    searchOption.rangeDate[0] + "-01",
+    token,
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
+  ];
 
-  // NUMBERING
-  // const numbering
-  const selectQuery = `
-  SELECT @n:=@n+1 dateCnt, t.dateRecord_id
-                          , t.dateTime
-                          , t.title
-                          , t.description
-                          , t.image
-                          , t.created_at
-    FROM (SELECT @n:=( SELECT count(*)
-                        FROM dateRecord
-                        WHERE 1=1
-                        AND ISDELETED = 0
-                        AND dateTime < ?)) initvars, (SELECT *
-                                                        FROM dateRecord
-                                                        WHERE 1=1
-                                                          AND ISDELETED = 0
-                                                          AND couple_id = (
-                                                            select couple_id
-                                                            from couple
-                                                            where 1=1
-                                                            and couple1_id = (
-                                                              select user_id from users where token = ?
-                                                            )
-                                                            or couple2_id = (
-                                                              select user_id from users where token = ?
-                                                            )
-                                                          )
-                                                          AND dateTime BETWEEN ? AND ?
-                                                     ORDER BY dateTime ASC) t
-  WHERE 1=1
-  ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
+  try {
+    const resultSelectQueryByCoupleId = await new Promise((resolve, reject) => {
+      connection.query(
+        getCoupleStatus,
+        [token, token],
+        function (err, results) {
+          if (err) throw err;
+          resolve(results[0]);
+        }
+      );
+    });
 
-    SELECT place_id,
-            dateRecord_id,
-            place_name,
-            latLong
-      FROM PLACE
-      WHERE ISDELETED = 0;
-
-    SELECT dateImage_id,
-            dateRecord_id,
-            dateImage_name
-      FROM DATEIMAGE
-      WHERE ISDELETED = 0;`;
-
-  connection.query(selectQuery, selectParam, function (err, rows) {
-    if (err) throw err;
-    res.send(rows);
-  });
+    let result;
+    if (
+      resultSelectQueryByCoupleId &&
+      resultSelectQueryByCoupleId.status == 1
+    ) {
+      // 커플 인증 후
+      result = await new Promise((resolve, reject) => {
+        connection.query(
+          selectQueryByCoupleId(searchOption),
+          selectParam1,
+          function (err, results) {
+            if (err) throw err;
+            resolve(results);
+          }
+        );
+      });
+    } else {
+      // 커플 인증 전
+      result = await new Promise((resolve, reject) => {
+        connection.query(
+          selectQueryByUserId(searchOption),
+          selectParam2,
+          function (err, results) {
+            if (err) throw err;
+            resolve(results);
+          }
+        );
+      });
+    }
+    res.send(result);
+  } catch (error) {
+    console.log(error);
+  }
 });
 
 // # 파일업로드
@@ -249,15 +429,14 @@ app.use("/image", express.static("upload"));
 // # DATE - RECORD INSERT
 app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
   const token = req.header("authorization").split(" ")[1];
-
   const hasUser = "select * from users where token = ?";
   let resultHasUser = "";
   try {
     const result = await new Promise((resolve, reject) => {
-      connection.query(hasUser, [token], (err, rows, fields) => {
+      connection.query(hasUser, [token], (err, results, fields) => {
         if (err) throw err;
-        resultHasUser = rows;
-        resolve(rows);
+        resultHasUser = results;
+        resolve(results);
       });
     });
 
@@ -269,8 +448,8 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
     throw error;
   }
 
-  let insertDateRecord = `INSERT INTO dateRecord(couple_id, dateTime, title, description)
-      SELECT couple_id, ? as dateTime, ? as title, ? as description
+  let insertDateRecord = `INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
+      SELECT couple_id, (SELECT user_id FROM users WHERE token= ?) as user_id, ? as dateTime, ? as title, ? as description
         FROM couple
        WHERE 1=1
          AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
@@ -286,7 +465,14 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
   let description = req.body.description;
   let placeList = JSON.parse(req.body.placeList);
   let images = req.files;
-  let insertDateRecordParams = [dateTime, title, description, token, token];
+  let insertDateRecordParams = [
+    token,
+    dateTime,
+    title,
+    description,
+    token,
+    token,
+  ];
 
   let insertDateRecordid;
 
@@ -294,8 +480,8 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
     await connection.query(
       insertDateRecord,
       insertDateRecordParams,
-      (err, rows, fields) => {
-        insertDateRecordid = rows.insertId;
+      (err, results, fields) => {
+        insertDateRecordid = results.insertId;
         if (err) throw err;
 
         for (var i = 0; i < placeList.length; i++) {
@@ -305,7 +491,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
             placeList[i].address,
             placeList[i].latLong,
           ];
-          connection.query(insertPlace, insertParam, (err, rows, field) => {
+          connection.query(insertPlace, insertParam, (err, results, field) => {
             if (err) throw err;
           });
         }
@@ -315,11 +501,15 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
             insertDateRecordid,
             "/image/" + images[j].filename,
           ];
-          connection.query(insertDateImage, insertParam, (err, rows, field) => {
-            if (err) throw err;
-          });
+          connection.query(
+            insertDateImage,
+            insertParam,
+            (err, results, field) => {
+              if (err) throw err;
+            }
+          );
         }
-        res.send(rows);
+        res.send(results);
       }
     );
   } catch (error) {
@@ -358,7 +548,7 @@ app.patch(
     connection.query(
       updateDateRecord,
       updateDateRecordParams,
-      (err, rows, field) => {
+      (err, results, field) => {
         if (err) throw err;
       }
     );
@@ -370,26 +560,30 @@ app.patch(
         addPlaceList[i].address,
         addPlaceList[i].latLong,
       ];
-      connection.query(insertPlace, insertParam, (err, rows, field) => {
+      connection.query(insertPlace, insertParam, (err, results, field) => {
         if (err) throw err;
       });
     }
 
     for (var i = 0; i < delPlaceList.length; i++) {
       let updatePlaceParams = [delPlaceList[i].id];
-      connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
-        if (err) throw err;
-      });
+      connection.query(
+        deletePlace,
+        updatePlaceParams,
+        (err, results, field) => {
+          if (err) throw err;
+        }
+      );
     }
     for (var j = 0; j < images.length; j++) {
       let insertParam = [editDateRecordId, "/image/" + images[j].filename];
-      connection.query(insertDateImage, insertParam, (err, rows, field) => {
+      connection.query(insertDateImage, insertParam, (err, results, field) => {
         if (err) throw err;
       });
     }
     for (var k = 0; k < delImageFileIdList.length; k++) {
       let insertParam = [1, delImageFileIdList[k]];
-      connection.query(deleteDateImage, insertParam, (err, rows, field) => {
+      connection.query(deleteDateImage, insertParam, (err, results, field) => {
         if (err) throw err;
       });
     }
@@ -421,12 +615,16 @@ app.delete("/api/dateRecord/:id", (req, res) => {
   let deletePlace = "UPDATE PLACE SET isDeleted = 1 where dateRecord_id = ?;";
 
   let updatePlaceParams = [req.params.id];
-  connection.query(deleteDateRecord, updatePlaceParams, (err, rows, field) => {
+  connection.query(
+    deleteDateRecord,
+    updatePlaceParams,
+    (err, results, field) => {
+      if (err) throw err;
+    }
+  );
+  connection.query(deletePlace, updatePlaceParams, (err, results, field) => {
     if (err) throw err;
-  });
-  connection.query(deletePlace, updatePlaceParams, (err, rows, field) => {
-    if (err) throw err;
-    res.send(rows);
+    res.send(results);
   });
 });
 

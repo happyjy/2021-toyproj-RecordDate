@@ -1,39 +1,19 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
-import { message as messageDialog, PageHeader, Button } from 'antd';
-import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import {
-  DateRecordReqType,
-  getUserByEmailReqType,
   getUserResType,
-  placeListType,
+  reqAcceptCoupleType,
+  requsetCoupleReqType,
 } from '../../types';
-import styles from './DateRecordAdd.module.css';
-import mapStyles from './map.module.css';
-import styled, { css, keyframes } from 'styled-components';
-import Chips from '../ChipsComponent/chipsComponent';
-import map from '../map';
-import useFileUpload from '../../hooks/useFileUplaod';
-import FileUpload from '../FileUpload/FileUpload';
-import dycalendar from '../Calendar/dyCalendar';
-import moment from 'moment';
-import { debounce } from '../../redux/utils';
-import UserService from '../../services/UserService';
-
-declare global {
-  interface Window {
-    kakao: any;
-  }
-}
+import styled, { keyframes } from 'styled-components';
+import confirm from 'antd/lib/modal/confirm';
+import { COUPLESTATUS } from '../../constants';
 
 const Container = styled.div`
-  /* border: 5px solid red; */
   margin-top: 64px;
   height: calc(100vh - 64px);
 `;
-
 const MenuBackgroundContainer = styled.div`
-  /* z-index: 500; */
   width: 100%;
   height: 100%;
   position: relative;
@@ -57,7 +37,6 @@ const MenuBackgroundContainer = styled.div`
     height: 1000px;
     background: linear-gradient(#ffc107, #e91e63);
     border-radius: 50%;
-    /* z-index: 500; */
   }
 `;
 const MenuBackgroundBlurFilterContainer = styled.div`
@@ -65,35 +44,22 @@ const MenuBackgroundBlurFilterContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
+  z-index: 500;
   width: 100%;
   height: 100%;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(25px);
 `;
-
-const ContentContainer = styled.div`
+type ContentContainerType = {
+  coupleReqStatus: number | undefined;
+};
+const ContentContainer = styled.div<ContentContainerType>`
   display: grid;
   row-gap: 100px;
-  margin-bottom: 30%;
-  /* display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-direction: column;
-
-  width: 70%;
-  height: 50%; */
-  /* border: 2px solid var(--white)   */
-  /* border: 1px solid rgba(255, 255, 255, 0.5);
-  border-right: 1px solid rgba(255, 255, 255, 0.2);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2); */
+  margin-bottom: ${({ coupleReqStatus }) =>
+    coupleReqStatus === undefined ? '30%' : 'none'};
 `;
-
 const SearchContainer = styled.div`
-  /* display: flex;
-  justify-content: center;
-  width: 100%;
-  max-width: 80%; */
   position: relative;
   margin: 0 auto;
   width: 60%;
@@ -103,8 +69,6 @@ const SearchContainer = styled.div`
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 `;
 const SearchCoupleInput = styled.input`
-  /* padding: 40px 100px; */
-
   width: 100%;
   height: 100%;
   font-size: 2rem;
@@ -116,12 +80,10 @@ const SearchCoupleInput = styled.input`
     outline: none;
   }
 `;
-
 const LoadingIcon = styled.div`
   position: absolute;
   top: 50%;
   right: 0;
-  /* border: 1px solid red; */
   transform: translate(-10px, -50%);
 
   height: -webkit-fill-available;
@@ -137,81 +99,101 @@ const SearchResultListContainer = styled.div<SearchResultListContainerType>`
   width: calc(100% + 2px);
   left: -1px;
   height: ${({ setHeight }) => setHeight}px;
-  overflow-y: scroll;
+  overflow-y: auto;
 `;
 const SearchItemContainer = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-
   width: 100%;
-  /* height: 100%; */
   font-size: 1.5rem;
   background: rgba(0, 0, 0, 0);
   padding: 15px 25px;
-  /* border: none; */
   border: 1px solid rgba(255, 255, 255, 0.5);
   border-right: 1px solid rgba(255, 255, 255, 0.2);
   border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
 `;
-
 const SearchItemEmailSpan = styled.span``;
 const SearchItemThumbnailImg = styled.img`
   height: 1.5rem;
   filter: blur(2px);
 `;
-
 const CoupleContainer = styled.div`
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   width: 100%;
-  /* grid-template-rows: masonry; */
-  /* display: flex;
-  justify-content: space-around;
-  align-items: center;
-
-  width: 100%;
-  height: 50%; */
 `;
 const CoupleCard1Container = styled.div`
-  /* width: 33%;
-  height: 100%; */
   grid-column-start: 2;
   grid-column-end: 3;
-`;
-const CoupleCard1 = styled.div`
-  width: 100%;
-  height: 100%;
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-image: url('http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg');
+
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
 `;
 const CoupleCard1Img = styled.img`
   width: 100%;
   height: 100%;
-  /*
-  background-size: contain;
-  background-repeat: no-repeat;
-  background-image: url('http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg'); */
+`;
+type CoupleCard2ContainerType = {
+  border?: string;
+};
+
+const CoupleCardHeartContainer = styled.div`
+  grid-column-start: 3;
+  grid-column-end: 4;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 `;
 
-const CoupleCard2Container = styled.div`
+const CoupleCard2Container = styled.div<CoupleCard2ContainerType>`
   grid-column-start: 4;
   grid-column-end: 5;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--white);
+
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+`;
+type CoupleCard2ImgType = {
+  filter: boolean;
+};
+const CoupleCard2Img = styled.img<CoupleCard2ImgType>`
+  position: absolute;
+  filter: ${({ filter }) => (filter ? 'blur(2px)' : 'none')};
+  width: 100%;
+  height: 100%;
 `;
 
+const RequestSpan = styled.span`
+  position: relative;
+`;
+const RequestButton = styled.span`
+  position: relative;
+  padding: 10px 15px;
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  border-right: 1px solid rgba(255, 255, 255, 0.2);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+`;
 const LoadingRotateAnimation = keyframes`
   0%{ transform: rotate(0deg);
   100%{ transform: rotate(90deg);
 }`;
-
 const LodingSvg = styled.svg`
   width: 30px;
   height: 30px;
   overflow: visible !important;
   animation: ${LoadingRotateAnimation} 1s linear infinite;
 `;
-
 const LoadingAnimation = keyframes`
   0%, 100% { stroke-dashoffset: 20; }
   50% { stroke-dashoffset: 0; }
@@ -228,24 +210,27 @@ const LoadingCircle = styled.circle`
   animation: ${LoadingAnimation} 0.5s linear infinite;
 `;
 
-interface AddProps {
+interface CoupleMngtProps {
+  onAcceptCouple: (reqAcceptCouple: reqAcceptCoupleType) => void;
+  onRequestCouple: (reqCoupleUsers: requsetCoupleReqType) => void;
   searchLoading: boolean;
   userList: getUserResType[];
   onSearchUser: (event: ChangeEvent<HTMLInputElement>) => void;
-  user: getUserResType | null;
-  addDateRecord: (dateRecord: DateRecordReqType) => void;
+  ownInfo: getUserResType | null;
+  partnerInfo: getUserResType | null;
   loading: boolean;
   error: Error | null;
   back: () => void;
   logout: () => void;
 }
-
-const DateRecordCouple: React.FC<AddProps> = ({
+const DateRecordCouple: React.FC<CoupleMngtProps> = ({
+  onAcceptCouple,
+  onRequestCouple,
   searchLoading,
   userList,
   onSearchUser,
-  user,
-  addDateRecord,
+  ownInfo,
+  partnerInfo,
   loading,
   error,
   back,
@@ -259,88 +244,189 @@ const DateRecordCouple: React.FC<AddProps> = ({
   const [searchContainerHeight, setSearchContainerHeight] =
     useState<string>('');
 
+  // # user email 검색 layer height 제어
   useEffect(() => {
-    console.log(userList);
-    console.log(searchCoupleInputDom);
-    console.log(userListContainerDom);
+    if (userListContainerDom.current) {
+      let firstDomRect =
+        userListContainerDom.current.firstElementChild?.getBoundingClientRect();
 
-    let a = userListContainerDom.current;
-    let firstDom = userListContainerDom.current.firstElementChild;
-    let firstDomRect =
-      userListContainerDom.current.firstElementChild?.getBoundingClientRect();
+      let userListHeight;
+      if (firstDomRect) {
+        userListHeight = userList.length * firstDomRect?.height;
+      }
 
-    let userListHeight;
-    if (firstDomRect) {
-      userListHeight = userList.length * firstDomRect?.height;
+      let layer = '';
+      const searchInputDomBottomYAxis =
+        searchCoupleInputDom.current.getBoundingClientRect().y +
+        searchCoupleInputDom.current.getBoundingClientRect().height;
+      if (
+        window.innerHeight < userListHeight + searchInputDomBottomYAxis + 60 &&
+        userList.length > 0
+      ) {
+        layer = window.innerHeight - searchInputDomBottomYAxis - 60 + '';
+      }
+
+      setSearchContainerHeight(layer + '');
     }
-
-    let layer = '';
-    const searchInputDomBottomYAxis =
-      searchCoupleInputDom.current.getBoundingClientRect().y +
-      searchCoupleInputDom.current.getBoundingClientRect().height;
-    if (
-      window.innerHeight < userListHeight + searchInputDomBottomYAxis + 60 &&
-      userList.length > 0
-    ) {
-      layer = window.innerHeight - searchInputDomBottomYAxis - 60 + '';
-    }
-
-    setSearchContainerHeight(layer + '');
   }, [userList]);
+
+  // # EVENT
+  // ## EVENT - 커플 요청
+  const onClickSearchItem = (e) => {
+    console.log('### onClickSearchItem: ', e, userList);
+    const clickedUserArr = userList.filter((user) => {
+      return user.user_id === e.user_id;
+    });
+
+    let clickedUser;
+    if (clickedUserArr.length === 1) {
+      clickedUser = clickedUserArr[0];
+    }
+
+    const onOk = () => {
+      console.log('clickedUser', clickedUser);
+      if (!!ownInfo && !!ownInfo.token) {
+        onRequestCouple({
+          reqestUserId: ownInfo.user_id,
+          receiveUserId: clickedUser.user_id,
+          token: ownInfo.token,
+        });
+      }
+    };
+
+    confirm({
+      title: `${clickedUser.email}님에게 커플 요청하시겠습니까?`,
+      onOk,
+      onCancel: function () {},
+    });
+  };
+
+  // ## EVENT - 커플 수락
+  const onClickAcceptButton = (e) => {
+    if (ownInfo && ownInfo.token) {
+      onAcceptCouple({
+        coupleId: ownInfo?.couple_id,
+        status: COUPLESTATUS.ACCPET,
+        token: ownInfo.token,
+      });
+    }
+  };
 
   return (
     <Layout menuType="profile">
       <Container className="SectionContainer">
         <MenuBackgroundContainer>
           <MenuBackgroundBlurFilterContainer>
-            <ContentContainer className="ContentContainer">
+            <ContentContainer
+              coupleReqStatus={ownInfo?.couple_status}
+              className="ContentContainer"
+            >
               <CoupleContainer className="CoupleContainer">
-                <CoupleCard1Container className="Couple1Container">
-                  <CoupleCard1Img src={user?.profileImageUrl}></CoupleCard1Img>
+                <CoupleCard1Container className="CoupleCard1Container">
+                  <CoupleCard1Img
+                    src={ownInfo?.profileImageUrl}
+                  ></CoupleCard1Img>
                 </CoupleCard1Container>
-                <CoupleCard2Container className="Couple2Container">
-                  {/* <CoupleCard1Img src="http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg"></CoupleCard1Img> */}
-                  <CoupleCard1Img></CoupleCard1Img>
-                </CoupleCard2Container>
+                {ownInfo?.couple_status === 1 && (
+                  /* 커플 수락 */
+                  <CoupleCardHeartContainer className="CoupleCardHeartContainer">
+                    ❤️
+                  </CoupleCardHeartContainer>
+                )}
+
+                {ownInfo?.couple_status === undefined && (
+                  <CoupleCard2Container
+                    border="none"
+                    className="CoupleCard2Container"
+                  >
+                    '요청하세요.'
+                  </CoupleCard2Container>
+                )}
+                {ownInfo?.couple_status === 0 &&
+                  ownInfo?.user_id === ownInfo?.couple1_id && (
+                    /* 요청한 사람 */
+                    <CoupleCard2Container
+                      border="none"
+                      className="CoupleCard2Container"
+                    >
+                      <CoupleCard2Img
+                        filter={true}
+                        src={partnerInfo?.profileImageUrl}
+                      />
+                      <RequestSpan>요청중입니다.</RequestSpan>
+                    </CoupleCard2Container>
+                  )}
+                {ownInfo?.couple_status === 0 &&
+                  ownInfo?.user_id === ownInfo?.couple2_id && (
+                    /* 요청 받은 사람: 요청하기 */
+                    <CoupleCard2Container
+                      border="none"
+                      className="CoupleCard2Container"
+                    >
+                      <CoupleCard2Img
+                        filter={false}
+                        src={partnerInfo?.profileImageUrl}
+                      />
+                      <RequestButton onClick={onClickAcceptButton}>
+                        수락하시겠습니까?
+                      </RequestButton>
+                    </CoupleCard2Container>
+                  )}
+                {ownInfo?.couple_status === 1 && (
+                  /* 커플 수락 */
+                  <CoupleCard2Container className="CoupleCard2Container">
+                    <CoupleCard2Img
+                      filter={false}
+                      src={partnerInfo?.profileImageUrl}
+                    />
+                  </CoupleCard2Container>
+                )}
               </CoupleContainer>
 
-              <SearchContainer className="SearchContainer">
-                <SearchCoupleInput
-                  ref={searchCoupleInputDom}
-                  onChange={(event) => {
-                    event.persist();
-                    onSearchUser(event);
-                  }}
-                  placeholder="이메일을 입력하세요"
-                ></SearchCoupleInput>
+              {ownInfo?.couple_id == null && ownInfo?.couple_status !== 1 && (
+                <SearchContainer className="SearchContainer">
+                  <SearchCoupleInput
+                    ref={searchCoupleInputDom}
+                    onChange={(event) => {
+                      event.persist();
+                      onSearchUser(event);
+                    }}
+                    placeholder="이메일을 입력하세요"
+                  ></SearchCoupleInput>
 
-                {searchLoading && (
-                  <LoadingIcon>
-                    <LodingSvg>
-                      <LoadingCircle cx="10" cy="10" r="10"></LoadingCircle>
-                    </LodingSvg>
-                  </LoadingIcon>
-                )}
-                <SearchResultListContainer
-                  ref={userListContainerDom}
-                  setHeight={searchContainerHeight}
-                >
-                  {!searchLoading &&
-                    userList &&
-                    userList.map((v) => (
-                      <SearchItemContainer key={v.user_id}>
-                        <SearchItemEmailSpan>{v.email}</SearchItemEmailSpan>
-                        <SearchItemThumbnailImg
-                          src={v.thumbnailImageUrl}
-                          alt=""
-                        />
-                      </SearchItemContainer>
-                    ))}
-                </SearchResultListContainer>
-                {/* {!searchLoading &&
+                  {searchLoading && (
+                    <LoadingIcon>
+                      <LodingSvg>
+                        <LoadingCircle cx="10" cy="10" r="10"></LoadingCircle>
+                      </LodingSvg>
+                    </LoadingIcon>
+                  )}
+                  <SearchResultListContainer
+                    ref={userListContainerDom}
+                    setHeight={searchContainerHeight}
+                  >
+                    {!searchLoading &&
+                      userList &&
+                      userList.map((v) => (
+                        <SearchItemContainer
+                          key={v.user_id}
+                          onClick={(e) => {
+                            onClickSearchItem({ ...e, ...v });
+                          }}
+                        >
+                          <SearchItemEmailSpan>{v.email}</SearchItemEmailSpan>
+                          <SearchItemThumbnailImg
+                            src={v.thumbnailImageUrl}
+                            alt=""
+                          />
+                        </SearchItemContainer>
+                      ))}
+                  </SearchResultListContainer>
+                  {/* {!searchLoading &&
                   userList &&
                   userList.map((v) => <span>{v.email}</span>)} */}
-              </SearchContainer>
+                </SearchContainer>
+              )}
             </ContentContainer>
           </MenuBackgroundBlurFilterContainer>
         </MenuBackgroundContainer>

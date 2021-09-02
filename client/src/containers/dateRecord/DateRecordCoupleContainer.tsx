@@ -1,12 +1,18 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
-
 import { RootState } from '../../redux/modules/rootReducer';
-import { logout as logoutSaga } from '../../redux/modules/auth';
+import {
+  acceptcouple as acceptCoupleSaga,
+  requestcouple as requestCoupleSaga,
+  logout as logoutSaga,
+} from '../../redux/modules/auth';
 
-import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
-import { DateRecordReqType, getUserResType } from '../../types';
+import {
+  getUserResType,
+  reqAcceptCoupleType,
+  requsetCoupleReqType,
+} from '../../types';
 import DateRecordCouple from '../../components/DateRecord/DateRecordCouple';
 import { debounce } from '../../redux/utils';
 import UserService from '../../services/UserService';
@@ -18,31 +24,46 @@ const DateRecordCoupleContainer = () => {
   const error = useSelector<RootState, Error | null>(
     (state) => state.books.error,
   );
-  const user = useSelector<RootState, getUserResType | null>(
-    (state) => state.auth.user,
+  const ownInfo = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth && state.auth.user && state.auth.user[0],
+  );
+  const partnerInfo = useSelector<RootState, getUserResType | null>(
+    (state) => state.auth && state.auth.user && state.auth.user[1],
   );
 
   // email 검색 요청
   const [searchLoading, setSearchLoading] = useState<boolean>(false);
   const [userList, setUserList] = useState<getUserResType[]>([]);
   const onSearchUser = debounce(async (e) => {
-    // 유저 검색 saga호출(container, action, saga, service)
-    if (!e.target.value.trim()) return;
+    if (!e.target.value.trim()) {
+      setUserList([]);
+      return;
+    }
 
     setSearchLoading(true);
     const userList = await UserService.getUserByEmail({
       email: e.target.value,
-      token: user?.token,
+      token: ownInfo?.token,
     });
     setSearchLoading(false);
+
     setUserList((list) => [...userList]);
   }, 500);
 
   const dispatch = useDispatch();
 
-  const addDateRecord = useCallback(
-    (addDateRecord: DateRecordReqType) => {
-      dispatch(addDateRecordSaga(addDateRecord));
+  // 커플 요청 action
+  const onRequestCouple = useCallback(
+    (reqCoupleUsers: requsetCoupleReqType) => {
+      dispatch(requestCoupleSaga(reqCoupleUsers));
+    },
+    [dispatch],
+  );
+
+  // 커플 수락 action
+  const onAcceptCouple = useCallback(
+    (reqAcceptCouple: reqAcceptCoupleType) => {
+      dispatch(acceptCoupleSaga(reqAcceptCouple));
     },
     [dispatch],
   );
@@ -50,18 +71,19 @@ const DateRecordCoupleContainer = () => {
   const back = useCallback(() => {
     dispatch(goBack());
   }, [dispatch]);
-
   const logout = useCallback(() => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
   return (
     <DateRecordCouple
+      onAcceptCouple={onAcceptCouple}
+      onRequestCouple={onRequestCouple}
       searchLoading={searchLoading}
-      userList={userList}
+      userList={userList} //email유저검색 유저list
       onSearchUser={onSearchUser}
-      user={user}
-      addDateRecord={addDateRecord}
+      ownInfo={ownInfo}
+      partnerInfo={partnerInfo}
       loading={loading}
       error={error}
       back={back}

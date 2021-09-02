@@ -3,6 +3,7 @@
   - [테이블 쿼리](#테이블-쿼리)
 - [modify column](#modify-column)
   - [users Table](#users-table)
+  - [couple Table](#couple-table)
   - [dateRecord Table](#daterecord-table)
   - [place Table](#place-table)
   - [dateImage Table](#dateimage-table)
@@ -11,16 +12,20 @@
 - [select query](#select-query)
   - [dateRecord query list](#daterecord-query-list)
   - [select & date type](#select--date-type)
+- [tempData](#tempdata)
 
 # 테이블
 
 ## 테이블 리스트
 
     - users
+    - couple
+
     - dateRecord
     - place
     - image
-    - todolist
+
+    - todolist[만들예정]
         - 할것
         - 정보
         - 위치
@@ -58,6 +63,8 @@ CREATE TABLE IF NOT EXISTS couple (
     couple_id INT AUTO_INCREMENT PRIMARY KEY,
     couple1_id INT,
     couple2_id INT,
+    status TINYINT,
+    request_user_id INT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 )  ENGINE=INNODB;
@@ -65,6 +72,7 @@ CREATE TABLE IF NOT EXISTS couple (
 CREATE TABLE IF NOT EXISTS dateRecord (
     dateRecord_id INT AUTO_INCREMENT PRIMARY KEY,
     couple_id INT NOT NULL,
+    user_id INT,
     dateTime date NOT NULL,
     title VARCHAR(255) NOT NULL,
     description TEXT,
@@ -72,8 +80,8 @@ CREATE TABLE IF NOT EXISTS dateRecord (
     isDeleted BOOLEAN NOT NULL DEFAULT 0,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (couple_id)
-      REFERENCES couple (couple_id)
+    FOREIGN KEY (user_id)
+      REFERENCES couple (user_id)
       ON UPDATE RESTRICT
 )  ENGINE=INNODB;
 
@@ -120,13 +128,21 @@ CREATE TABLE IF NOT EXISTS userProfileImage (
 
 ## users Table
 
-```
+```sql
 ALTER TABLE user RENAME TO users;
 ALTER TABLE users RENAME COLUMN use_id TO user_id;
 * primary key 추가 방법1 - primary key 있는 상태
   ALTER TABLE users DROP PRIMARY KEY, ADD PRIMARY KEY(user_id, email);
 * primary key 추가 방법2 - primary key 정하지 않았을 때
   ALTER TABLE users ADD PRIMARY KEY (email);
+
+ALTER TABLE users ADD couple_id INT AFTER email;
+```
+
+## couple Table
+
+```sql
+  ALTER TABLE COUPLE ADD COLUMN status TINYINT AFTER couple2_id;
 ```
 
 ## dateRecord Table
@@ -162,8 +178,9 @@ ALTER TABLE place ADD COLUMN address VARCHAR(100) AFTER place_name;
 ALTER TABLE place DROP COLUMN isDeleted;
 ALTER TABLE place ADD COLUMN isDeleted BOOLEAN NOT NULL DEFAULT 0 AFTER latLong;
 
-
 ALTER TABLE place DROP COLUMN couple_id;
+
+
 
 
 ```
@@ -282,4 +299,26 @@ SELECT dateRecord_id,
    AND created_at >= '2021-01-01'
    AND created_at <= '2021-07-01'
  order by created_at desc
+```
+
+# tempData
+
+```sql
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy1@gmail.com', '윤재윤1', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy2@gmail.com', '윤재윤2', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy3@gmail.com', '윤재윤3', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy4@gmail.com', '윤재윤4', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy5@gmail.com', '윤재윤5', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy6@gmail.com', '윤재윤6', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy7@gmail.com', '윤재윤7', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy8@gmail.com', '윤재윤8', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy9@gmail.com', '윤재윤9', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy10@gmail.com', '윤재윤10', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy11@gmail.com', '윤재윤11', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy12@gmail.com', '윤재윤12', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy13@gmail.com', '윤재윤13', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy14@gmail.com', '윤재윤14', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy15@gmail.com', '윤재윤15', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+  INSERT INTO users (email, nickname, profileImageUrl, thumbnailImageUrl) VALUES ('okwoyjy16@gmail.com', '윤재윤16', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_640x640.jpg', 'http://k.kakaocdn.net/dn/hH40V/btrb6sspo1a/gh67rnbk6NKvHsAASYtFm1/img_110x110.jpg');
+
 ```

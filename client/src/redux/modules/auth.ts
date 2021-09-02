@@ -4,20 +4,22 @@ import { takeEvery, put, call, select } from 'redux-saga/effects';
 import { push } from 'connected-react-router';
 
 import {
-  getUserByEmailReqType,
   getUserReqType,
   getUserResType,
   LoginReqType,
+  reqAcceptCoupleType,
+  requsetCoupleReqType,
   SnsLoginReqType,
 } from '../../types';
 import { getTokenFromState } from '../utils';
 import { success as booksSuccess } from './books';
 import UserService from '../../services/UserService';
 import TokenService from '../../services/TokenService';
+import produce from 'immer';
 
 export interface AuthState {
   token: string | null;
-  user: getUserResType | null;
+  user: getUserResType[] | null; //# index1: own, # index2: partner
   loading: boolean;
   error: Error | null;
 }
@@ -30,14 +32,27 @@ const initialState: AuthState = {
 };
 
 const options = {
-  prefix: 'my-books/auth',
+  prefix: 'dateRecord/auth',
 };
 
-export const { success, pending, fail } = createActions(
+export const {
+  success,
+  successrequestcouple,
+  successacceptcouple,
+  pending,
+  fail,
+} = createActions(
   {
     SUCCESS: (token: string, user: getUserResType) => ({
       token,
       user,
+    }),
+    SUCCESSREQUESTCOUPLE: (token: string, user: getUserResType) => ({
+      token,
+      user,
+    }),
+    SUCCESSACCEPTCOUPLE: (coupleStatus: number) => ({
+      coupleStatus,
     }),
   },
   'PENDING',
@@ -47,11 +62,6 @@ export const { success, pending, fail } = createActions(
 
 const reducer = handleActions<AuthState, any>(
   {
-    PENDING: (state) => ({
-      ...state,
-      loading: true,
-      error: null,
-    }),
     SUCCESS: (state, action) => {
       return {
         ...state,
@@ -61,6 +71,38 @@ const reducer = handleActions<AuthState, any>(
         error: null,
       };
     },
+    SUCCESSREQUESTCOUPLE: (state, action) => {
+      // immer(불변성관리) library 적용
+      return {
+        ...state,
+        user: action.payload.user,
+        loading: false,
+        error: null,
+      };
+
+      // return produce(state, (draft) => {
+      //   if (draft && draft.user) {
+      //     debugger;
+      //     draft.user[0].couple_id = action.payload.user[0].couple_id;
+      //     draft.user[0].couple_status = action.payload.user[0].couple_status;
+      //   }
+      // });
+    },
+    SUCCESSACCEPTCOUPLE: (state, action) => {
+      // immer(불변성관리) library 적용
+      return produce(state, (draft) => {
+        if (draft && draft.user) {
+          debugger;
+          draft.user[0].couple_status = action.payload.coupleStatus;
+          draft.user[1].couple_status = action.payload.coupleStatus;
+        }
+      });
+    },
+    PENDING: (state) => ({
+      ...state,
+      loading: true,
+      error: null,
+    }),
     FAIL: (state, action) => ({
       ...state,
       loading: false,
@@ -73,11 +115,11 @@ const reducer = handleActions<AuthState, any>(
 
 export default reducer;
 
-export const { getusebyemail, getuser, snslogin, login, logout } =
+export const { acceptcouple, requestcouple, getuser, snslogin, login, logout } =
   createActions(
     {
-      // GETUSEBYEMAIL: (email: String, token: String) => ({
-      GETUSEBYEMAIL: (getUserOpt: getUserByEmailReqType) => getUserOpt,
+      ACCEPTCOUPLE: (reqAcceptCouple: reqAcceptCoupleType) => reqAcceptCouple,
+      REQUESTCOUPLE: (reqCoupleUsers: requsetCoupleReqType) => reqCoupleUsers,
       GETUSER: (token: String) => ({
         token,
       }),
@@ -106,30 +148,53 @@ export const { getusebyemail, getuser, snslogin, login, logout } =
   );
 
 export function* sagas() {
-  yield takeEvery(`${options.prefix}/GETUSERBYEMAIL`, getUserByEmailSaga);
+  yield takeEvery(`${options.prefix}/ACCEPTCOUPLE`, acceptCoupleSaga);
+  yield takeEvery(`${options.prefix}/REQUESTCOUPLE`, requestCoupleSaga);
   yield takeEvery(`${options.prefix}/GETUSER`, getUserSaga);
   yield takeEvery(`${options.prefix}/SNSLOGIN`, snsLoginSaga);
-  // yield takeEvery(`${options.prefix}/LOGIN`, loginSaga);
   yield takeEvery(`${options.prefix}/LOGOUT`, logoutSaga);
 }
 
-interface getUserByEmailSagaAction extends AnyAction {
-  payload: getUserByEmailReqType;
+interface acceptCoupleSagaAction extends AnyAction {
+  payload: reqAcceptCoupleType;
 }
 
-function* getUserByEmailSaga(action: getUserByEmailSagaAction) {
+function* acceptCoupleSaga(action: acceptCoupleSagaAction) {
   try {
     yield put(pending());
-    const user: getUserResType[] = yield call(
-      UserService.getUserByEmail,
+    const result: reqAcceptCoupleType = yield call(
+      UserService.acceptCouple,
       action.payload,
     );
-    console.log('### getUserByEmailSaga: ');
-    // yield put(success(action.payload.token, user));
+    console.log('### acceptCoupleSaga', { result });
+    console.log('### acceptCoupleSaga', {
+      'action.payload.status': action.payload.status,
+    });
+    yield put(successacceptcouple(action.payload.status));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
   }
 }
+
+interface requestCoupleSagaAction extends AnyAction {
+  payload: requsetCoupleReqType;
+}
+
+function* requestCoupleSaga(action: requestCoupleSagaAction) {
+  try {
+    yield put(pending());
+    const requestCoupleResResult: getUserResType[] = yield call(
+      UserService.requestCouple,
+      action.payload,
+    );
+    yield put(
+      successrequestcouple(action.payload.token, requestCoupleResResult),
+    );
+  } catch (error) {
+    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+  }
+}
+
 interface getUserSagaAction extends AnyAction {
   payload: getUserReqType;
 }
@@ -137,11 +202,11 @@ interface getUserSagaAction extends AnyAction {
 function* getUserSaga(action: getUserSagaAction) {
   try {
     yield put(pending());
-    const user: getUserResType[] = yield call(
+    const coupleUsers: getUserResType[] = yield call(
       UserService.getUserByToken,
       action.payload.token,
     );
-    yield put(success(action.payload.token, user));
+    yield put(success(action.payload.token, coupleUsers));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
   }
@@ -155,33 +220,12 @@ function* snsLoginSaga(action: SnsLoginSagaAction) {
     yield put(pending());
     const token: string = yield call(UserService.snsLogin, action.payload);
     TokenService.set(token);
-    yield put(
-      success(
-        token,
-        // action.payload.profileImageUrl,
-        // action.payload.thumbnailImageUrl,
-      ),
-    );
+    yield put(success(token));
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
   }
 }
-
-// interface LoginSagaAction extends AnyAction {
-//   payload: LoginReqType;
-// }
-// function* loginSaga(action: LoginSagaAction) {
-//   try {
-//     yield put(pending());
-//     const token: string = yield call(UserService.login, action.payload);
-//     TokenService.set(token);
-//     yield put(success(token));
-//     yield put(push('/'));
-//   } catch (error) {
-//     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
-//   }
-// }
 
 function* logoutSaga() {
   try {
@@ -190,7 +234,7 @@ function* logoutSaga() {
     const token: string = yield select(getTokenFromState);
     yield call(UserService.logout, token);
   } catch (error) {
-    // console.log(error);
+    console.log(error);
   } finally {
     TokenService.remove();
     yield put(success(null));
