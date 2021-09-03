@@ -10,13 +10,11 @@
   "main": "index.js",
   "scripts": {
     "start": "node server.js",
-    "heroku-postbuild": "cd client && npm install && npm run build",
     "nodemon": "nodemon ./server.js dev",
     "server": "nodemon ./server.js",
     "client": "cd client && yarn start",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "yarn nodemon",
-    "dev:client": "cd client && npm start",
     "build": "rm -r build && npm run build"
   },
   "repository": {
