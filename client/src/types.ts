@@ -44,6 +44,7 @@ export interface dateImageListType {
 }
 
 export interface DateResType {
+  dateCnt: number;
   dateRecord_id: number;
   title: string;
   description: string;

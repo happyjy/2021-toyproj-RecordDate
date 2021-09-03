@@ -16,10 +16,11 @@ var env = process.argv[2] || "prod";
 console.log("### process.env.NODE_ENV : ", process.env.NODE_ENV);
 console.log("### process.argv", process.argv);
 console.log("### mode : ", env);
+
+let connection;
 if (env !== "dev") {
   // # production level 설정
   console.log("### prod mode ###");
-  // 리액트 정적 파일 제공
   console.log("### path: ", path);
   console.log("### __dirname: ", __dirname);
   console.log(
@@ -27,7 +28,23 @@ if (env !== "dev") {
     path.join(__dirname, "client/build")
   );
 
+  // # DB connection - prod mode
+  const mysql = require("mysql");
+  const data = fs.readFileSync("./database.json");
+  const dbConf = JSON.parse(data);
+  console.log({ data, dbConf });
+  connection = mysql.createConnection({
+    host: dbConf.herokuHost,
+    user: dbConf.herokuUser,
+    password: dbConf.herokuPassword,
+    database: dbConf.herokuDatabase,
+    multipleStatements: true,
+  });
+  connection.connect();
+
+  // 리액트 정적 파일 제공
   app.use(express.static(path.join(__dirname, "client/build")));
+
   // 라우트 설정
   // build foler: npm run build로 생성된 static한 파일들
   app.get("*", (req, res) => {
@@ -38,6 +55,21 @@ if (env !== "dev") {
   });
 } else {
   console.log("### dev mode ###");
+  // # DB connection - dev mode
+  const mysql = require("mysql");
+  const data = fs.readFileSync("./database.json");
+  const dbConf = JSON.parse(data);
+  console.log({ data, dbConf });
+
+  connection = mysql.createConnection({
+    host: dbConf.host,
+    user: dbConf.user,
+    password: dbConf.password,
+    port: dbConf.port,
+    database: dbConf.database,
+    multipleStatements: true,
+  });
+  connection.connect();
 }
 
 app.use(cors());
@@ -79,20 +111,6 @@ app.get("/api/test", (req, res) => {
     },
   ]);
 });
-
-// # DB connection
-// const data = fs.readFileSync("./database.json");
-// const conf = JSON.parse(data);
-// const mysql = require("mysql");
-// const connection = mysql.createConnection({
-//   host: conf.host,
-//   user: conf.user,
-//   password: conf.password,
-//   port: conf.port,
-//   database: conf.database,
-//   multipleStatements: true,
-// });
-// connection.connect();
 
 // # require: sql query
 const {
@@ -360,6 +378,12 @@ app.get("/api/dateRecord", async (req, res) => {
   console.log("### DATE - record select, /api/dateRecord");
   const token = req.header("authorization").split(" ")[1];
   console.log("req.query", req.query);
+  console.log("!req.query.searchOption", !req.query.searchOption);
+  if (!req.query.searchOption) {
+    res.send({ status: "FAIL" });
+    return;
+  }
+
   const searchOption = JSON.parse(req.query.searchOption);
 
   const endOfRange = searchOption.rangeDate[1];
@@ -401,6 +425,7 @@ app.get("/api/dateRecord", async (req, res) => {
       resultSelectQueryByCoupleId &&
       resultSelectQueryByCoupleId.status == 1
     ) {
+      console.log("### 커플 인증 후 ###");
       // 커플 인증 후
       result = await new Promise((resolve, reject) => {
         connection.query(
@@ -413,6 +438,7 @@ app.get("/api/dateRecord", async (req, res) => {
         );
       });
     } else {
+      console.log("### 커플 인증 전 ###");
       // 커플 인증 전
       result = await new Promise((resolve, reject) => {
         connection.query(
@@ -620,13 +646,14 @@ app.patch(
       WHERE ISDELETED = 0
         AND DATERECORD_ID = ?;
 
-    SELECT *
-      FROM PLACE
-     WHERE ISDELETED = 0
-       AND DATERECORD_ID = ?`,
+      SELECT *
+        FROM PLACE
+      WHERE ISDELETED = 0
+        AND DATERECORD_ID = ?`,
       [editDateRecordId, editDateRecordId],
       (err, results) => {
         if (err) throw err;
+        console.log("edit after: ", results);
         res.send(results);
       }
     );

@@ -5,6 +5,7 @@
 
 # database
 /database.json
+/table sql
 
 # dependencies
 /node_modules
