@@ -2,11 +2,11 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 
 import Signin from '../Components/Signin';
-import { RootState } from '../redux/Modules/rootReducer';
+import { RootState } from '../redux/modules/rootReducer';
 import {
   login as loginSaga,
   snslogin as snsLoginSaga,
-} from '../redux/Modules/auth';
+} from '../redux/modules/auth';
 import { LoginReqType, SnsLoginReqType } from '../types';
 
 const SigninContainer: React.FC = () => {

@@ -4,8 +4,8 @@ import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
 import createSagaMiddleware from 'redux-saga';
 
-import rootReducer from './Modules/rootReducer';
-import rootSaga from './Modules/rootSaga';
+import rootReducer from './modules/rootReducer';
+import rootSaga from './modules/rootSaga';
 import TokenService from '../Services/TokenService';
 
 export const history = createBrowserHistory();

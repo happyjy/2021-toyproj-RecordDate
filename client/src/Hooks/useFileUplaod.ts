@@ -1,13 +1,4 @@
 import { useState } from 'react';
-import { dateImageListType } from '../types';
-
-// interface HTMLInputEvent extends Event {
-//   // target: HTMLInputElement & EventTarget;
-//   // target: {
-//   //   files: any;
-//   // };
-// }
-
 interface IFileText {
   index: number;
   name: string;
@@ -16,10 +7,8 @@ interface IFileText {
 const useFileUpload = () => {
   const [imageFile, setImagefile] = useState<any[]>([]); // 수정필요
   const [fileText, setFileText] = useState<any[]>([]); // 수정필요
-  // const [loadImageFiles, setLoadImageFiles] = useState<dateImageListType[]>([]);
 
   const onChangeFileupload = (e: any) => {
-    const uploadImage = [...imageFile, ...e.target.files];
     let files = e.target.files;
     setImagefile((imageFile) => {
       return [...imageFile, ...files];
@@ -30,7 +19,6 @@ const useFileUpload = () => {
       return v.__proto__ === File.prototype;
     }).length;
 
-    // [...uploadImage].forEach((v, i) => {
     [...e.target.files].forEach((v, i) => {
       if (v.__proto__ !== File.prototype) return;
 
@@ -48,7 +36,6 @@ const useFileUpload = () => {
       };
       reader.onloadend = function (e) {
         if (cntFileTypeImages === 0) {
-          // setFileText([...imageFile, ...arr]);
           setFileText((fileText) => [...fileText, ...arr]);
           console.log(fileText);
         }
@@ -60,8 +47,6 @@ const useFileUpload = () => {
     setImagefile,
     fileText,
     setFileText,
-    // loadImageFiles,
-    // setLoadImageFiles,
     onChangeFileupload,
   };
 };

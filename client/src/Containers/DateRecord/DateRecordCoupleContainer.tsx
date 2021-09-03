@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
-import { RootState } from '../../redux/Modules/rootReducer';
+import { RootState } from '../../redux/modules/rootReducer';
 import {
   acceptcouple as acceptCoupleSaga,
   requestcouple as requestCoupleSaga,
   logout as logoutSaga,
-} from '../../redux/Modules/auth';
+} from '../../redux/modules/auth';
 
 import {
   getUserResType,

@@ -1,20 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import moment from 'moment';
-import {
-  Table,
-  PageHeader,
-  Button,
-  DatePicker,
-  Input,
-  Dropdown,
-  Menu,
-} from 'antd';
+import { Table, Button, DatePicker, Input, Dropdown, Menu } from 'antd';
 import styles from './DateRecordList.module.css';
 import Layout from '../Layout';
 import {
   dateRecordListExtendType,
   searchOptionType,
-  keywordSearchType,
+  // keywordSearchType,
   placeListType,
   TypeWillMarkedPlaceList,
 } from '../../types';
@@ -22,7 +14,6 @@ import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { debounce, getDateFormatSearchType } from '../../redux/utils';
-import TokenService from '../../Services/TokenService';
 
 const Container = styled.div`
   /* border: 5px red solid; */
@@ -156,7 +147,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 }) => {
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
-  const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
+  // const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
   const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
     [],
   ); // 선택한 위치의 picker 객체
@@ -182,7 +173,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   useEffect(() => {
     getDateList(searchOption);
-  }, [getDateList]);
+  }, [getDateList, searchOption]);
 
   useEffect(() => {
     setDateRecordListState(dateRecordList);
@@ -437,10 +428,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
     // https://www.flaticon.com/search?word=heart&type=icon&license=selection&order_by=4
     const bounds = new window.kakao.maps.LatLngBounds();
-    const imageSrc =
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png'; // star
-    const imageSrc1 =
-      'https://image.flaticon.com/icons/png/512/2107/2107845.png'; // red heart
+    // const imageSrc =
+    //   'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png'; // star
+    // const imageSrc1 =
+    //   'https://image.flaticon.com/icons/png/512/2107/2107845.png'; // red heart
     const imageSrc2 =
       'https://image.flaticon.com/icons/png/512/1405/1405351.png'; // heart*3
     const imageSize = new window.kakao.maps.Size(24, 24);

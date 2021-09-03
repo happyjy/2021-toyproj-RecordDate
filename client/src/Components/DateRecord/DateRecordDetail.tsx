@@ -6,9 +6,7 @@ import { dateRecordListExtendType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/ChipsComponent';
-import Carousel from '../Carousel/Carousel';
 import dycalendar from '../Calendar/dyCalendar';
-import moment from 'moment';
 
 const Container = styled.div`
   /* border: 5px red solid; */
@@ -231,7 +229,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     return () => {
       dycalendar.remove();
     };
-  }, []);
+  }, [dateRecord]);
 
   if (dateRecord === null) {
     return null;

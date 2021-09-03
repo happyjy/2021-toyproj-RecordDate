@@ -238,9 +238,9 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
     setFileText(result);
   }, []);
 
-  const [dateImageList, setDateImageList] = useState<any[]>(
-    dateRecord?.dateImageList ? dateRecord.dateImageList : [],
-  );
+  // const [dateImageList, setDateImageList] = useState<any[]>(
+  //   dateRecord?.dateImageList ? dateRecord.dateImageList : [],
+  // );
 
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
@@ -296,7 +296,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
     return () => {
       dycalendar.remove();
     };
-  }, []);
+  }, [dateRecord]);
 
   useEffect(() => {
     if (error) {

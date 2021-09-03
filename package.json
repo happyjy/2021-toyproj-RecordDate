@@ -16,7 +16,8 @@
     "client": "cd client && yarn start",
     "dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
     "dev:server": "yarn nodemon",
-    "dev:client": "cd client && npm start"
+    "dev:client": "cd client && npm start",
+    "build": "rm -r build && npm run build"
   },
   "repository": {
     "type": "git",

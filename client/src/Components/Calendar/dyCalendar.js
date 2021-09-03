@@ -59,7 +59,6 @@ const cycalendar = (function (global) {
   //'yyyy-mm-dd'
   var highlightDom = '';
 
-  var setDatedate;
   var targetedElementBy = 'id';
   var targetSelector;
 
@@ -502,7 +501,6 @@ const cycalendar = (function (global) {
       var //get target dom object reference
         targetDomObject = e.target || e.srcElement,
         //other variables
-        date,
         month,
         year,
         btn,

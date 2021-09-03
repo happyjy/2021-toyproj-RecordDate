@@ -11,8 +11,8 @@ import styled from 'styled-components';
 import {
   logout as logoutSaga,
   getuser as getUserSaga,
-} from '../../redux/Modules/auth';
-import { RootState } from '../../redux/Modules/rootReducer';
+} from '../../redux/modules/auth';
+import { RootState } from '../../redux/modules/rootReducer';
 import TokenService from '../../Services/TokenService';
 import { getUserResType } from '../../types';
 import styles from './Header.module.css';
@@ -84,18 +84,18 @@ const ProfileImg = styled.img`
 type MenuContainerType = {
   isActive: Boolean;
 };
-const Triangle = styled.div<MenuContainerType>`
-  position: absolute;
-  top: ${(props) => (props.isActive ? '-20px' : '0px')};
-  right: 20px;
-  border-top: 10px transparent solid;
-  border-right: 10px transparent solid;
-  border-bottom: ${(props) =>
-    props.isActive ? '10px var(--coral) solid' : 'rgba(0, 0, 0, 0)'};
-  border-left: 10px #11ffee00 solid;
+// const Triangle = styled.div<MenuContainerType>`
+//   position: absolute;
+//   top: ${(props) => (props.isActive ? '-20px' : '0px')};
+//   right: 20px;
+//   border-top: 10px transparent solid;
+//   border-right: 10px transparent solid;
+//   border-bottom: ${(props) =>
+//     props.isActive ? '10px var(--coral) solid' : 'rgba(0, 0, 0, 0)'};
+//   border-left: 10px #11ffee00 solid;
 
-  transition: 0.5s;
-`;
+//   transition: 0.5s;
+// `;
 
 const MenuContainer = styled.div<MenuContainerType>`
   visibility: ${(props) => (props.isActive ? 'visible' : 'hidden')};
@@ -235,7 +235,7 @@ const ProfileMenu: React.FC = () => {
   const token = TokenService.get();
   useEffect(() => {
     token && getUser(token);
-  }, [getUser]);
+  }, [getUser, token]);
 
   return (
     <>

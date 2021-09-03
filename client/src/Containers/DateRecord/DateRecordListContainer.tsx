@@ -2,21 +2,14 @@ import React, { useCallback } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
-import { RootState } from '../../redux/Modules/rootReducer';
-import {
-  dateRecordListExtendType,
-  getUserResType,
-  searchOptionType,
-} from '../../types';
-import {
-  logout as logoutSaga,
-  getuser as getUserSaga,
-} from '../../redux/Modules/auth';
+import { RootState } from '../../redux/modules/rootReducer';
+import { dateRecordListExtendType, searchOptionType } from '../../types';
+import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import {
   getDatelist as getDateListSaga,
   deleteDaterecord as deleteDateRecordSaga,
-} from '../../redux/Modules/dateRecord';
+} from '../../redux/modules/dateRecord';
 import DateRecordList from '../../Components/DateRecord/DateRecordList';
 
 const DateRecordListContainer: React.FC = (props) => {

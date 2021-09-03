@@ -2,10 +2,10 @@ import React, { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
 
-import { RootState } from '../../redux/Modules/rootReducer';
-import { logout as logoutSaga } from '../../redux/Modules/auth';
+import { RootState } from '../../redux/modules/rootReducer';
+import { logout as logoutSaga } from '../../redux/modules/auth';
 
-import { addDaterecord as addDateRecordSaga } from '../../redux/Modules/dateRecord';
+import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
 import { DateRecordReqType } from '../../types';
 import DateRecordAdd from '../../Components/DateRecord/DateRecordAdd';
 

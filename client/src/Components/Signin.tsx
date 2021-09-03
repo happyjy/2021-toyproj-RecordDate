@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { Row, Col, Button, Input, message } from 'antd';
+import { Row, Col, message } from 'antd';
 
 import styles from './Signin.module.css';
 import { LoginReqType, SnsLoginReqType } from '../types';
@@ -12,9 +12,6 @@ interface SigninProps {
 }
 
 const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
-  const emailRef = React.useRef<Input>(null);
-  const passwordRef = React.useRef<Input>(null);
-
   useEffect(() => {
     if (error === null) return;
 
@@ -93,22 +90,15 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
     });
   };
 
-  const kakaoLogout = () => {
-    if (!window.Kakao.Auth.getAccessToken()) {
-      alert('Not logged in.');
-      return;
-    }
-    window.Kakao.Auth.logout(function () {
-      alert('logout ok\naccess token -> ' + window.Kakao.Auth.getAccessToken());
-    });
-  };
-
-  function click() {
-    const email = emailRef.current?.state.value;
-    const password = passwordRef.current?.state.value;
-
-    login({ email, password });
-  }
+  // const kakaoLogout = () => {
+  //   if (!window.Kakao.Auth.getAccessToken()) {
+  //     alert('Not logged in.');
+  //     return;
+  //   }
+  //   window.Kakao.Auth.logout(function () {
+  //     alert('logout ok\naccess token -> ' + window.Kakao.Auth.getAccessToken());
+  //   });
+  // };
 
   return (
     <form>
