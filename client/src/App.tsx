@@ -7,7 +7,6 @@ import NotFound from './Pages/NotFound';
 import Error from './Pages/Error';
 import ErrorBoundary from 'react-error-boundary';
 import { ConnectedRouter } from 'connected-react-router';
-import { history } from './Redux/Create';
 import Detail from './Pages/Detail';
 import Edit from './Pages/Edit';
 
@@ -15,6 +14,7 @@ import DateRecordDetail from './Pages/DateRecordDetail';
 import DateRecordEdit from './Pages/DateRecordEdit';
 import DateRecordAdd from './Pages/DateRecordAdd';
 import Couple from './Pages/Couple';
+import { history } from './Redux/create';
 declare global {
   interface Window {
     kakao: any;

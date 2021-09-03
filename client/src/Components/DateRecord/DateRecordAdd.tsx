@@ -6,7 +6,7 @@ import { DateRecordReqType, placeListType } from '../../types';
 import styles from './DateRecordAdd.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
-import Chips from '../ChipsComponent/chipsComponent';
+import Chips from '../ChipsComponent/ChipsComponent';
 import map from '../map';
 import useFileUpload from '../../Hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';

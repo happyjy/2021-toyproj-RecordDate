@@ -5,7 +5,7 @@ import Layout from '../Layout';
 import { dateRecordListExtendType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
-import Chips from '../ChipsComponent/chipsComponent';
+import Chips from '../ChipsComponent/ChipsComponent';
 import Carousel from '../Carousel/Carousel';
 import dycalendar from '../Calendar/dyCalendar';
 import moment from 'moment';

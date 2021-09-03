@@ -6,7 +6,7 @@ import './dyCalendar.css';
 import './dyCalendarCustomStyling.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import Create from './Redux/Create';
+import create from './Redux/create';
 import { Provider } from 'react-redux';
 import dotenv from 'dotenv';
 
@@ -22,7 +22,7 @@ dotenv.config();
 // kaako login
 window.Kakao.init(process.env.REACT_APP_KAKAO_MAP_KEY);
 
-const store = Create();
+const store = create();
 
 ReactDOM.render(
   <React.StrictMode>

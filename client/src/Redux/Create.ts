@@ -11,7 +11,7 @@ import TokenService from '../Services/TokenService';
 export const history = createBrowserHistory();
 const sagaMiddleware = createSagaMiddleware(); // 2. saga 미들웨어 생성
 
-const Create = () => {
+const create = () => {
   const token = TokenService.get();
 
   const store = createStore(
@@ -34,4 +34,4 @@ const Create = () => {
   return store;
 };
 
-export default Create;
+export default create;
