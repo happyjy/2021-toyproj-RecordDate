@@ -36,6 +36,8 @@ if (env !== "dev") {
   connection = dbconfig;
   connection.connect();
 
+  console.log({ connection });
+
   // 리액트 정적 파일 제공
   app.use(express.static(path.join(__dirname, "client/build")));
 
@@ -50,9 +52,9 @@ if (env !== "dev") {
 } else {
   console.log("### dev mode ###");
   // # DB connection - dev mode
-  const mysql = require("mysql");
-  const data = fs.readFileSync("./database.json");
-  const dbConf = JSON.parse(data);
+  // const mysql = require("mysql");
+  // const data = fs.readFileSync("./database.json");
+  // const dbConf = JSON.parse(data);
 
   // connection = mysql.createConnection({
   //   host: dbConf.host,
@@ -63,6 +65,7 @@ if (env !== "dev") {
   //   multipleStatements: true,
   // });
   connection = dbconfig;
+  console.log({ connection });
   connection.connect();
 
   // console.log({dbconfig});

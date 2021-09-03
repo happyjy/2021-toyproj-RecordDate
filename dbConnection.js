@@ -5,6 +5,7 @@ let connection = "";
 console.log({ env });
 if (env !== "dev") {
   console.log("### mysql connection 설정 - prod");
+
   connection = mysql.createConnection({
     host: "us-cdbr-east-04.cleardb.com",
     user: "bb9d93a5abeec8",
