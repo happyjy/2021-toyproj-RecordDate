@@ -13,33 +13,27 @@ const port = process.env.PORT || 5000;
 // express 객체 생성
 const app = express();
 var env = process.argv[2] || "prod";
-console.log("### process.env.NODE_ENV : ", process.env.NODE_ENV);
-console.log("### process.argv", process.argv);
-console.log("### mode : ", env);
+const { dbconfig, abc } = require("./dbConnection");
 
+// # mysql connection 설정
 let connection;
 if (env !== "dev") {
-  // # production level 설정
   console.log("### prod mode ###");
-  console.log("### path: ", path);
-  console.log("### __dirname: ", __dirname);
-  console.log(
-    "### path.join(__dirname, client/build)): ",
-    path.join(__dirname, "client/build")
-  );
-
+  // # production level 설정
   // # DB connection - prod mode
-  const mysql = require("mysql");
-  const data = fs.readFileSync("./database.json");
-  const dbConf = JSON.parse(data);
-  console.log({ data, dbConf });
-  connection = mysql.createConnection({
-    host: dbConf.herokuHost,
-    user: dbConf.herokuUser,
-    password: dbConf.herokuPassword,
-    database: dbConf.herokuDatabase,
-    multipleStatements: true,
-  });
+  // const mysql = require("mysql");
+  // const data = fs.readFileSync("./database.json");
+  // const dbConf = JSON.parse(data);
+  // console.log({ data, dbConf });
+  // connection = mysql.createConnection({
+  //   host: dbConf.herokuHost,
+  //   user: dbConf.herokuUser,
+  //   password: dbConf.herokuPassword,
+  //   database: dbConf.herokuDatabase,
+  //   multipleStatements: true,
+  // });
+  // connection.connect();
+  connection = dbconfig;
   connection.connect();
 
   // 리액트 정적 파일 제공
@@ -59,17 +53,21 @@ if (env !== "dev") {
   const mysql = require("mysql");
   const data = fs.readFileSync("./database.json");
   const dbConf = JSON.parse(data);
-  console.log({ data, dbConf });
 
-  connection = mysql.createConnection({
-    host: dbConf.host,
-    user: dbConf.user,
-    password: dbConf.password,
-    port: dbConf.port,
-    database: dbConf.database,
-    multipleStatements: true,
-  });
+  // connection = mysql.createConnection({
+  //   host: dbConf.host,
+  //   user: dbConf.user,
+  //   password: dbConf.password,
+  //   port: dbConf.port,
+  //   database: dbConf.database,
+  //   multipleStatements: true,
+  // });
+  connection = dbconfig;
   connection.connect();
+
+  // console.log({dbconfig});
+  // console.log(dbconfig());
+  // connection = dbconfig();
 }
 
 app.use(cors());
