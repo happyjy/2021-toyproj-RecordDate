@@ -16,6 +16,7 @@ var env = process.argv[2] || "prod";
 const { dbconfig, abc } = require("./dbConnection");
 
 // # mysql connection 설정
+const mysql = require("mysql");
 let connection;
 if (env !== "dev") {
   console.log("### prod mode ###");
