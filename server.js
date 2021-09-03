@@ -33,9 +33,18 @@ if (env !== "dev") {
   //   multipleStatements: true,
   // });
   // connection.connect();
-  connection = dbconfig;
+  connection = mysql.createConnection({
+    host: "us-cdbr-east-04.cleardb.com",
+    user: "bb9d93a5abeec8",
+    password: "6ffcbecf",
+    database: "heroku_02032f06a36b7f9",
+    multipleStatements: true,
+  });
   connection.connect();
+  // connection = dbconfig;
+  // connection.connect();
 
+  console.log("### 돼라");
   console.log({ connection });
 
   // 리액트 정적 파일 제공
