@@ -46,7 +46,7 @@ if (env !== "dev") {
   // connection.connect();
 
   console.log("### 돼라");
-  console.log({ connection });
+  // console.log({ connection });
 
   // 리액트 정적 파일 제공
   app.use(express.static(path.join(__dirname, "client/build")));
