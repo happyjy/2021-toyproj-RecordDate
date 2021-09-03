@@ -171,15 +171,16 @@ function* editDateRecord(action: EditDateRecordSagaAction) {
       action.payload.dateRecord,
     );
     const dateRecordList: DateResType[] = yield select(getDateRecordFromState);
-    yield put(
-      success(
-        dateRecordList.map((dateRecord) =>
-          dateRecord.dateRecord_id === newDateRecord.dateRecord_id
-            ? newDateRecord
-            : dateRecord,
-        ),
-      ),
-    );
+    newDateRecord.dateCnt = dateRecordList[0].dateCnt;
+    const newResult = dateRecordList.map((dateRecord) => {
+      if (dateRecord.dateRecord_id === newDateRecord.dateRecord_id) {
+        newDateRecord.dateCnt = dateRecord.dateCnt;
+        return newDateRecord;
+      } else {
+        return dateRecord;
+      }
+    });
+    yield put(success(newResult));
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));

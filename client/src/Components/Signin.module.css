@@ -28,12 +28,9 @@
 }
 
 .signin_contents {
-  /* margin-top: 50px; */
-  background-color: #f3f7f8;
   margin-left: auto;
   margin-right: auto;
   justify-content: center;
-  /* width: 800px; */
 }
 
 .signin_bg {

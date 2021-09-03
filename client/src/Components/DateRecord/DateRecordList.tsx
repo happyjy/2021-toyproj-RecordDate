@@ -232,6 +232,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
             v.dateCnt,
           ];
         } else {
+          debugger;
           mapMarkList[v.lat + v.lng].dateCnt = [
             ...mapMarkList[v.lat + v.lng].dateCnt,
             v.dateCnt,

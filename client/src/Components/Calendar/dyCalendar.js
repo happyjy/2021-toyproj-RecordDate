@@ -728,7 +728,7 @@ const cycalendar = (function (global) {
   }
 
   dycalendar.remove = function () {
-    if (targetedElementBy === 'id') {
+    if (targetedElementBy === 'id' && document.getElementById(targetSelector)) {
       document.getElementById(targetSelector).remove();
     }
   };

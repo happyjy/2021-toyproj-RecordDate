@@ -221,7 +221,13 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   // );
 
   useEffect(() => {
-    getDateList();
+    // getDateList();
+    /*
+      [!] issue search option 없이 조회 해서 error생김, list화면에서 정보 filter함으로 문제 없음
+      단, 데이트 번호로 직접 입력해서 들어오는 경우 문제
+      데이트 번호 url 주소 공유하기 안됨
+      이문제 해결하려면 map 안나오는것 부터 해결해야함
+    */
   }, [getDateList]);
 
   const result: dateImageListType[] = dateRecord

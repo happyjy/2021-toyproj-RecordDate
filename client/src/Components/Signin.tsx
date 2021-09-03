@@ -107,7 +107,9 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
           <Row className={styles.signin_contents}>
             <Col>
               <div className={styles.signin_title}>데이트 기록</div>
-              <div className={styles.signin_subtitle}>데이트 기록과 리스트</div>
+              <div className={styles.signin_subtitle}>
+                데이트 기록과 투두리스트
+              </div>
               <div className={styles.signin_underline} />
 
               <div className={styles.button_area}>
