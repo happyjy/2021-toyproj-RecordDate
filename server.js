@@ -12,14 +12,21 @@ const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
 // express 객체 생성
 const app = express();
-console.log("### mode? : ", process.env.NODE_ENV);
 var env = process.argv[2] || "prod";
-console.log("process.argv", process.argv);
+console.log("### process.env.NODE_ENV : ", process.env.NODE_ENV);
+console.log("### process.argv", process.argv);
 console.log("### mode : ", env);
 if (env !== "dev") {
   // # production level 설정
   console.log("### prod mode ###");
   // 리액트 정적 파일 제공
+  console.log("### path: ", path);
+  console.log("### __dirname: ", __dirname);
+  console.log(
+    "### path.join(__dirname, client/build)): ",
+    path.join(__dirname, "client/build")
+  );
+
   app.use(express.static(path.join(__dirname, "client/build")));
   // 라우트 설정
   // build foler: npm run build로 생성된 static한 파일들
