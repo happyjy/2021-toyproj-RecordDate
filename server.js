@@ -1,25 +1,40 @@
 require("dotenv").config();
+// file system
 const fs = require("fs");
+// client, server port 다름으로 보안상 문제 해결
 const cors = require("cors");
+// express 모듈 불러오기
 const express = require("express");
-const bodyParser = require("body-parser");
+// path 모듈
+const path = require("path");
 const jwt = require("jsonwebtoken");
-
+const bodyParser = require("body-parser");
 const port = process.env.PORT || 5000;
+// express 객체 생성
 const app = express();
-app.listen(port, () => console.log(`Listening on port ${port}`));
+console.log("### mode? : ", process.env.NODE_ENV);
+var env = process.argv[2] || "prod";
+console.log("process.argv", process.argv);
+console.log("### mode : ", env);
+if (env !== "dev") {
+  // # production level 설정
+  console.log("### prod mode ###");
+  // 리액트 정적 파일 제공
+  app.use(express.static(path.join(__dirname, "client/build")));
+  // 라우트 설정
+  // build foler: npm run build로 생성된 static한 파일들
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname + "/client/build/index.html"));
+  });
+  app.get("/demo", (req, res) => {
+    res.send("HELLO, JYOON");
+  });
+} else {
+  console.log("### dev mode ###");
+}
+
 app.use(cors());
 app.use(express.json());
-// 리액트 정적 파일 제공
-app.use(express.static(path.join(__dirname, "client/build")));
-// 라우트 설정
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/client/build/index.html"));
-});
-
-app.get("/demo", (req, res) => {
-  res.send("HELLO, JYOON");
-});
 app.get("/api/test", (req, res) => {
   /*
     # authorization
@@ -335,7 +350,9 @@ app.get("/api/getUser/email", async (req, res) => {
 
 // # DATE - RECORD SELECT
 app.get("/api/dateRecord", async (req, res) => {
+  console.log("### DATE - record select, /api/dateRecord");
   const token = req.header("authorization").split(" ")[1];
+  console.log("req.query", req.query);
   const searchOption = JSON.parse(req.query.searchOption);
 
   const endOfRange = searchOption.rangeDate[1];
@@ -437,13 +454,30 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
     throw error;
   }
 
-  let insertDateRecord = `INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
-      SELECT couple_id, (SELECT user_id FROM users WHERE token= ?) as user_id, ? as dateTime, ? as title, ? as description
-        FROM couple
-       WHERE 1=1
-         AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
-          OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+  let insertDateRecord = `
+    INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
+    SELECT (SELECT couple_id
+              FROM couple
+             WHERE 1=1
+               AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
+                OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+              ) as couple_id,
+              user_id,
+              ? as dateTime,
+              ? as title,
+              ? as description
+      FROM users
+    WHERE 1=1
+      AND token= ?
   `;
+
+  // let insertDateRecord = `INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
+  //     SELECT couple_id, (SELECT user_id FROM users WHERE token= ?) as user_id, ? as dateTime, ? as title, ? as description
+  //       FROM couple
+  //      WHERE 1=1
+  //        AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
+  //         OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+  // `;
   let insertPlace =
     "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
   let insertDateImage =
@@ -456,10 +490,10 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
   let images = req.files;
   let insertDateRecordParams = [
     token,
+    token,
     dateTime,
     title,
     description,
-    token,
     token,
   ];
 
@@ -611,3 +645,5 @@ app.delete("/api/dateRecord/:id", (req, res) => {
     res.send(results);
   });
 });
+
+app.listen(port, () => console.log(`Listening on port ${port}`));
