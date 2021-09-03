@@ -20,7 +20,8 @@ dotenv.config();
 // document.head.appendChild(kakaoMapScript);
 
 // kaako login
-window.Kakao.init(process.env.REACT_APP_KAKAO_MAP_KEY);
+// window.Kakao.init(process.env.REACT_APP_KAKAO_MAP_KEY);
+window.Kakao.init('647c93581c06a76215fffb6f5c2db212');
 
 const store = create();
 
