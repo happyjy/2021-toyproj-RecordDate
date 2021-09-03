@@ -6,7 +6,7 @@ import './dyCalendar.css';
 import './dyCalendarCustomStyling.css';
 import App from './App';
 import * as serviceWorker from './serviceWorker';
-import create from './Redux/create';
+import create from './redux/create';
 import { Provider } from 'react-redux';
 import dotenv from 'dotenv';
 

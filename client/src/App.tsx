@@ -14,7 +14,7 @@ import DateRecordDetail from './Pages/DateRecordDetail';
 import DateRecordEdit from './Pages/DateRecordEdit';
 import DateRecordAdd from './Pages/DateRecordAdd';
 import Couple from './Pages/Couple';
-import { history } from './Redux/create';
+import { history } from './redux/create';
 declare global {
   interface Window {
     kakao: any;

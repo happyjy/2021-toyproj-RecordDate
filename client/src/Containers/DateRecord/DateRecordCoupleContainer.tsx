@@ -1,12 +1,12 @@
 import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { goBack } from 'connected-react-router';
-import { RootState } from '../../Redux/Modules/rootReducer';
+import { RootState } from '../../redux/Modules/rootReducer';
 import {
   acceptcouple as acceptCoupleSaga,
   requestcouple as requestCoupleSaga,
   logout as logoutSaga,
-} from '../../Redux/Modules/auth';
+} from '../../redux/Modules/auth';
 
 import {
   getUserResType,
@@ -14,7 +14,7 @@ import {
   requsetCoupleReqType,
 } from '../../types';
 import DateRecordCouple from '../../Components/DateRecord/DateRecordCouple';
-import { debounce } from '../../Redux/utils';
+import { debounce } from '../../redux/utils';
 import UserService from '../../Services/UserService';
 
 const DateRecordCoupleContainer = () => {

@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { makeDate } from '../Redux/utils';
+import { makeDate } from '../redux/utils';
 
 import {
   dateIamgeType,
