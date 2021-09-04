@@ -45,6 +45,10 @@ if (env !== "dev") {
     });
 
     connection.connect(function (err) {
+      connection.query("select * from users", function (err, results) {
+        console.log("### select * from users", results);
+        if (err) throw err;
+      });
       if (err) {
         console.log("+++ error when connecting to connection:", err);
         setTimeout(handleDisconnect, 2000);
@@ -98,7 +102,12 @@ if (env !== "dev") {
   // });
   connection = dbconfig;
   console.log({ connection });
-  connection.connect();
+  connection.connect(function () {
+    connection.query("select * from users", function (err, results) {
+      console.log("### select * from users", results[0]);
+      if (err) throw err;
+    });
+  });
 
   // console.log({dbconfig});
   // console.log(dbconfig());
