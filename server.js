@@ -34,15 +34,35 @@ if (env !== "dev") {
   //   multipleStatements: true,
   // });
   // connection.connect();
-  connection = mysql.createConnection({
-    host: "us-cdbr-east-04.cleardb.com",
-    user: "bb9d93a5abeec8",
-    password: "6ffcbecf",
-    database: "heroku_02032f06a36b7f9",
-    multipleStatements: true,
-  });
 
-  connection.connect();
+  function handleDisconnect() {
+    connection = mysql.createConnection({
+      host: "us-cdbr-east-04.cleardb.com",
+      user: "bb9d93a5abeec8",
+      password: "6ffcbecf",
+      database: "heroku_02032f06a36b7f9",
+      multipleStatements: true,
+    });
+
+    connection.connect(function (err) {
+      if (err) {
+        console.log("+++ error when connecting to connection:", err);
+        setTimeout(handleDisconnect, 2000);
+      }
+    });
+
+    connection.on("error", function (err) {
+      console.log("+++ connection error", err);
+      if (err.code === "PROTOCOL_CONNECTION_LOST") {
+        return handleDisconnect();
+      } else {
+        throw err;
+      }
+    });
+  }
+
+  handleDisconnect();
+
   // connection = dbconfig;
   // connection.connect();
 
@@ -57,6 +77,7 @@ if (env !== "dev") {
   app.get("*", (req, res) => {
     res.sendFile(path.join(__dirname + "/client/build/index.html"));
   });
+
   app.get("/demo", (req, res) => {
     res.send("HELLO, JYOON");
   });
