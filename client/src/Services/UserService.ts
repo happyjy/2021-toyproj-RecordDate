@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { axiosInst } from '../axiosConfig';
 
 import {
   getUserByEmailReqType,
@@ -25,7 +26,7 @@ export default class UserService {
     profileImageUrl,
     thumbnailImageUrl,
   }: SnsLoginReqType): Promise<string> {
-    const response = await axios.post<SnsLoginResType>(DATERECORD_API_URL, {
+    const response = await axiosInst.post<SnsLoginResType>('/login', {
       param: {
         email,
         nickname,
