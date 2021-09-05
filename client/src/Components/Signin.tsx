@@ -101,22 +101,22 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
   //   });
   // };
 
-  const checkNw = async () => {
-    const response = await Axios.get(`http://localhost:5000/api/test`, {
-      params: { email: '' },
+  const checkNw = async (event) => {
+    event.preventDefault();
+    const response = await Axios.post(`http://localhost:5000/api/test`, {
+      param: { testparam: 'test' },
     });
 
-    console.log('### checkNw - ', response);
-    return response.data;
+    console.log('### checkNw - ', response.data);
   };
 
-  const checkNwWith = async () => {
+  const checkNwWith = async (event) => {
+    event.preventDefault();
     const response = await Axios.get(`http://localhost:5000/api/test1`, {
-      params: { email: '' },
+      params: { testparam: 'test1', testparam2: 'test2' },
     });
 
-    console.log('### checkNw - ', response);
-    return response.data;
+    console.log('### checkNwWith - ', response.data);
   };
 
   return (

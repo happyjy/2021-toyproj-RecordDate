@@ -13,116 +13,118 @@ const port = process.env.PORT || 5000;
 // express 객체 생성
 const app = express();
 var env = process.argv[2] || "prod";
-const { dbconfig, abc } = require("./dbConnection");
+const { dbConfig, poolType } = require("./dbConnection");
 
 // # mysql connection 설정
 const mysql = require("mysql");
 let connection;
-if (env !== "dev") {
-  console.log("### prod mode ###");
-  // # production level 설정
-  // # DB connection - prod mode
-  // const mysql = require("mysql");
-  // const data = fs.readFileSync("./database.json");
-  // const dbConf = JSON.parse(data);
-  // console.log({ data, dbConf });
-  // connection = mysql.createConnection({
-  //   host: dbConf.herokuHost,
-  //   user: dbConf.herokuUser,
-  //   password: dbConf.herokuPassword,
-  //   database: dbConf.herokuDatabase,
-  //   multipleStatements: true,
-  // });
-  // connection.connect();
+let pool = poolType;
 
-  function handleDisconnect() {
-    connection = mysql.createConnection({
-      host: "us-cdbr-east-04.cleardb.com",
-      user: "bb9d93a5abeec8",
-      password: "6ffcbecf",
-      database: "heroku_02032f06a36b7f9",
-      multipleStatements: true,
-    });
+// if (env !== "dev") {
+//   console.log("### prod mode ###");
+//   // # production level 설정
+//   // # DB connection - prod mode
 
-    connection.connect(function (err) {
-      connection.query("select * from users", function (err, results) {
-        console.log("### prod mode > select * from users", results);
-        if (err) throw err;
-      });
-      if (err) {
-        console.log("+++ error when connecting to connection:", err);
-        setTimeout(handleDisconnect, 2000);
-      }
-    });
+//   function handleDisconnect() {
+//     connection = mysql.createConnection({
+//       host: "us-cdbr-east-04.cleardb.com",
+//       user: "bb9d93a5abeec8",
+//       password: "6ffcbecf",
+//       database: "heroku_02032f06a36b7f9",
+//       multipleStatements: true,
+//     });
 
-    connection.on("error", function (err) {
-      console.log("+++ connection error", err);
-      if (err.code === "PROTOCOL_CONNECTION_LOST") {
-        return handleDisconnect();
-      } else {
-        throw err;
-      }
-    });
-  }
+//     connection.connect(function (err) {
+//       connection.query("select * from users", function (err, results) {
+//         console.log("### prod mode > select * from users", results);
+//         if (err) throw err;
+//       });
+//       if (err) {
+//         console.log("+++ error when connecting to connection:", err);
+//         setTimeout(handleDisconnect, 2000);
+//       }
+//     });
 
-  handleDisconnect();
+//     connection.on("error", function (err) {
+//       console.log("+++ connection error", err);
+//       if (err.code === "PROTOCOL_CONNECTION_LOST") {
+//         return handleDisconnect();
+//       } else {
+//         throw err;
+//       }
+//     });
+//   }
 
-  // connection = dbconfig;
-  // connection.connect();
+//   handleDisconnect();
+//   console.log("### 돼라");
 
-  console.log("### 돼라");
-  // console.log({ connection });
+//   // 리액트 정적 파일 제공
+//   app.use(express.static(path.join(__dirname, "client/build")));
+//   // 라우트 설정
+//   // build foler: npm run build로 생성된 static한 파일들
+//   app.get("*", (req, res) => {
+//     res.sendFile(path.join(__dirname + "/client/build/index.html"));
+//   });
+//   app.get("/demo", (req, res) => {
+//     res.send("HELLO, JYOON");
+//   });
+// } else {
+//   // # DB connection - dev mode
+//   console.log("### dev mode ###");
 
-  // 리액트 정적 파일 제공
-  app.use(express.static(path.join(__dirname, "client/build")));
+//   // connection = dbConfig;
+//   // connection.connect(function () {
+//   //   connection.query("select * from users", function (err, results) {
+//   //     console.log("### dev mode > select * from users", results[0]);
+//   //     if (err) throw err;
+//   //   });
+//   // });
 
-  // 라우트 설정
-  // build foler: npm run build로 생성된 static한 파일들
-  app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + "/client/build/index.html"));
-  });
-
-  app.get("/demo", (req, res) => {
-    res.send("HELLO, JYOON");
-  });
-} else {
-  // # DB connection - dev mode
-  console.log("### dev mode ###");
-  // const mysql = require("mysql");
-  // const data = fs.readFileSync("./database.json");
-  // const dbConf = JSON.parse(data);
-
-  // connection = mysql.createConnection({
-  //   host: dbConf.host,
-  //   user: dbConf.user,
-  //   password: dbConf.password,
-  //   port: dbConf.port,
-  //   database: dbConf.database,
-  //   multipleStatements: true,
-  // });
-  connection = dbconfig;
-  console.log({ connection });
-  connection.connect(function () {
-    connection.query("select * from users", function (err, results) {
-      console.log("### dev mode > select * from users", results[0]);
-      if (err) throw err;
-    });
-  });
-
-  // console.log({dbconfig});
-  // console.log(dbconfig());
-  // connection = dbconfig();
-}
+//   // console.log({dbconfig});
+//   // console.log(dbconfig());
+//   // connection = dbconfig();
+// }
 
 app.use(cors());
 app.use(express.json());
 app.get("/api/test1", (req, res) => {
   console.log("### /api/test1");
-  connection.query("select * from users", function (err, results) {
-    console.log("### /api/test1 > select * from users", results);
-    if (err) throw err;
+  console.log(`### req.params - `, req.params);
+
+  pool.getConnection((err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      connection.query("select * from users", function (err, results) {
+        console.log("### /api/test1 > select * from users", results[0]);
+        res.send(results);
+        if (err) throw err;
+      });
+      // return connection.release();
+    }
   });
+
+  // connection.query("select * from users", function (err, results) {
+  //   console.log("### /api/test1 > select * from users", results[0]);
+  //   res.send(results);
+  //   if (err) throw err;
+  // });
 });
+app.post("/api/test", (req, res) => {
+  console.log(`### app.post("/api/test"`);
+  console.log(`### req.params - `, req.params);
+});
+
 app.get("/api/test", (req, res) => {
   /*
     # authorization
@@ -183,7 +185,9 @@ const {
 
 // # USER - LOGIN
 app.post("/api/login", async (req, res) => {
-  console.log('app.post("/api/login"');
+  console.log("#########################");
+  console.log('### app.post("/api/login"');
+  console.log("#########################");
   const reqParam = req?.body.param;
   const email = reqParam.email;
   const nickname = reqParam.nickname;
@@ -192,109 +196,156 @@ app.post("/api/login", async (req, res) => {
   const profileImageUrl = reqParam.profileImageUrl;
   const thumbnailImageUrl = reqParam.thumbnailImageUrl;
 
-  const resultQueryFindUserResult = await new Promise((resolve, reject) => {
-    connection.query(findUserSql, [email], (err, results, field) => {
-      if (err) throw err;
-      resolve(results);
-    });
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      const resultQueryFindUserResult = await new Promise((resolve, reject) => {
+        connection.query(findUserSql, [email], (err, results, field) => {
+          if (err) throw err;
+          resolve(results);
+        });
+      });
+      const responseValue = {};
+      console.log({ resultQueryFindUserResult });
+      console.log({
+        "resultQueryFindUserResult[0]": resultQueryFindUserResult[0],
+      });
+      if (!resultQueryFindUserResult.length) {
+        // 계정이 없는 경우
+        console.log("계정이 없는 경우");
+
+        const jwtToken = jwt.sign(
+          { id: reqParam.email },
+          process.env.PRIVATE_KEY
+        );
+        const token = jwtToken;
+
+        connection.query(
+          loginSql,
+          [
+            token,
+            email,
+            nickname,
+            birthday,
+            gender,
+            profileImageUrl,
+            thumbnailImageUrl,
+          ],
+          (err, results, field) => {
+            if (err) throw err;
+            responseValue.token = jwtToken;
+            console.log("### 계정이 없는 경우 > responseValue", responseValue);
+
+            res.send(responseValue);
+          }
+        );
+      } else {
+        // 계정이 있는 경우
+        console.log("### 계정이 있는 경우");
+
+        connection.query(
+          updateUserProfileImgUrlSql,
+          [
+            // resultQueryFindUserResult[0].user_id,
+            resultQueryFindUserResult[0].token,
+            email,
+            nickname,
+            birthday,
+            gender,
+            profileImageUrl,
+            thumbnailImageUrl,
+            email,
+          ],
+          (err, results, field) => {
+            if (err) throw err;
+            responseValue.token = resultQueryFindUserResult[0].token;
+            console.log(
+              `### 계정이 있는 경우 > responseValue: `,
+              responseValue
+            );
+            res.send(responseValue);
+          }
+        );
+      }
+    }
   });
-
-  const responseValue = {};
-  console.log({ resultQueryFindUserResult });
-  console.log({ "resultQueryFindUserResult[0]": resultQueryFindUserResult[0] });
-  if (!resultQueryFindUserResult.length) {
-    // 계정이 없는 경우
-    const jwtToken = jwt.sign({ id: reqParam.email }, process.env.PRIVATE_KEY);
-    const token = jwtToken;
-
-    connection.query(
-      loginSql,
-      [
-        token,
-        email,
-        nickname,
-        birthday,
-        gender,
-        profileImageUrl,
-        thumbnailImageUrl,
-      ],
-      (err, results, field) => {
-        if (err) throw err;
-        responseValue.token = jwtToken;
-        res.send(responseValue);
-      }
-    );
-  } else {
-    // 계정이 있는 경우
-    console.log("계정이 있는 경우");
-
-    connection.query(
-      updateUserProfileImgUrlSql,
-      [
-        // resultQueryFindUserResult[0].user_id,
-        resultQueryFindUserResult[0].token,
-        email,
-        nickname,
-        birthday,
-        gender,
-        profileImageUrl,
-        thumbnailImageUrl,
-        email,
-      ],
-      (err, results, field) => {
-        if (err) throw err;
-        responseValue.token = resultQueryFindUserResult[0].token;
-        res.send(responseValue);
-      }
-    );
-  }
 });
 // # USER - GETUSER(redux > auth > user)
 app.get("/api/getUser", async (req, res) => {
+  console.log("######################");
   console.log('app.post("/api/getUser"');
+  console.log("######################");
   const token = getAuthorization(req);
   let result = [];
-  // # redux로 관리되는 정보
-  //  * 커플 요청 전, 후 data type이 다르다.
-  //  * 커플 요청 전에는 로그인 유저 정보 "하나의 정보만" 배열에 하나만 설정
-  //  * 커플 요청 후에는 로그인 유저, 커플 요청한 파트너 "두명의 정보"가 배열에 설정
-  const ownUserInfoRequested = await new Promise((resolve, reject) => {
-    connection.query(
-      getUserCoupleByTokenSql,
-      [token, token],
-      function (err, results) {
-        if (err) throw err;
-        resolve(results[0]);
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
       }
-    );
-  });
-
-  // 커플 요청 전(유저 검색/ 커플요청해야 하는 상태)
-  if (!ownUserInfoRequested) {
-    const ownUserInfoSolo = await new Promise((resolve, reject) => {
-      connection.query(getUserByTokenSql, [token], function (err, results) {
-        if (err) throw err;
-        resolve(results[0]);
+    } else {
+      // connection
+      // # redux로 관리되는 정보
+      //  * 커플 요청 전, 후 data type이 다르다.
+      //  * 커플 요청 전에는 로그인 유저 정보 "하나의 정보만" 배열에 하나만 설정
+      //  * 커플 요청 후에는 로그인 유저, 커플 요청한 파트너 "두명의 정보"가 배열에 설정
+      const ownUserInfoRequested = await new Promise((resolve, reject) => {
+        connection.query(
+          getUserCoupleByTokenSql,
+          [token, token],
+          function (err, results) {
+            if (err) throw err;
+            resolve(results[0]);
+          }
+        );
       });
-    });
-    result.push(ownUserInfoSolo);
-  } else {
-    // 커플 요청 후
-    const partnerUserInfo = await new Promise((resolve, reject) => {
-      connection.query(
-        getPartnerCoupleByUserIdSql,
-        [ownUserInfoRequested.partner, ownUserInfoRequested.partner],
-        function (err, results) {
-          if (err) throw err;
-          resolve(results[0]);
-        }
-      );
-    });
-    result.push(ownUserInfoRequested);
-    result.push(partnerUserInfo);
-  }
 
-  res.send(result);
+      // 커플 요청 전(유저 검색/ 커플요청해야 하는 상태)
+      if (!ownUserInfoRequested) {
+        const ownUserInfoSolo = await new Promise((resolve, reject) => {
+          connection.query(getUserByTokenSql, [token], function (err, results) {
+            if (err) throw err;
+            resolve(results[0]);
+          });
+        });
+        result.push(ownUserInfoSolo);
+      } else {
+        // 커플 요청 후
+        const partnerUserInfo = await new Promise((resolve, reject) => {
+          connection.query(
+            getPartnerCoupleByUserIdSql,
+            [ownUserInfoRequested.partner, ownUserInfoRequested.partner],
+            function (err, results) {
+              if (err) throw err;
+              resolve(results[0]);
+            }
+          );
+        });
+        result.push(ownUserInfoRequested);
+        result.push(partnerUserInfo);
+      }
+
+      res.send(result);
+    }
+  });
 });
 
 // # COUPLE - REQUEST COUPLE
@@ -432,7 +483,9 @@ app.get("/api/getUser/email", async (req, res) => {
 
 // # DATE - RECORD SELECT
 app.get("/api/dateRecord", async (req, res) => {
+  console.log("#########################################");
   console.log("### DATE - record select, /api/dateRecord");
+  console.log("#########################################");
 
   const token = req.header("authorization").split(" ")[1];
   if (!req.query.searchOption) {
@@ -464,53 +517,72 @@ app.get("/api/dateRecord", async (req, res) => {
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
   ];
 
-  try {
-    const resultSelectQueryByCoupleId = await new Promise((resolve, reject) => {
-      connection.query(
-        getCoupleStatus,
-        [token, token],
-        function (err, results) {
-          if (err) throw err;
-          resolve(results[0]);
-        }
-      );
-    });
-
-    let result;
-    if (
-      resultSelectQueryByCoupleId &&
-      resultSelectQueryByCoupleId.status == 1
-    ) {
-      console.log("### 커플 인증 후 ###");
-      // 커플 인증 후
-      result = await new Promise((resolve, reject) => {
-        connection.query(
-          selectQueryByCoupleId(searchOption),
-          selectParam1,
-          function (err, results) {
-            if (err) throw err;
-            resolve(results);
-          }
-        );
-      });
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
     } else {
-      console.log("### 커플 인증 전 ###");
-      // 커플 인증 전
-      result = await new Promise((resolve, reject) => {
-        connection.query(
-          selectQueryByUserId(searchOption),
-          selectParam2,
-          function (err, results) {
-            if (err) throw err;
-            resolve(results);
+      // connection
+      try {
+        const resultSelectQueryByCoupleId = await new Promise(
+          (resolve, reject) => {
+            connection.query(
+              getCoupleStatus,
+              [token, token],
+              function (err, results) {
+                if (err) throw err;
+                resolve(results[0]);
+              }
+            );
           }
         );
-      });
+
+        let result;
+        if (
+          resultSelectQueryByCoupleId &&
+          resultSelectQueryByCoupleId.status == 1
+        ) {
+          console.log("### 커플 인증 후 - 데이트리스트 ###");
+          // 커플 인증 후
+          result = await new Promise((resolve, reject) => {
+            connection.query(
+              selectQueryByCoupleId(searchOption),
+              selectParam1,
+              function (err, results) {
+                if (err) throw err;
+                resolve(results);
+              }
+            );
+          });
+        } else {
+          console.log("### 커플 인증 전 - 데이트리스트 ###");
+          // 커플 인증 전
+          result = await new Promise((resolve, reject) => {
+            connection.query(
+              selectQueryByUserId(searchOption),
+              selectParam2,
+              function (err, results) {
+                if (err) throw err;
+                resolve(results);
+              }
+            );
+          });
+        }
+        res.send(result);
+      } catch (error) {
+        throw error;
+      }
     }
-    res.send(result);
-  } catch (error) {
-    throw error;
-  }
+  });
 });
 
 // # 파일업로드
