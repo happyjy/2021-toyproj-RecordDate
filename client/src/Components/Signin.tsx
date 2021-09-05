@@ -4,6 +4,7 @@ import { Row, Col, message } from 'antd';
 import styles from './Signin.module.css';
 import { LoginReqType, SnsLoginReqType } from '../types';
 import Axios from 'axios';
+import { axiosInst } from '../axiosConfig';
 
 interface SigninProps {
   loading: boolean;
@@ -103,18 +104,24 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
 
   const checkNw = async (event) => {
     event.preventDefault();
-    const response = await Axios.post(`http://localhost:5000/api/test`, {
-      param: { testparam: 'test' },
-    });
+    const response = await Axios.post(
+      `https://ourdatinghistory.herokuapp.com/api/test`,
+      {
+        param: { testparam: 'test' },
+      },
+    );
 
     console.log('### checkNw - ', response.data);
   };
 
   const checkNwWith = async (event) => {
     event.preventDefault();
-    const response = await Axios.get(`http://localhost:5000/api/test1`, {
-      params: { testparam: 'test1', testparam2: 'test2' },
-    });
+    const response = await axiosInst.get(
+      `https://ourdatinghistory.herokuapp.com/api/test1`,
+      {
+        params: { testparam: 'test1', testparam2: 'test2' },
+      },
+    );
 
     console.log('### checkNwWith - ', response.data);
   };
