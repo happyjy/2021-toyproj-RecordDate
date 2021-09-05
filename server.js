@@ -1,4 +1,6 @@
 require("dotenv").config();
+console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
+
 // file system
 const fs = require("fs");
 // client, server port 다름으로 보안상 문제 해결
@@ -91,8 +93,9 @@ app.get("/api/test1", (req, res) => {
 app.post("/api/test", (req, res) => {
   console.log(`### app.post("/api/test"`);
   console.log(`### req.params - `, req.params);
-});
 
+  res.send("api/test 입니다.");
+});
 app.get("/api/test", (req, res) => {
   /*
     # authorization

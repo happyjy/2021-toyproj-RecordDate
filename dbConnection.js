@@ -2,16 +2,27 @@ const mysql = require("mysql");
 
 const env = process.argv[2] || "prod";
 let connection = "";
-console.log({ env });
+// console.log({ env });
 let dbConfigObj;
 if (env !== "dev") {
   console.log("### dbConnection.js > mysql connection 설정 - prod");
 
+  // dbConfigObj = {
+  //   host: "us-cdbr-east-04.cleardb.com",
+  //   user: "bb9d93a5abeec8",
+  //   password: "6ffcbecf",
+  //   database: "heroku_02032f06a36b7f9",
+  //   multipleStatements: true,
+  // };
+  console.log("> DB_PROD_USER: ", process.env.DB_PROD_USER);
+  console.log("> DB_PROD_PASSWORD: ", process.env.DB_PROD_PASSWORD);
+  console.log("> DB_PROD_HOST: ", process.env.DB_PROD_HOST);
+  console.log("> DB_PROD_DATABASE: ", process.env.DB_PROD_DATABASE);
   dbConfigObj = {
-    host: "us-cdbr-east-04.cleardb.com",
-    user: "bb9d93a5abeec8",
-    password: "6ffcbecf",
-    database: "heroku_02032f06a36b7f9",
+    host: process.env.DB_PROD_USER,
+    user: process.env.DB_PROD_PASSWORD,
+    password: process.env.DB_PROD_HOST,
+    database: process.env.DB_PROD_DATABASE,
     multipleStatements: true,
   };
 
