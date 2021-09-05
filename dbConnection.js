@@ -14,10 +14,12 @@ if (env !== "dev") {
   //   database: "heroku_02032f06a36b7f9",
   //   multipleStatements: true,
   // };
-  console.log("> DB_PROD_USER: ", process.env.DB_PROD_USER);
-  console.log("> DB_PROD_PASSWORD: ", process.env.DB_PROD_PASSWORD);
-  console.log("> DB_PROD_HOST: ", process.env.DB_PROD_HOST);
-  console.log("> DB_PROD_DATABASE: ", process.env.DB_PROD_DATABASE);
+  console.log(">>> PRIVATE_KEY: ", process.env.PRIVATE_KEY);
+  console.log(">>> PK: ", process.env.PK);
+  console.log(">>> DB_PROD_USER: ", process.env.DB_PROD_USER);
+  console.log(">>> DB_PROD_PASSWORD: ", process.env.DB_PROD_PASSWORD);
+  console.log(">>> DB_PROD_HOST: ", process.env.DB_PROD_HOST);
+  console.log(">>> DB_PROD_DATABASE: ", process.env.DB_PROD_DATABASE);
   dbConfigObj = {
     host: process.env.DB_PROD_USER,
     user: process.env.DB_PROD_PASSWORD,

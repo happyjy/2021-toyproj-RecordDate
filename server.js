@@ -7,6 +7,7 @@ httpProxy.createProxyServer({
   xfwd: true,
 });
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
+console.log("### PK: ", process.env.PK);
 
 // file system
 const fs = require("fs");
@@ -28,7 +29,6 @@ const { dbConfig, poolType } = require("./dbConnection");
 const mysql = require("mysql");
 let connection;
 let pool = poolType;
-console.log(pool.config);
 
 if (env !== "dev") {
   console.log("### prod mode ###");
@@ -99,10 +99,10 @@ app.get("/api/test1", (req, res) => {
   // });
 });
 app.post("/api/test", (req, res) => {
-  console.log(`### app.post("/api/test"`);
+  console.log(`### app.post("/api/test")`);
   console.log(`### req.params - `, req.params);
 
-  res.send("api/test 입니다.");
+  // res.send("api/test 입니다.");
 });
 app.get("/api/test", (req, res) => {
   /*
@@ -114,7 +114,7 @@ app.get("/api/test", (req, res) => {
     http://localhost:5000/api/test?searchKeyword=111&user=999
      => req.query: { searchKeyword: '111', user: '999' }
   */
-  console.log("### /api/test");
+  console.log('### app.get("/api/test")');
   res.send([
     {
       bookId: 1,

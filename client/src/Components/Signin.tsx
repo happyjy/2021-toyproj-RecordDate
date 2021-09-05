@@ -102,7 +102,7 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
   //   });
   // };
 
-  const checkNw = async (event) => {
+  const getApiTest = async (event) => {
     event.preventDefault();
     const response = await Axios.get(
       `https://ourdatinghistory.herokuapp.com/api/test`,
@@ -114,8 +114,20 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
 
     console.log('### checkNw - ', response.data);
   };
+  const postApiTest = async (event) => {
+    event.preventDefault();
+    const response = await Axios.post(
+      `https://ourdatinghistory.herokuapp.com/api/test`,
+      // `http://localhost:5000/api/test`,
+      {
+        params: { testparam: 'test' },
+      },
+    );
 
-  const checkNwWith = async (event) => {
+    console.log('### checkNw - ', response.data);
+  };
+
+  const getApiTest1 = async (event) => {
     event.preventDefault();
     const response = await Axios.get(
       `https://ourdatinghistory.herokuapp.com/api/test1`,
@@ -150,10 +162,13 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
                   </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button onClick={checkNw}>test</button>
+                  <button onClick={getApiTest}>test</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button onClick={checkNwWith}>test1</button>
+                  <button onClick={postApiTest}>test</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button onClick={getApiTest1}>test1</button>
                 </div>
               </div>
             </Col>
