@@ -116,7 +116,7 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
 
   const checkNwWith = async (event) => {
     event.preventDefault();
-    const response = await axiosInst.get(
+    const response = await Axios.get(
       `https://ourdatinghistory.herokuapp.com/api/test1`,
       {
         params: { testparam: 'test1', testparam2: 'test2' },
