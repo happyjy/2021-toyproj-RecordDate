@@ -1,3 +1,4 @@
+require("dotenv").config();
 const httpProxy = require("http-proxy");
 httpProxy.createProxyServer({
   target: "https://ourdatinghistory.herokuapp.com/",
@@ -5,9 +6,7 @@ httpProxy.createProxyServer({
   changeOrigin: true,
   xfwd: true,
 });
-require("dotenv").config();
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
-console.log("### PRIVATE_KEY1: ", process.env.PRIVATE_KEY1);
 
 // file system
 const fs = require("fs");
@@ -205,9 +204,10 @@ app.post("/api/login", async (req, res) => {
         // 계정이 없는 경우
         console.log("계정이 없는 경우");
 
+        // todo heroku에서 process.env.PRIVATE_KEY가 undefined됨.
         const jwtToken = jwt.sign(
           { id: reqParam.email },
-          process.env.PRIVATE_KEY
+          process.env.PRIVATE_KEY || "UdO1OZgf0skCS2T3NTCrzXVb8BMMYzl6"
         );
         const token = jwtToken;
 

@@ -9,7 +9,7 @@
   "description": "",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node -r dotenv/config server.js",
     "heroku-postbuild": "cd client && yarn install && yarn run build",
     "nodemon": "nodemon ./server.js dev",
     "server": "nodemon ./server.js",
