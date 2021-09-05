@@ -97,7 +97,7 @@ export const { addDaterecord, getDatelist, deleteDaterecord, editDaterecord } =
 // });
 
 export function* sagas() {
-  yield takeEvery(`${options.prefix}/ADD_DATERECORD`, addDateSaga);
+  yield takeEvery(`${options.prefix}/ADD_DATERECORD`, addDateRecordSaga);
   yield takeEvery(`${options.prefix}/GET_DATELIST`, getDateListSaga);
   yield takeEvery(`${options.prefix}/EDIT_DATERECORD`, editDateRecord);
   yield takeEvery(`${options.prefix}/DELETE_DATERECORD`, deleteDateRecord);
@@ -109,7 +109,7 @@ interface AddDateRecordSagaAction extends AnyAction {
   };
 }
 
-function* addDateSaga(action: AddDateRecordSagaAction) {
+function* addDateRecordSaga(action: AddDateRecordSagaAction) {
   try {
     yield put(pending());
     //[ ] getTokenFromState 인자값은 어떻게 관리되는지 분석글 작성하기

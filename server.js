@@ -189,6 +189,7 @@ app.post("/api/login", async (req, res) => {
           break;
       }
     } else {
+      // connection
       const resultQueryFindUserResult = await new Promise((resolve, reject) => {
         connection.query(findUserSql, [email], (err, results, field) => {
           if (err) throw err;

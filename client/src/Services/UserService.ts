@@ -40,7 +40,7 @@ export default class UserService {
   }
 
   public static async getUserByToken(token: String): Promise<getUserResType[]> {
-    const response = await axios.get<getUserResType[]>(GETUSER_API_URL, {
+    const response = await axiosInst.get<getUserResType[]>('/getUser', {
       params: { token },
       headers: {
         Authorization: `Bearer ${token}`,
