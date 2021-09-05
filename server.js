@@ -20,55 +20,23 @@ const mysql = require("mysql");
 let connection;
 let pool = poolType;
 
-// if (env !== "dev") {
-//   console.log("### prod mode ###");
-//   // # production level 설정
-//   // # DB connection - prod mode
+if (env !== "dev") {
+  console.log("### prod mode ###");
+  //   // # production level 설정
+  //   // # DB connection - prod mode
 
-//   function handleDisconnect() {
-//     connection = mysql.createConnection({
-//       host: "us-cdbr-east-04.cleardb.com",
-//       user: "bb9d93a5abeec8",
-//       password: "6ffcbecf",
-//       database: "heroku_02032f06a36b7f9",
-//       multipleStatements: true,
-//     });
-
-//     connection.connect(function (err) {
-//       connection.query("select * from users", function (err, results) {
-//         console.log("### prod mode > select * from users", results);
-//         if (err) throw err;
-//       });
-//       if (err) {
-//         console.log("+++ error when connecting to connection:", err);
-//         setTimeout(handleDisconnect, 2000);
-//       }
-//     });
-
-//     connection.on("error", function (err) {
-//       console.log("+++ connection error", err);
-//       if (err.code === "PROTOCOL_CONNECTION_LOST") {
-//         return handleDisconnect();
-//       } else {
-//         throw err;
-//       }
-//     });
-//   }
-
-//   handleDisconnect();
-//   console.log("### 돼라");
-
-//   // 리액트 정적 파일 제공
-//   app.use(express.static(path.join(__dirname, "client/build")));
-//   // 라우트 설정
-//   // build foler: npm run build로 생성된 static한 파일들
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.join(__dirname + "/client/build/index.html"));
-//   });
-//   app.get("/demo", (req, res) => {
-//     res.send("HELLO, JYOON");
-//   });
-// } else {
+  // 리액트 정적 파일 제공
+  app.use(express.static(path.join(__dirname, "client/build")));
+  // 라우트 설정
+  // build foler: npm run build로 생성된 static한 파일들
+  app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname + "/client/build/index.html"));
+  });
+  app.get("/demo", (req, res) => {
+    res.send("HELLO, JYOON");
+  });
+}
+// else {
 //   // # DB connection - dev mode
 //   console.log("### dev mode ###");
 
