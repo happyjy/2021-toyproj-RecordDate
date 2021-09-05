@@ -3,6 +3,7 @@ import { Row, Col, message } from 'antd';
 
 import styles from './Signin.module.css';
 import { LoginReqType, SnsLoginReqType } from '../types';
+import Axios from 'axios';
 
 interface SigninProps {
   loading: boolean;
@@ -100,6 +101,24 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
   //   });
   // };
 
+  const checkNw = async () => {
+    const response = await Axios.get(`http://localhost:5000/api/test`, {
+      params: { email: '' },
+    });
+
+    console.log('### checkNw - ', response);
+    return response.data;
+  };
+
+  const checkNwWith = async () => {
+    const response = await Axios.get(`http://localhost:5000/api/test1`, {
+      params: { email: '' },
+    });
+
+    console.log('### checkNw - ', response);
+    return response.data;
+  };
+
   return (
     <form>
       <Row align="middle" className={styles.signin_row}>
@@ -120,6 +139,12 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
                       width="222"
                     />
                   </div>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button onClick={checkNw}>test</button>
+                </div>
+                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                  <button onClick={checkNwWith}>test1</button>
                 </div>
               </div>
             </Col>

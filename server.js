@@ -46,7 +46,7 @@ if (env !== "dev") {
 
     connection.connect(function (err) {
       connection.query("select * from users", function (err, results) {
-        console.log("### select * from users", results);
+        console.log("### prod mode > select * from users", results);
         if (err) throw err;
       });
       if (err) {
@@ -86,8 +86,8 @@ if (env !== "dev") {
     res.send("HELLO, JYOON");
   });
 } else {
-  console.log("### dev mode ###");
   // # DB connection - dev mode
+  console.log("### dev mode ###");
   // const mysql = require("mysql");
   // const data = fs.readFileSync("./database.json");
   // const dbConf = JSON.parse(data);
@@ -104,7 +104,7 @@ if (env !== "dev") {
   console.log({ connection });
   connection.connect(function () {
     connection.query("select * from users", function (err, results) {
-      console.log("### select * from users", results[0]);
+      console.log("### dev mode > select * from users", results[0]);
       if (err) throw err;
     });
   });
@@ -116,6 +116,13 @@ if (env !== "dev") {
 
 app.use(cors());
 app.use(express.json());
+app.get("/api/test1", (req, res) => {
+  console.log("### /api/test1");
+  connection.query("select * from users", function (err, results) {
+    console.log("### /api/test1 > select * from users", results);
+    if (err) throw err;
+  });
+});
 app.get("/api/test", (req, res) => {
   /*
     # authorization
@@ -126,6 +133,7 @@ app.get("/api/test", (req, res) => {
     http://localhost:5000/api/test?searchKeyword=111&user=999
      => req.query: { searchKeyword: '111', user: '999' }
   */
+  console.log("### /api/test");
   res.send([
     {
       bookId: 1,
@@ -175,6 +183,7 @@ const {
 
 // # USER - LOGIN
 app.post("/api/login", async (req, res) => {
+  console.log('app.post("/api/login"');
   const reqParam = req?.body.param;
   const email = reqParam.email;
   const nickname = reqParam.nickname;
@@ -191,6 +200,8 @@ app.post("/api/login", async (req, res) => {
   });
 
   const responseValue = {};
+  console.log({ resultQueryFindUserResult });
+  console.log({ "resultQueryFindUserResult[0]": resultQueryFindUserResult[0] });
   if (!resultQueryFindUserResult.length) {
     // 계정이 없는 경우
     const jwtToken = jwt.sign({ id: reqParam.email }, process.env.PRIVATE_KEY);
@@ -215,6 +226,8 @@ app.post("/api/login", async (req, res) => {
     );
   } else {
     // 계정이 있는 경우
+    console.log("계정이 있는 경우");
+
     connection.query(
       updateUserProfileImgUrlSql,
       [
@@ -226,6 +239,7 @@ app.post("/api/login", async (req, res) => {
         gender,
         profileImageUrl,
         thumbnailImageUrl,
+        email,
       ],
       (err, results, field) => {
         if (err) throw err;
@@ -237,6 +251,7 @@ app.post("/api/login", async (req, res) => {
 });
 // # USER - GETUSER(redux > auth > user)
 app.get("/api/getUser", async (req, res) => {
+  console.log('app.post("/api/getUser"');
   const token = getAuthorization(req);
   let result = [];
   // # redux로 관리되는 정보
@@ -418,9 +433,8 @@ app.get("/api/getUser/email", async (req, res) => {
 // # DATE - RECORD SELECT
 app.get("/api/dateRecord", async (req, res) => {
   console.log("### DATE - record select, /api/dateRecord");
+
   const token = req.header("authorization").split(" ")[1];
-  console.log("req.query", req.query);
-  console.log("!req.query.searchOption", !req.query.searchOption);
   if (!req.query.searchOption) {
     res.send({ status: "FAIL" });
     return;

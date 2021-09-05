@@ -106,9 +106,15 @@ module.exports = {
     VALUES (?, ?, ?, ?, ?, ?, ?);
   `,
   updateUserProfileImgUrlSql: `
-    REPLACE INTO
-    USERS (token, email, nickname, birthday, gender, profileImageUrl, thumbnailImageUrl)
-    VALUES (?, ?, ?, ?, ?, ?, ?)
+    UPDATE USERS
+       SET token = ?,
+           email = ?,
+           nickname = ?,
+           birthday = ?,
+           gender = ?,
+           profileImageUrl = ?,
+           thumbnailImageUrl = ?
+     WHERE email = ?;
   `,
 
   // main select
