@@ -1,5 +1,13 @@
+const httpProxy = require("http-proxy");
+httpProxy.createProxyServer({
+  target: "https://ourdatinghistory.herokuapp.com/",
+  toProxy: true,
+  changeOrigin: true,
+  xfwd: true,
+});
 require("dotenv").config();
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
+console.log("### PRIVATE_KEY1: ", process.env.PRIVATE_KEY1);
 
 // file system
 const fs = require("fs");
@@ -21,6 +29,7 @@ const { dbConfig, poolType } = require("./dbConnection");
 const mysql = require("mysql");
 let connection;
 let pool = poolType;
+console.log(pool.config);
 
 if (env !== "dev") {
   console.log("### prod mode ###");
