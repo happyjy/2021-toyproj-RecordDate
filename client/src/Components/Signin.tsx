@@ -163,7 +163,7 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
                     />
                   </div>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'center' }}>
+                {/* <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <button onClick={postApiTest}>postApiTest</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -171,7 +171,7 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <button onClick={getApiTest1}>getApiTest1</button>
-                </div>
+                </div> */}
               </div>
             </Col>
           </Row>

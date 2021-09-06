@@ -8,8 +8,9 @@ httpProxy.createProxyServer({
   xfwd: true,
 });
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
-console.log("### PK1: ", process.env.PK1);
-console.log("### PK2: ", process.env.PK2);
+console.log("### key: ", process.env.key);
+console.log("### D_P_K1: ", process.env.D_P_K1);
+console.log("### D_P_K2: ", process.env.D_P_K2);
 
 // file system
 const fs = require("fs");
@@ -604,6 +605,9 @@ app.use("/image", express.static("upload"));
 
 // # DATE - RECORD INSERT
 app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
+  console.log(`##############################`);
+  console.log(`### app.post("/api/dateRecord"`);
+  console.log(`##############################`);
   const token = req.header("authorization").split(" ")[1];
   const hasUser = "select * from users where token = ?";
   let resultHasUser = "";
@@ -616,6 +620,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
       });
     });
 
+    console.log(`### hasUser Result: ${result}`);
     if (result.length == 0) {
       res.send("not exist user");
       return;
@@ -674,6 +679,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
       insertDateRecord,
       insertDateRecordParams,
       (err, results, fields) => {
+        console.log(`### result insertDateRecord`);
         insertDateRecordid = results.insertId;
         if (err) throw err;
 
@@ -685,6 +691,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
             placeList[i].latLong,
           ];
           connection.query(insertPlace, insertParam, (err, results, field) => {
+            console.log(`### result insertPlace`);
             if (err) throw err;
           });
         }
@@ -698,6 +705,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
             insertDateImage,
             insertParam,
             (err, results, field) => {
+              console.log(`### result insertDateImage`);
               if (err) throw err;
             }
           );
