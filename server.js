@@ -611,111 +611,152 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
   const token = req.header("authorization").split(" ")[1];
   const hasUser = "select * from users where token = ?";
   let resultHasUser = "";
-  try {
-    const result = await new Promise((resolve, reject) => {
-      connection.query(hasUser, [token], (err, results, fields) => {
-        if (err) throw err;
-        resultHasUser = results;
-        resolve(results);
-      });
-    });
 
-    console.log(`### hasUser Result: ${result}`);
-    if (result.length == 0) {
-      res.send("not exist user");
-      return;
-    }
-  } catch (error) {
-    throw error;
-  }
-
-  let insertDateRecord = `
-    INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
-    SELECT (SELECT couple_id
-              FROM couple
-             WHERE 1=1
-               AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
-                OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
-              ) as couple_id,
-              user_id,
-              ? as dateTime,
-              ? as title,
-              ? as description
-      FROM users
-    WHERE 1=1
-      AND token= ?
-  `;
-
-  // let insertDateRecord = `INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
-  //     SELECT couple_id, (SELECT user_id FROM users WHERE token= ?) as user_id, ? as dateTime, ? as title, ? as description
-  //       FROM couple
-  //      WHERE 1=1
-  //        AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
-  //         OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
-  // `;
-  let insertPlace =
-    "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
-  let insertDateImage =
-    "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
-
-  let dateTime = req.body.dateTime;
-  let title = req.body.title;
-  let description = req.body.description;
-  let placeList = JSON.parse(req.body.placeList);
-  let images = req.files;
-  let insertDateRecordParams = [
-    token,
-    token,
-    dateTime,
-    title,
-    description,
-    token,
-  ];
-
-  let insertDateRecordid;
-
-  try {
-    await connection.query(
-      insertDateRecord,
-      insertDateRecordParams,
-      (err, results, fields) => {
-        console.log(`### result insertDateRecord`);
-        insertDateRecordid = results.insertId;
-        if (err) throw err;
-
-        for (var i = 0; i < placeList.length; i++) {
-          let insertParam = [
-            insertDateRecordid,
-            placeList[i].placeName,
-            placeList[i].address,
-            placeList[i].latLong,
-          ];
-          connection.query(insertPlace, insertParam, (err, results, field) => {
-            console.log(`### result insertPlace`);
-            if (err) throw err;
-          });
-        }
-
-        for (var j = 0; j < images.length; j++) {
-          let insertParam = [
-            insertDateRecordid,
-            "/image/" + images[j].filename,
-          ];
-          connection.query(
-            insertDateImage,
-            insertParam,
-            (err, results, field) => {
-              console.log(`### result insertDateImage`);
-              if (err) throw err;
-            }
-          );
-        }
-        res.send(results);
+  // 유저 확인
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
       }
-    );
-  } catch (error) {
-    throw error;
-  }
+    } else {
+      // connection
+      try {
+        const result = await new Promise((resolve, reject) => {
+          connection.query(hasUser, [token], (err, results, fields) => {
+            if (err) throw err;
+            resultHasUser = results;
+            resolve(results);
+          });
+        });
+
+        console.log(`### hasUser Result: ${result}`);
+        if (result.length == 0) {
+          res.send("not exist user");
+          return;
+        }
+      } catch (error) {
+        throw error;
+      }
+    }
+  });
+
+  // insert 로직
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      // connection
+      let insertDateRecord = `
+      INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
+      SELECT (SELECT couple_id
+                FROM couple
+               WHERE 1=1
+                 AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
+                  OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+                ) as couple_id,
+                user_id,
+                ? as dateTime,
+                ? as title,
+                ? as description
+        FROM users
+      WHERE 1=1
+        AND token= ?
+    `;
+
+      // let insertDateRecord = `INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
+      //     SELECT couple_id, (SELECT user_id FROM users WHERE token= ?) as user_id, ? as dateTime, ? as title, ? as description
+      //       FROM couple
+      //      WHERE 1=1
+      //        AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
+      //         OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+      // `;
+      let insertPlace =
+        "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
+      let insertDateImage =
+        "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
+
+      let dateTime = req.body.dateTime;
+      let title = req.body.title;
+      let description = req.body.description;
+      let placeList = JSON.parse(req.body.placeList);
+      let images = req.files;
+      let insertDateRecordParams = [
+        token,
+        token,
+        dateTime,
+        title,
+        description,
+        token,
+      ];
+
+      let insertDateRecordid;
+
+      try {
+        await connection.query(
+          insertDateRecord,
+          insertDateRecordParams,
+          (err, results, fields) => {
+            console.log(`### result insertDateRecord`);
+            insertDateRecordid = results.insertId;
+            if (err) throw err;
+
+            for (var i = 0; i < placeList.length; i++) {
+              let insertParam = [
+                insertDateRecordid,
+                placeList[i].placeName,
+                placeList[i].address,
+                placeList[i].latLong,
+              ];
+              connection.query(
+                insertPlace,
+                insertParam,
+                (err, results, field) => {
+                  console.log(`### result insertPlace`);
+                  if (err) throw err;
+                }
+              );
+            }
+
+            for (var j = 0; j < images.length; j++) {
+              let insertParam = [
+                insertDateRecordid,
+                "/image/" + images[j].filename,
+              ];
+              connection.query(
+                insertDateImage,
+                insertParam,
+                (err, results, field) => {
+                  console.log(`### result insertDateImage`);
+                  if (err) throw err;
+                }
+              );
+            }
+            res.send(results);
+          }
+        );
+      } catch (error) {
+        throw error;
+      }
+    }
+  });
 });
 
 // # DATE - RECORD UPDATE
