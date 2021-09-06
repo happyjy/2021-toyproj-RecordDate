@@ -84,7 +84,7 @@ app.get("/api/test1", (req, res) => {
       }
     } else {
       connection.query("select * from users", function (err, results) {
-        console.log("### /api/test1 > select * from users", results[0]);
+        console.log("### /api/test1 > select * from users", results[1]);
         res.send(results);
         if (err) throw err;
       });
