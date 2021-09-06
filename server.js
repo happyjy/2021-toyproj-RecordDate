@@ -604,7 +604,7 @@ const upload = multer({ dest: "./upload" });
 app.get("/image", express.static("upload"));
 
 // # DATE - RECORD INSERT
-app.post("/api/addDateRecord", upload.array("imageFile"), async (req, res) => {
+app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
   console.log(`##############################`);
   console.log(`### app.post("/api/dateRecord"`);
   console.log(`##############################`);
