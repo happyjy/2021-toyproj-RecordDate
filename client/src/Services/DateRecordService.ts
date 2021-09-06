@@ -81,7 +81,7 @@ export default class DateRecordService {
 
     const response = await axiosInst.patch<
       [dateRecordListExtendType[], placeType[]]
-    >(`'/dateRecord/${dateRecordId}`, formData, {
+    >(`/dateRecord/${dateRecordId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'content-type': 'multipart/form-data',

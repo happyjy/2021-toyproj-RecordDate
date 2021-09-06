@@ -1,37 +1,40 @@
-// console.log(`### process.env.NODE_ENV: ${process.env.NODE_ENV}`);
 require("dotenv").config();
-const httpProxy = require("http-proxy");
-httpProxy.createProxyServer({
-  target: "https://ourdatinghistory.herokuapp.com/",
-  toProxy: true,
-  changeOrigin: true,
-  xfwd: true,
-});
+// const httpProxy = require("http-proxy");
+// httpProxy.createProxyServer({
+//   target: "https://ourdatinghistory.herokuapp.com/",
+//   toProxy: true,
+//   changeOrigin: true,
+//   xfwd: true,
+// });
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
 console.log("### key: ", process.env.key);
 console.log("### D_P_K1: ", process.env.D_P_K1);
 console.log("### D_P_K2: ", process.env.D_P_K2);
 
+const express = require("express");
 // file system
 const fs = require("fs");
 // client, server port 다름으로 보안상 문제 해결
 const cors = require("cors");
-// express 모듈 불러오기
-const express = require("express");
-// path 모듈
 const path = require("path");
 const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
-const port = process.env.PORT || 5000;
-// express 객체 생성
-const app = express();
-var env = process.argv[2] || "prod";
+// 파일업로드
+const multer = require("multer");
+// db connection
 const { dbConfig, poolType } = require("./dbConnection");
+// getAuthorization
+const { getAuthorization } = require("./util");
 
-// # mysql connection 설정
-const mysql = require("mysql");
-let connection;
+const app = express();
+const port = process.env.PORT || 5000;
+// product, development
+const env = process.argv[2] || "prod";
+
 let pool = poolType;
+
+app.use(express.static("public"));
+app.use("/image", express.static("upload"));
 
 if (env !== "dev") {
   console.log("### prod mode ###");
@@ -293,9 +296,9 @@ app.post("/api/login", async (req, res) => {
 });
 // # USER - GETUSER(redux > auth > user)
 app.get("/api/getUser", async (req, res) => {
-  console.log("######################");
-  console.log('app.post("/api/getUser"');
-  console.log("######################");
+  console.log("###########################");
+  console.log('### app.post("/api/getUser"');
+  console.log("###########################");
   const token = getAuthorization(req);
   let result = [];
   pool.getConnection(async (err, connection) => {
@@ -360,135 +363,198 @@ app.get("/api/getUser", async (req, res) => {
 
 // # COUPLE - REQUEST COUPLE
 app.get("/api/couple/request", async (req, res) => {
-  const token = getAuthorization(req);
-  let { reqestUserId, receiveUserId } = req.query;
-  let coupleId;
-  try {
-    const reqCoupleResult = await new Promise((resolve, reject) => {
-      connection.query(
-        requestCoupleSql,
-        [reqestUserId, receiveUserId],
-        (err, result, fields) => {
-          if (err) throw err;
-          resolve({ result, fields });
-        }
-      );
-    });
+  console.log("#################################");
+  console.log('### app.get("/api/couple/request"');
+  console.log("#################################");
 
-    coupleId = reqCoupleResult.result.insertId;
-    // 요청한 사람: reqestUserId
-    await new Promise((resolve, reject) => {
-      connection.query(
-        updateRequestCoupleUserSql,
-        [coupleId, reqestUserId],
-        (err, result, fields) => {
-          if (err) throw err;
-          resolve({ result, fields });
-        }
-      );
-    });
-    // 요청받을 사람: receiveUserId
-    await new Promise((resolve, reject) => {
-      connection.query(
-        updateRequestCoupleUserSql,
-        [coupleId, receiveUserId],
-        (err, result, fields) => {
-          if (err) throw err;
-          resolve({ result, fields });
-        }
-      );
-    });
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      // connection
+      const token = getAuthorization(req);
+      let { reqestUserId, receiveUserId } = req.query;
+      let coupleId;
+      try {
+        const reqCoupleResult = await new Promise((resolve, reject) => {
+          connection.query(
+            requestCoupleSql,
+            [reqestUserId, receiveUserId],
+            (err, result, fields) => {
+              if (err) throw err;
+              resolve({ result, fields });
+            }
+          );
+        });
 
-    let result = [];
-    const ownUserInfoRequested = await new Promise((resolve, reject) => {
-      connection.query(
-        getUserCoupleByTokenSql,
-        [token, token],
-        function (err, results) {
-          if (err) throw err;
-          resolve(results[0]);
-        }
-      );
-    });
+        coupleId = reqCoupleResult.result.insertId;
+        // 요청한 사람: reqestUserId
+        await new Promise((resolve, reject) => {
+          connection.query(
+            updateRequestCoupleUserSql,
+            [coupleId, reqestUserId],
+            (err, result, fields) => {
+              if (err) throw err;
+              resolve({ result, fields });
+            }
+          );
+        });
+        // 요청받을 사람: receiveUserId
+        await new Promise((resolve, reject) => {
+          connection.query(
+            updateRequestCoupleUserSql,
+            [coupleId, receiveUserId],
+            (err, result, fields) => {
+              if (err) throw err;
+              resolve({ result, fields });
+            }
+          );
+        });
 
-    const partnerUserInfo = await new Promise((resolve, reject) => {
-      connection.query(
-        getPartnerCoupleByUserIdSql,
-        [ownUserInfoRequested.partner, ownUserInfoRequested.partner],
-        function (err, results) {
-          if (err) throw err;
-          resolve(results[0]);
-        }
-      );
-    });
-    result.push(ownUserInfoRequested);
-    result.push(partnerUserInfo);
+        let result = [];
+        const ownUserInfoRequested = await new Promise((resolve, reject) => {
+          connection.query(
+            getUserCoupleByTokenSql,
+            [token, token],
+            function (err, results) {
+              if (err) throw err;
+              resolve(results[0]);
+            }
+          );
+        });
 
-    res.send(result);
-    // res.send({
-    //   status: "SUCCESS",
-    //   result: {
-    //     insertId: reqCoupleResult.result.insertId,
-    //     serverStatus: reqCoupleResult.result.serverStatus,
-    //   },
-    // });
-  } catch (error) {
-    throw error;
-  }
+        const partnerUserInfo = await new Promise((resolve, reject) => {
+          connection.query(
+            getPartnerCoupleByUserIdSql,
+            [ownUserInfoRequested.partner, ownUserInfoRequested.partner],
+            function (err, results) {
+              if (err) throw err;
+              resolve(results[0]);
+            }
+          );
+        });
+        result.push(ownUserInfoRequested);
+        result.push(partnerUserInfo);
+
+        res.send(result);
+        // res.send({
+        //   status: "SUCCESS",
+        //   result: {
+        //     insertId: reqCoupleResult.result.insertId,
+        //     serverStatus: reqCoupleResult.result.serverStatus,
+        //   },
+        // });
+      } catch (error) {
+        throw error;
+      }
+    }
+  });
 });
 // # COUPLE - ACCEPT COUPLE
 app.get("/api/couple/accept", async (req, res) => {
-  const coupleId = req.query.coupleId;
-  const status = 1; // # couplse request: 0: request, 1: accept
+  console.log("################################");
+  console.log('### app.get("/api/couple/accept"');
+  console.log("################################");
 
-  // COUPLE status COUPLE Table
-  const result = await new Promise((resolve, reject) => {
-    connection.query(
-      updateCoupleStatusSql,
-      [status, coupleId],
-      (err, result, fields) => {
-        if (err) throw err;
-        resolve(result);
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
       }
-    );
-  });
+    } else {
+      // connection
+      const coupleId = req.query.coupleId;
+      const status = 1; // # couplse request: 0: request, 1: accept
 
-  // get user_id 2개 by couple_id
-  const result1 = await new Promise((resolve, reject) => {
-    connection.query(
-      getUsersByCoupleIdSql,
-      [coupleId],
-      (err, result, fields) => {
-        if (err) throw err;
-        resolve(result[0]);
-      }
-    );
-  });
+      // COUPLE status COUPLE Table
+      const result = await new Promise((resolve, reject) => {
+        connection.query(
+          updateCoupleStatusSql,
+          [status, coupleId],
+          (err, result, fields) => {
+            if (err) throw err;
+            resolve(result);
+          }
+        );
+      });
 
-  // update couple_id feild dateRecord Table
-  const result2 = await new Promise((resolve, reject) => {
-    connection.query(
-      updateDateRecordCoupleIdSql,
-      [coupleId, result1.couple1_id, result1.couple2_id],
-      (err, result, fields) => {
-        if (err) throw err;
-        resolve(result);
-      }
-    );
-  });
+      // get user_id 2개 by couple_id
+      const result1 = await new Promise((resolve, reject) => {
+        connection.query(
+          getUsersByCoupleIdSql,
+          [coupleId],
+          (err, result, fields) => {
+            if (err) throw err;
+            resolve(result[0]);
+          }
+        );
+      });
 
-  res.send({ coupleId, status });
+      // update couple_id feild dateRecord Table
+      const result2 = await new Promise((resolve, reject) => {
+        connection.query(
+          updateDateRecordCoupleIdSql,
+          [coupleId, result1.couple1_id, result1.couple2_id],
+          (err, result, fields) => {
+            if (err) throw err;
+            resolve(result);
+          }
+        );
+      });
+
+      res.send({ coupleId, status });
+    }
+  });
 });
 // # COUPLE - SEARCH USER BY EMAIL
 app.get("/api/getUser/email", async (req, res) => {
-  connection.query(
-    getUserByEmailSql(req.query.email),
-    [],
-    function (err, results) {
-      if (err) throw err;
-      res.send(results);
+  console.log("################################");
+  console.log('### app.get("/api/getUser/email"');
+  console.log("################################");
+
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      // connection
+      connection.query(
+        getUserByEmailSql(req.query.email),
+        [],
+        function (err, results) {
+          if (err) throw err;
+          res.send(results);
+        }
+      );
     }
-  );
+  });
 });
 
 // # DATE - RECORD SELECT
@@ -595,19 +661,14 @@ app.get("/api/dateRecord", async (req, res) => {
   });
 });
 
-// # 파일업로드
-const multer = require("multer");
-const { JsonWebTokenError } = require("jsonwebtoken");
-const { getAuthorization } = require("./util");
-
 const upload = multer({ dest: "./upload" });
-app.get("/image", express.static("upload"));
 
 // # DATE - RECORD INSERT
 app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
-  console.log(`##############################`);
-  console.log(`### app.post("/api/dateRecord"`);
-  console.log(`##############################`);
+  console.log(`##############################################`);
+  console.log(`### app.post("/api/dateRecord" - RECORD INSERT`);
+  console.log(`##############################################`);
+
   const token = req.header("authorization").split(" ")[1];
   const hasUser = "select * from users where token = ?";
   let resultHasUser = "";
@@ -764,112 +825,167 @@ app.patch(
   "/api/dateRecord/:id",
   upload.array("newImageFileList"),
   (req, res) => {
-    let updateDateRecord =
-      "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
-    let insertPlace =
-      "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
-    let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
-    let insertDateImage =
-      "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
-    let deleteDateImage =
-      "update dateImage set isDeleted = ? where dateImage_id = ?";
+    console.log(`###################################`);
+    console.log(`### app.patch("/api/dateRecord/:id"`);
+    console.log(`###################################`);
 
-    const editDateRecordId = req.params.id;
-    let title = req.body.title;
-    let description = req.body.description;
-    let delPlaceList = JSON.parse(req.body.delPlaceList);
-    let addPlaceList = JSON.parse(req.body.addPlaceList);
-    let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
-    let images = req.files;
-    let updateDateRecordParams = [title, description, req.params.id];
-
-    connection.query(
-      updateDateRecord,
-      updateDateRecordParams,
-      (err, results, field) => {
-        if (err) throw err;
-      }
-    );
-
-    for (var i = 0; i < addPlaceList.length; i++) {
-      let insertParam = [
-        editDateRecordId,
-        addPlaceList[i].placeName,
-        addPlaceList[i].address,
-        addPlaceList[i].latLong,
-      ];
-      connection.query(insertPlace, insertParam, (err, results, field) => {
-        if (err) throw err;
-      });
-    }
-
-    for (var i = 0; i < delPlaceList.length; i++) {
-      let updatePlaceParams = [delPlaceList[i].id];
-      connection.query(
-        deletePlace,
-        updatePlaceParams,
-        (err, results, field) => {
-          if (err) throw err;
+    pool.getConnection(async (err, connection) => {
+      if (err) {
+        switch (err.code) {
+          case "PROTOCOL_CONNECTION_LOST":
+            console.error("Database connection was closed.");
+            break;
+          case "ER_CON_COUNT_ERROR":
+            console.error("Database has too many connections.");
+            break;
+          case "ECONNREFUSED":
+            console.error("Database connection was refused.");
+            break;
         }
-      );
-    }
-    for (var j = 0; j < images.length; j++) {
-      let insertParam = [editDateRecordId, "/image/" + images[j].filename];
-      connection.query(insertDateImage, insertParam, (err, results, field) => {
-        if (err) throw err;
-      });
-    }
-    for (var k = 0; k < delImageFileIdList.length; k++) {
-      let insertParam = [1, delImageFileIdList[k]];
-      connection.query(deleteDateImage, insertParam, (err, results, field) => {
-        if (err) throw err;
-      });
-    }
+      } else {
+        // connection
+        let updateDateRecord =
+          "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
+        let insertPlace =
+          "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
+        let deletePlace = "UPDATE PLACE SET isDeleted = 1 where place_id = ?;";
+        let insertDateImage =
+          "INSERT INTO dateImage(dateRecord_id, dateImage_name) VALUES (?, ?);";
+        let deleteDateImage =
+          "update dateImage set isDeleted = ? where dateImage_id = ?";
 
-    connection.query(
-      `SELECT *
-       FROM DATERECORD
-      WHERE ISDELETED = 0
-        AND DATERECORD_ID = ?;
+        const editDateRecordId = req.params.id;
+        let title = req.body.title;
+        let description = req.body.description;
+        let delPlaceList = JSON.parse(req.body.delPlaceList);
+        let addPlaceList = JSON.parse(req.body.addPlaceList);
+        let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
+        let images = req.files;
+        let updateDateRecordParams = [title, description, req.params.id];
 
-      SELECT *
-        FROM PLACE
-      WHERE ISDELETED = 0
-        AND DATERECORD_ID = ?`,
-      [editDateRecordId, editDateRecordId],
-      (err, results) => {
-        if (err) throw err;
-        console.log("edit after: ", results);
-        res.send(results);
+        connection.query(
+          updateDateRecord,
+          updateDateRecordParams,
+          (err, results, field) => {
+            if (err) throw err;
+          }
+        );
+
+        for (var i = 0; i < addPlaceList.length; i++) {
+          let insertParam = [
+            editDateRecordId,
+            addPlaceList[i].placeName,
+            addPlaceList[i].address,
+            addPlaceList[i].latLong,
+          ];
+          connection.query(insertPlace, insertParam, (err, results, field) => {
+            if (err) throw err;
+          });
+        }
+
+        for (var i = 0; i < delPlaceList.length; i++) {
+          let updatePlaceParams = [delPlaceList[i].id];
+          connection.query(
+            deletePlace,
+            updatePlaceParams,
+            (err, results, field) => {
+              if (err) throw err;
+            }
+          );
+        }
+        for (var j = 0; j < images.length; j++) {
+          let insertParam = [editDateRecordId, "/image/" + images[j].filename];
+          connection.query(
+            insertDateImage,
+            insertParam,
+            (err, results, field) => {
+              if (err) throw err;
+            }
+          );
+        }
+        for (var k = 0; k < delImageFileIdList.length; k++) {
+          let insertParam = [1, delImageFileIdList[k]];
+          connection.query(
+            deleteDateImage,
+            insertParam,
+            (err, results, field) => {
+              if (err) throw err;
+            }
+          );
+        }
+
+        connection.query(
+          `SELECT *
+             FROM DATERECORD
+            WHERE ISDELETED = 0
+              AND DATERECORD_ID = ?;
+
+            SELECT *
+              FROM PLACE
+             WHERE ISDELETED = 0
+               AND DATERECORD_ID = ?`,
+          [editDateRecordId, editDateRecordId],
+          (err, results) => {
+            if (err) throw err;
+            console.log("edit after: ", results);
+            res.send(results);
+          }
+        );
       }
-    );
+    });
   }
 );
 
 // # DATE - RECORD DELETE
 app.delete("/api/dateRecord/:id", (req, res) => {
-  let deleteDateRecord =
-    "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";
-  let deletePlace = "UPDATE PLACE SET isDeleted = 1 where dateRecord_id = ?;";
+  console.log(`####################################`);
+  console.log(`### app.delete("/api/dateRecord/:id"`);
+  console.log(`####################################`);
 
-  let updatePlaceParams = [req.params.id];
-  connection.query(
-    deleteDateRecord,
-    updatePlaceParams,
-    (err, results, field) => {
-      if (err) throw err;
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      // connection
+      let deleteDateRecord =
+        "UPDATE DATERECORD SET isDeleted = 1 where dateRecord_id = ?;";
+      let deletePlace =
+        "UPDATE PLACE SET isDeleted = 1 where dateRecord_id = ?;";
+
+      let updatePlaceParams = [req.params.id];
+      connection.query(
+        deleteDateRecord,
+        updatePlaceParams,
+        (err, results, field) => {
+          if (err) throw err;
+        }
+      );
+      connection.query(
+        deletePlace,
+        updatePlaceParams,
+        (err, results, field) => {
+          if (err) throw err;
+          res.send(results);
+        }
+      );
     }
-  );
-  connection.query(deletePlace, updatePlaceParams, (err, results, field) => {
-    if (err) throw err;
-    res.send(results);
   });
 });
 
 // # 라우트 설정
 // build foler: npm run build로 생성된 static한 파일들
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
-});
+// app.get("*", (req, res) => {
+//   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
+// });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
