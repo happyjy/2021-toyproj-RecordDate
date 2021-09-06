@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { axiosInst } from '../axiosConfig';
 import { makeDate } from '../redux/utils';
 
 import {
@@ -18,9 +19,9 @@ export default class DateRecordService {
     token: string,
     searchOption: searchOptionType,
   ): Promise<dateRecordListExtendType[]> {
-    const response = await axios.get<
+    const response = await axiosInst.get<
       [dateRecordListExtendType[], placeType[], dateIamgeType[]]
-    >(DATERECORD_API_URL, {
+    >('/dateRecord', {
       params: { searchOption },
       headers: {
         Authorization: `Bearer ${token}`,
@@ -46,8 +47,8 @@ export default class DateRecordService {
       formData.append('imageFile', v);
     });
 
-    const response = await axios.post<dateRecordListExtendType>(
-      DATERECORD_API_URL,
+    const response = await axiosInst.post<dateRecordListExtendType>(
+      '/dateRecord',
       formData,
       {
         headers: {
@@ -78,9 +79,9 @@ export default class DateRecordService {
         formData.append('newImageFileList', v);
       });
 
-    const response = await axios.patch<
+    const response = await axiosInst.patch<
       [dateRecordListExtendType[], placeType[]]
-    >(`${DATERECORD_API_URL}/${dateRecordId}`, formData, {
+    >(`'/dateRecord/${dateRecordId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
         'content-type': 'multipart/form-data',
@@ -96,8 +97,8 @@ export default class DateRecordService {
     token: string,
     dateRecordId: number,
   ): Promise<dateRecordListExtendType> {
-    const response = await axios.delete<dateRecordListExtendType>(
-      `${DATERECORD_API_URL}/${dateRecordId}`,
+    const response = await axiosInst.delete<dateRecordListExtendType>(
+      `/dateRecord/${dateRecordId}`,
       {
         headers: { Authorization: `Bearer ${token}` },
       },

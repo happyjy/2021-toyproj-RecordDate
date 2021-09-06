@@ -604,7 +604,7 @@ const upload = multer({ dest: "./upload" });
 app.get("/image", express.static("upload"));
 
 // # DATE - RECORD INSERT
-app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
+app.post("/api/addDateRecord", upload.array("imageFile"), async (req, res) => {
   console.log(`##############################`);
   console.log(`### app.post("/api/dateRecord"`);
   console.log(`##############################`);
@@ -828,9 +828,6 @@ app.delete("/api/dateRecord/:id", (req, res) => {
 // # 라우트 설정
 // build foler: npm run build로 생성된 static한 파일들
 app.get("*", (req, res) => {
-  console.log(
-    `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
-  );
   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
 });
 

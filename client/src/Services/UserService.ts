@@ -53,15 +53,12 @@ export default class UserService {
   public static async getUserByEmail(
     searchOption: getUserByEmailReqType,
   ): Promise<getUserResType[]> {
-    const response = await axios.get<getUserResType[]>(
-      `${GETUSER_API_URL}/email`,
-      {
-        params: { email: searchOption.email },
-        headers: {
-          Authorization: `Bearer ${searchOption.token}`,
-        },
+    const response = await axiosInst.get<getUserResType[]>(`/getUser/email`, {
+      params: { email: searchOption.email },
+      headers: {
+        Authorization: `Bearer ${searchOption.token}`,
       },
-    );
+    });
     return response.data;
   }
 
@@ -70,7 +67,7 @@ export default class UserService {
     receiveUserId,
     token,
   }): Promise<getUserResType[]> {
-    const response = await axios.get<getUserResType[]>(`${REQCOUPLE_API_URL}`, {
+    const response = await axiosInst.get<getUserResType[]>(`/couple/request`, {
       params: {
         reqestUserId,
         receiveUserId,
@@ -85,37 +82,35 @@ export default class UserService {
   public static async acceptCouple(
     reqAcceptCouple: reqAcceptCoupleType,
   ): Promise<getUserResType[]> {
-    const response = await axios.get<getUserResType[]>(
-      `${ACCEPTCOUPLE_API_URL}`,
-      {
-        params: {
-          coupleId: reqAcceptCouple.coupleId,
-          status: reqAcceptCouple.status,
-        },
-        headers: {
-          Authorization: `Bearer ${reqAcceptCouple.token}`,
-        },
+    const response = await axiosInst.get<getUserResType[]>(`/couple/accept`, {
+      params: {
+        coupleId: reqAcceptCouple.coupleId,
+        status: reqAcceptCouple.status,
       },
-    );
+      headers: {
+        Authorization: `Bearer ${reqAcceptCouple.token}`,
+      },
+    });
     return response.data;
   }
 
-  public static async login({
-    email,
-    password,
-  }: LoginReqType): Promise<string> {
-    const response = await axios.post<LoginResType>(USER_API_URL, {
-      email,
-      password,
-    });
-    return response.data.token;
-  }
-
+  // [todo]
   public static async logout(token: string): Promise<void> {
-    await axios.delete(USER_API_URL, {
+    await axiosInst.delete('logout', {
       headers: {
         Authorization: `Bearer ${token}`,
       },
     });
   }
+
+  // public static async login({
+  //   email,
+  //   password,
+  // }: LoginReqType): Promise<string> {
+  //   const response = await axiosInst.post<LoginResType>(USER_API_URL, {
+  //     email,
+  //     password,
+  //   });
+  //   return response.data.token;
+  // }
 }
