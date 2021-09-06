@@ -100,7 +100,7 @@ app.post("/api/test", (req, res) => {
     }
   });
 });
-app.use("/api/test", (req, res) => {
+app.get("/api/test", (req, res) => {
   /*
     # authorization
       => req.header("authorization")
@@ -139,7 +139,7 @@ app.use("/api/test", (req, res) => {
   console.log('### app.get("/api/test")', resData);
   res.send(resData);
 });
-app.use("/api/test1", (req, res) => {
+app.get("/api/test1", (req, res) => {
   console.log("### /api/test1");
   console.log(`### req.params - `, req.params);
 
@@ -292,7 +292,7 @@ app.post("/api/login", async (req, res) => {
   });
 });
 // # USER - GETUSER(redux > auth > user)
-app.use("/api/getUser", async (req, res) => {
+app.get("/api/getUser", async (req, res) => {
   console.log("######################");
   console.log('app.post("/api/getUser"');
   console.log("######################");
@@ -359,7 +359,7 @@ app.use("/api/getUser", async (req, res) => {
 });
 
 // # COUPLE - REQUEST COUPLE
-app.use("/api/couple/request", async (req, res) => {
+app.get("/api/couple/request", async (req, res) => {
   const token = getAuthorization(req);
   let { reqestUserId, receiveUserId } = req.query;
   let coupleId;
@@ -437,7 +437,7 @@ app.use("/api/couple/request", async (req, res) => {
   }
 });
 // # COUPLE - ACCEPT COUPLE
-app.use("/api/couple/accept", async (req, res) => {
+app.get("/api/couple/accept", async (req, res) => {
   const coupleId = req.query.coupleId;
   const status = 1; // # couplse request: 0: request, 1: accept
 
@@ -480,7 +480,7 @@ app.use("/api/couple/accept", async (req, res) => {
   res.send({ coupleId, status });
 });
 // # COUPLE - SEARCH USER BY EMAIL
-app.use("/api/getUser/email", async (req, res) => {
+app.get("/api/getUser/email", async (req, res) => {
   connection.query(
     getUserByEmailSql(req.query.email),
     [],
@@ -492,7 +492,7 @@ app.use("/api/getUser/email", async (req, res) => {
 });
 
 // # DATE - RECORD SELECT
-app.use("/api/dateRecord", async (req, res) => {
+app.get("/api/dateRecord", async (req, res) => {
   console.log("#########################################");
   console.log("### DATE - record select, /api/dateRecord");
   console.log("#########################################");
@@ -601,7 +601,7 @@ const { JsonWebTokenError } = require("jsonwebtoken");
 const { getAuthorization } = require("./util");
 
 const upload = multer({ dest: "./upload" });
-app.use("/image", express.static("upload"));
+app.get("/image", express.static("upload"));
 
 // # DATE - RECORD INSERT
 app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
