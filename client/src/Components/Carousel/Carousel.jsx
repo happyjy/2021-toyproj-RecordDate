@@ -113,6 +113,7 @@ const Carousel = ({ images }) => {
           <Img
             key={image.id}
             src={'http://localhost:5000' + image.dateImageName}
+            // src={image.dateImageName}
             width={width}
             onLoad={handleImageLoad}
           />

@@ -307,7 +307,8 @@ const DateRecordDetail: React.FC<DetailProps> = ({
                 {dateRecord.dateImageList.map((image, i) => (
                   <ContainerThumbnail key={image.id}>
                     <ThumbnailImg
-                      src={'http://localhost:5000' + image.dateImageName}
+                      // src={'http://localhost:5000' + image.dateImageName}
+                      src={image.dateImageName}
                     ></ThumbnailImg>
                   </ContainerThumbnail>
                 ))}

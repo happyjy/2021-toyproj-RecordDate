@@ -7,9 +7,7 @@ require("dotenv").config();
 //   xfwd: true,
 // });
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
-console.log("### key: ", process.env.key);
-console.log("### D_P_K1: ", process.env.D_P_K1);
-console.log("### D_P_K2: ", process.env.D_P_K2);
+console.log("### DB_PROD_KEY: ", process.env.DB_PROD_KEY);
 
 const express = require("express");
 // file system
@@ -55,23 +53,6 @@ if (env !== "dev") {
   //   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
   // });
 }
-
-// else {
-//   // # DB connection - dev mode
-//   console.log("### dev mode ###");
-
-//   // connection = dbConfig;
-//   // connection.connect(function () {
-//   //   connection.query("select * from users", function (err, results) {
-//   //     console.log("### dev mode > select * from users", results[0]);
-//   //     if (err) throw err;
-//   //   });
-//   // });
-
-//   // console.log({dbconfig});
-//   // console.log(dbconfig());
-//   // connection = dbconfig();
-// }
 
 app.use(cors());
 app.use(express.json());
@@ -662,9 +643,11 @@ app.get("/api/dateRecord", async (req, res) => {
 });
 
 const upload = multer({ dest: "./upload" });
+const s3Upload = require("./s3_upload");
 
 // # DATE - RECORD INSERT
-app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
+//  * imageFile: server req시 설정된 필드명
+app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
   console.log(`##############################################`);
   console.log(`### app.post("/api/dateRecord" - RECORD INSERT`);
   console.log(`##############################################`);
@@ -759,6 +742,7 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
       let description = req.body.description;
       let placeList = JSON.parse(req.body.placeList);
       let images = req.files;
+      console.log(`#파일업로드: `, images);
       let insertDateRecordParams = [
         token,
         token,
@@ -799,7 +783,8 @@ app.post("/api/dateRecord", upload.array("imageFile"), async (req, res) => {
             for (var j = 0; j < images.length; j++) {
               let insertParam = [
                 insertDateRecordid,
-                "/image/" + images[j].filename,
+                images[j].location,
+                // "/image/" + images[j].filename,
               ];
               connection.query(
                 insertDateImage,
