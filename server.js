@@ -1,3 +1,4 @@
+// console.log(`### process.env.NODE_ENV: ${process.env.NODE_ENV}`);
 require("dotenv").config();
 const httpProxy = require("http-proxy");
 httpProxy.createProxyServer({
@@ -91,7 +92,7 @@ app.get("/api/test1", (req, res) => {
     } else {
       connection.query("select * from users", function (err, results) {
         console.log("### /api/test1 > select * from users", results[1]);
-        res.send(results);
+        // res.send(results);
         if (err) throw err;
       });
       // return connection.release();
@@ -108,7 +109,27 @@ app.post("/api/test", (req, res) => {
   console.log(`### app.post("/api/test")`);
   console.log(`### req.params - `, req.params);
 
-  // res.send("api/test 입니다.");
+  pool.getConnection((err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      connection.query("select * from users", function (err, results) {
+        console.log("### /api/test1 > select * from users", results[1]);
+        // res.send(results);
+        if (err) throw err;
+      });
+    }
+  });
 });
 app.get("/api/test", (req, res) => {
   /*
