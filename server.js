@@ -50,9 +50,6 @@ if (env !== "dev") {
     );
     res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
   });
-  app.get("/demo", (req, res) => {
-    res.send("HELLO, JYOON");
-  });
 }
 // else {
 //   // # DB connection - dev mode
@@ -95,7 +92,7 @@ app.post("/api/test", (req, res) => {
     } else {
       connection.query("select * from users", function (err, results) {
         console.log("### /api/test > select * from users", results[1]);
-        res.send(results);
+        res.send(results[1]);
         if (err) throw err;
       });
     }
@@ -111,8 +108,7 @@ app.use("/api/test", (req, res) => {
     http://localhost:5000/api/test?searchKeyword=111&user=999
      => req.query: { searchKeyword: '111', user: '999' }
   */
-  console.log('### app.get("/api/test")');
-  res.send([
+  const resData = [
     {
       bookId: 1,
       title: "자바스크립트 디자인패턴",
@@ -134,10 +130,12 @@ app.use("/api/test", (req, res) => {
       title: "리팩터링2판",
       author: "마틴파울러",
       message: `예제가 javascript코드로 되어 있으며 볼 예정입니다.
-          레거시코드가 많은 회사에서 이 책을 잘 활용하면 좋을것 같습니다.`,
+        레거시코드가 많은 회사에서 이 책을 잘 활용하면 좋을것 같습니다.`,
       url: "https://happyjy.netlify.app/",
     },
-  ]);
+  ];
+  console.log('### app.get("/api/test")', resData);
+  res.send(resData);
 });
 app.use("/api/test1", (req, res) => {
   console.log("### /api/test1");
@@ -159,7 +157,7 @@ app.use("/api/test1", (req, res) => {
     } else {
       connection.query("select * from users", function (err, results) {
         console.log("### /api/test1 > select * from users", results[1]);
-        // res.send(results);
+        res.send(results[1]);
         if (err) throw err;
       });
     }
@@ -292,7 +290,7 @@ app.post("/api/login", async (req, res) => {
   });
 });
 // # USER - GETUSER(redux > auth > user)
-app.get("/api/getUser", async (req, res) => {
+app.use("/api/getUser", async (req, res) => {
   console.log("######################");
   console.log('app.post("/api/getUser"');
   console.log("######################");
@@ -359,7 +357,7 @@ app.get("/api/getUser", async (req, res) => {
 });
 
 // # COUPLE - REQUEST COUPLE
-app.get("/api/couple/request", async (req, res) => {
+app.use("/api/couple/request", async (req, res) => {
   const token = getAuthorization(req);
   let { reqestUserId, receiveUserId } = req.query;
   let coupleId;
@@ -437,7 +435,7 @@ app.get("/api/couple/request", async (req, res) => {
   }
 });
 // # COUPLE - ACCEPT COUPLE
-app.get("/api/couple/accept", async (req, res) => {
+app.use("/api/couple/accept", async (req, res) => {
   const coupleId = req.query.coupleId;
   const status = 1; // # couplse request: 0: request, 1: accept
 
@@ -480,7 +478,7 @@ app.get("/api/couple/accept", async (req, res) => {
   res.send({ coupleId, status });
 });
 // # COUPLE - SEARCH USER BY EMAIL
-app.get("/api/getUser/email", async (req, res) => {
+app.use("/api/getUser/email", async (req, res) => {
   connection.query(
     getUserByEmailSql(req.query.email),
     [],
@@ -492,7 +490,7 @@ app.get("/api/getUser/email", async (req, res) => {
 });
 
 // # DATE - RECORD SELECT
-app.get("/api/dateRecord", async (req, res) => {
+app.use("/api/dateRecord", async (req, res) => {
   console.log("#########################################");
   console.log("### DATE - record select, /api/dateRecord");
   console.log("#########################################");
