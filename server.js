@@ -8,8 +8,8 @@ httpProxy.createProxyServer({
   xfwd: true,
 });
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
-console.log("### PK: ", process.env.PK);
-console.log("### DB_PROD(PK env 테스트용): ", process.env.DB_PROD);
+console.log("### PK1: ", process.env.PK1);
+console.log("### PK2: ", process.env.PK2);
 
 // file system
 const fs = require("fs");
@@ -42,15 +42,16 @@ if (env !== "dev") {
     `# 리액트 정적 파일 제공: ${path.join(__dirname, "/client/build")}`
   );
   app.use(express.static(path.join(__dirname, "/client/build")));
-  // 라우트 설정
-  // build foler: npm run build로 생성된 static한 파일들
-  app.get("*", (req, res) => {
-    console.log(
-      `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
-    );
-    res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
-  });
+  // // 라우트 설정
+  // // build foler: npm run build로 생성된 static한 파일들
+  // app.get("*", (req, res) => {
+  //   console.log(
+  //     `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
+  //   );
+  //   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
+  // });
 }
+
 // else {
 //   // # DB connection - dev mode
 //   console.log("### dev mode ###");
@@ -814,6 +815,15 @@ app.delete("/api/dateRecord/:id", (req, res) => {
     if (err) throw err;
     res.send(results);
   });
+});
+
+// # 라우트 설정
+// build foler: npm run build로 생성된 static한 파일들
+app.get("*", (req, res) => {
+  console.log(
+    `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
+  );
+  res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
 });
 
 app.listen(port, () => console.log(`Listening on port ${port}`));

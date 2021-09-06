@@ -92,7 +92,6 @@ const reducer = handleActions<AuthState, any>(
       // immer(불변성관리) library 적용
       return produce(state, (draft) => {
         if (draft && draft.user) {
-          debugger;
           draft.user[0].couple_status = action.payload.coupleStatus;
           draft.user[1].couple_status = action.payload.coupleStatus;
         }
