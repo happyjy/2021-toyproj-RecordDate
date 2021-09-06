@@ -9,6 +9,7 @@ httpProxy.createProxyServer({
 });
 console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
 console.log("### PK: ", process.env.PK);
+console.log("### DB_PROD(PK env 테스트용): ", process.env.DB_PROD);
 
 // file system
 const fs = require("fs");
@@ -43,12 +44,12 @@ if (env !== "dev") {
   app.use(express.static(path.join(__dirname, "/client/build")));
   // 라우트 설정
   // build foler: npm run build로 생성된 static한 파일들
-  // app.get("*", (req, res) => {
-  //   console.log(
-  //     `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
-  //   );
-  //   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
-  // });
+  app.get("*", (req, res) => {
+    console.log(
+      `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
+    );
+    res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
+  });
   app.get("/demo", (req, res) => {
     res.send("HELLO, JYOON");
   });
@@ -93,14 +94,14 @@ app.post("/api/test", (req, res) => {
       }
     } else {
       connection.query("select * from users", function (err, results) {
-        console.log("### /api/test1 > select * from users", results[1]);
+        console.log("### /api/test > select * from users", results[1]);
         res.send(results);
         if (err) throw err;
       });
     }
   });
 });
-app.get("/api/test", (req, res) => {
+app.use("/api/test", (req, res) => {
   /*
     # authorization
       => req.header("authorization")
@@ -138,7 +139,7 @@ app.get("/api/test", (req, res) => {
     },
   ]);
 });
-app.get("/api/test1", (req, res) => {
+app.use("/api/test1", (req, res) => {
   console.log("### /api/test1");
   console.log(`### req.params - `, req.params);
 
@@ -161,7 +162,6 @@ app.get("/api/test1", (req, res) => {
         // res.send(results);
         if (err) throw err;
       });
-      // return connection.release();
     }
   });
 
