@@ -36,11 +36,17 @@ if (env !== "dev") {
   //   // # DB connection - prod mode
 
   // 리액트 정적 파일 제공
-  app.use(express.static(path.join(__dirname, "client/build")));
+  console.log(
+    `# 리액트 정적 파일 제공: ${path.join(__dirname, "/client/build")}`
+  );
+  app.use(express.static(path.join(__dirname, "/client/build")));
   // 라우트 설정
   // build foler: npm run build로 생성된 static한 파일들
   app.get("*", (req, res) => {
-    res.sendFile(path.join(__dirname + "/client/build/index.html"));
+    console.log(
+      `# 라우트 설정: ${path.join(__dirname + "/client/build" + "index.html")}`
+    );
+    res.sendFile(path.join(__dirname + "/client/build" + "index.html"));
   });
   app.get("/demo", (req, res) => {
     res.send("HELLO, JYOON");

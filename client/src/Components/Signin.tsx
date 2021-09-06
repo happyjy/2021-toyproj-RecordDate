@@ -102,42 +102,44 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
   //   });
   // };
 
-  const getApiTest = async (event) => {
-    event.preventDefault();
-    const response = await Axios.get(
-      `https://ourdatinghistory.herokuapp.com/api/test`,
-      // `http://localhost:5000/api/test`,
-      {
-        params: { testparam: 'test' },
-      },
-    );
-
-    console.log('### checkNw - ', response.data);
-  };
   const postApiTest = async (event) => {
     event.preventDefault();
-    const response = await Axios.post(
-      `https://ourdatinghistory.herokuapp.com/api/test`,
+    const response = await axiosInst.post(
+      `/test`,
+      // `https://ourdatinghistory.herokuapp.com/api/test`,
       // `http://localhost:5000/api/test`,
       {
         params: { testparam: 'test' },
       },
     );
 
-    console.log('### checkNw - ', response.data);
+    console.log('### postApiTest - ', response.data);
   };
+  const getApiTest = async (event) => {
+    event.preventDefault();
+    const response = await axiosInst.get(
+      `/test`,
+      // `https://ourdatinghistory.herokuapp.com/api/test`,
+      // `http://localhost:5000/api/test`,
+      {
+        params: { testparam: 'test' },
+      },
+    );
 
+    console.log('### getApiTest - ', response.data);
+  };
   const getApiTest1 = async (event) => {
     event.preventDefault();
-    const response = await Axios.get(
-      `https://ourdatinghistory.herokuapp.com/api/test1`,
+    const response = await axiosInst.get(
+      `/test1`,
+      // `https://ourdatinghistory.herokuapp.com/api/test1`,
       // `http://localhost:5000/api/test1`,
       {
         params: { testparam: 'test1', testparam2: 'test2' },
       },
     );
 
-    console.log('### checkNwWith - ', response.data);
+    console.log('### getApiTest(getusers[0]) - ', response.data);
   };
 
   return (
@@ -162,13 +164,13 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
                   </div>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button onClick={getApiTest}>test</button>
+                  <button onClick={postApiTest}>postApiTest</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button onClick={postApiTest}>test</button>
+                  <button onClick={getApiTest}>getApiTest</button>
                 </div>
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
-                  <button onClick={getApiTest1}>test1</button>
+                  <button onClick={getApiTest1}>getApiTest1</button>
                 </div>
               </div>
             </Col>
