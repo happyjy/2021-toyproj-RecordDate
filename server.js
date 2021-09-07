@@ -1,14 +1,4 @@
 require("dotenv").config();
-// const httpProxy = require("http-proxy");
-// httpProxy.createProxyServer({
-//   target: "https://ourdatinghistory.herokuapp.com/",
-//   toProxy: true,
-//   changeOrigin: true,
-//   xfwd: true,
-// });
-console.log("### PRIVATE_KEY: ", process.env.PRIVATE_KEY);
-console.log("### DB_PROD_KEY: ", process.env.DB_PROD_KEY);
-
 const express = require("express");
 // file system
 const fs = require("fs");
@@ -23,39 +13,22 @@ const multer = require("multer");
 const { dbConfig, poolType } = require("./dbConnection");
 // getAuthorization
 const { getAuthorization } = require("./util");
-
 const app = express();
 const port = process.env.PORT || 5000;
-// product, development
 const env = process.argv[2] || "prod";
 
 let pool = poolType;
 
 app.use(express.static("public"));
 app.use("/image", express.static("upload"));
+app.use(cors());
+app.use(express.json());
 
 if (env !== "dev") {
   console.log("### prod mode ###");
-  //   // # production level 설정
-  //   // # DB connection - prod mode
-
   // 리액트 정적 파일 제공
-  console.log(
-    `# 리액트 정적 파일 제공: ${path.join(__dirname, "/client/build")}`
-  );
   app.use(express.static(path.join(__dirname, "/client/build")));
-  // // 라우트 설정
-  // // build foler: npm run build로 생성된 static한 파일들
-  // app.get("*", (req, res) => {
-  //   console.log(
-  //     `# 라우트 설정: ${path.join(__dirname + "/client/build" + "/index.html")}`
-  //   );
-  //   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
-  // });
 }
-
-app.use(cors());
-app.use(express.json());
 
 app.post("/api/test", (req, res) => {
   console.log(`#########################`);
@@ -968,8 +941,8 @@ app.delete("/api/dateRecord/:id", (req, res) => {
 
 // # 라우트 설정
 // build foler: npm run build로 생성된 static한 파일들
-// app.get("*", (req, res) => {
-//   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
-// });
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
+});
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
