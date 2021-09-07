@@ -44,7 +44,8 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
           url: '/v2/user/me',
           success: (res) => {
             const kakao_account = res.kakao_account;
-            console.log(kakao_account);
+            debugger;
+            console.log({ kakao_account });
             const {
               email,
               profile: { nickname, profile_image_url, thumbnail_image_url },

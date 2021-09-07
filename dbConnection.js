@@ -7,9 +7,10 @@ let dbConfigObj;
 if (env !== "dev") {
   console.log("### dbConnection.js > mysql connection 설정 - prod");
   dbConfigObj = {
-    host: process.env.DB_PROD_USER,
-    user: process.env.DB_PROD_PASSWORD,
-    password: process.env.DB_PROD_HOST,
+    connectionLimit: 20,
+    host: process.env.DB_PROD_HOST,
+    user: process.env.DB_PROD_USER,
+    password: process.env.DB_PROD_PASSWORD,
     database: process.env.DB_PROD_DATABASE,
     multipleStatements: true,
   };
