@@ -471,40 +471,9 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   return (
     <Layout>
-      {/* <PageHeader
-        className={styles.pageHeader1}
-        title={<div className={styles.pageTitle}>Date List</div>}
-        extra={[
-          <Button
-            key="2"
-            type="primary"
-            onClick={goAdd}
-            className={styles.button}
-          >
-            Add Date
-          </Button>,
-          <Button
-            key="1"
-            type="primary"
-            onClick={logout}
-            className={styles.button}
-          >
-            Logout
-          </Button>,
-        ]}
-      /> */}
       <Container className="Container">
         <MapContainer className="MapContainer">
           <MapSpace id="map"></MapSpace>
-          {/* <button
-            onClick={() => {
-              // console.log(boundsFnState);
-              console.log({ mapState, setBoundsState });
-              mapState?.setBounds(setBoundsState);
-            }}
-          >
-            클릭
-          </button> */}
         </MapContainer>
         <ListContainer className="ListContainer">
           <ConditionContainer className="ConditionContainer">
