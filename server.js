@@ -218,10 +218,9 @@ app.post("/api/login", async (req, res) => {
         // 계정이 없는 경우
         console.log("계정이 없는 경우");
 
-        // todo heroku에서 process.env.PRIVATE_KEY가 undefined됨.
         const jwtToken = jwt.sign(
           { id: reqParam.email },
-          process.env.PRIVATE_KEY || "UdO1OZgf0skCS2T3NTCrzXVb8BMMYzl6"
+          process.env.PRIVATE_KEY
         );
         const token = jwtToken;
 
