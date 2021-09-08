@@ -12,7 +12,7 @@ const multer = require("multer");
 // db connection
 const { dbConfig, poolType } = require("./dbConnection");
 // getAuthorization
-const { getAuthorization } = require("./util");
+const { getAuthorization, printQuery } = require("./util");
 const app = express();
 const port = process.env.PORT || 5000;
 const env = process.argv[2] || "prod";
@@ -24,12 +24,14 @@ app.use("/image", express.static("upload"));
 app.use(cors());
 app.use(express.json());
 
-if (env !== "dev") {
-  console.log("### prod mode ###");
-  // 리액트 정적 파일 제공
-  app.use(express.static(path.join(__dirname, "/client/build")));
-}
+// 리액트 정적 파일 제공
+app.use(express.static(path.join(__dirname, "/client/build")));
+// if (env !== "dev") {
+//   console.log("### prod mode ###");
+//   app.use(express.static(path.join(__dirname, "/client/build")));
+// }
 
+// # test api
 app.post("/api/test", (req, res) => {
   console.log(`#########################`);
   console.log(`### app.post("/api/test")`);
@@ -161,6 +163,16 @@ app.post("/api/login", async (req, res) => {
   const profileImageUrl = reqParam.profileImageUrl;
   const thumbnailImageUrl = reqParam.thumbnailImageUrl;
 
+  console.log({
+    reqParam,
+    email,
+    nickname,
+    birthday,
+    gender,
+    profileImageUrl,
+    thumbnailImageUrl,
+  });
+
   pool.getConnection(async (err, connection) => {
     if (err) {
       switch (err.code) {
@@ -176,6 +188,7 @@ app.post("/api/login", async (req, res) => {
       }
     } else {
       // connection
+      console.log("connection");
       const resultQueryFindUserResult = await new Promise((resolve, reject) => {
         connection.query(findUserSql, [email], (err, results, field) => {
           if (err) throw err;
@@ -190,7 +203,6 @@ app.post("/api/login", async (req, res) => {
       if (!resultQueryFindUserResult.length) {
         // 계정이 없는 경우
         console.log("계정이 없는 경우");
-
         const jwtToken = jwt.sign(
           { id: reqParam.email },
           process.env.PRIVATE_KEY
@@ -283,6 +295,7 @@ app.get("/api/getUser", async (req, res) => {
           }
         );
       });
+      // printQuery(getUserCoupleByTokenSql, [token, token]);
 
       // 커플 요청 전(유저 검색/ 커플요청해야 하는 상태)
       if (!ownUserInfoRequested) {
@@ -292,6 +305,8 @@ app.get("/api/getUser", async (req, res) => {
             resolve(results[0]);
           });
         });
+        printQuery(getUserByTokenSql, [token]);
+
         result.push(ownUserInfoSolo);
       } else {
         // 커플 요청 후
@@ -780,7 +795,7 @@ app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
 // # DATE - RECORD UPDATE
 app.patch(
   "/api/dateRecord/:id",
-  upload.array("newImageFileList"),
+  s3Upload.array("newImageFileList"),
   (req, res) => {
     console.log(`###################################`);
     console.log(`### app.patch("/api/dateRecord/:id"`);
@@ -801,6 +816,7 @@ app.patch(
         }
       } else {
         // connection
+        console.log("connection");
         let updateDateRecord =
           "UPDATE DATERECORD SET title = ?, description = ? where dateRecord_id = ?;";
         let insertPlace =

@@ -4,11 +4,6 @@ const env = process.argv[2] || "prod";
 let connection = "";
 let dbConfigObj;
 
-console.log("# host: ", process.env.DB_PROD_HOST);
-console.log("# user: ", process.env.DB_PROD_USER);
-console.log("# password: ", process.env.DB_PROD_PASSWORD);
-console.log("# database: ", process.env.DB_PROD_DATABASE);
-
 if (env !== "dev") {
   console.log("### dbConnection.js > mysql connection 설정 - prod");
   dbConfigObj = {
