@@ -34,7 +34,8 @@ const HeaderContainer = styled.div`
   padding: 16px 24px;
 
   background: #fff;
-  position: fixed;
+  /* position: fixed; */
+  position: sticky;
   top: 0px;
   z-index: 1000;
 `;

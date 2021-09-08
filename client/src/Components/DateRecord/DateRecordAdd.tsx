@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { message as messageDialog, PageHeader, Button } from 'antd';
+import { message as messageDialog } from 'antd';
 import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import { DateRecordReqType, placeListType } from '../../types';
@@ -251,25 +251,6 @@ const DateRecordAdd: React.FC<AddProps> = ({
 
   return (
     <Layout>
-      <PageHeader
-        onBack={back}
-        title={
-          <div>
-            <FormOutlined /> Add Date Record
-          </div>
-        }
-        subTitle="Add Your Book"
-        extra={[
-          <Button
-            key="1"
-            type="primary"
-            onClick={logout}
-            className={styles.button_logout}
-          >
-            Logout
-          </Button>,
-        ]}
-      />
       <Container className="Container">
         <MapContainer className="MapContainer">
           <div

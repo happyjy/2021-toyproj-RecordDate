@@ -1,6 +1,4 @@
 import React, { useEffect } from 'react';
-import { PageHeader, Button } from 'antd';
-import { BookOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import { dateRecordListExtendType } from '../../types';
 import styles from './DateRecord.module.css';
@@ -244,34 +242,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
   return (
     <Layout>
-      <PageHeader
-        onBack={back}
-        title={
-          <div>
-            <BookOutlined /> {dateRecord.title}
-          </div>
-        }
-        // subTitle={dateRecord.author}
-        extra={[
-          <Button
-            key="2"
-            type="primary"
-            onClick={onClickEdit}
-            className={styles.button}
-          >
-            Edit
-          </Button>,
-          <Button
-            key="1"
-            type="primary"
-            onClick={onClickLogout}
-            className={styles.button}
-          >
-            Logout
-          </Button>,
-        ]}
-      />
-
       <Container className="Container">
         <MapContainer>
           <MapSpace id="map"></MapSpace>

@@ -1,6 +1,5 @@
 import React, { useRef, useEffect, useState } from 'react';
-import { message as messageDialog, PageHeader, Button } from 'antd';
-import { FormOutlined } from '@ant-design/icons';
+import { message as messageDialog } from 'antd';
 import Layout from '../Layout';
 import {
   dateImageListType,
@@ -322,26 +321,6 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
   return (
     <Layout>
-      <PageHeader
-        onBack={back}
-        title={
-          <div>
-            <FormOutlined /> Edit dateRecord
-          </div>
-        }
-        subTitle="Edit Your Book"
-        extra={[
-          <Button
-            key="1"
-            type="primary"
-            onClick={logout}
-            className={styles.button_logout}
-          >
-            Logout
-          </Button>,
-        ]}
-      />
-
       <Container className="Container">
         <MapContainer className="MapContainer">
           <div

@@ -87,7 +87,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
                 type="primary"
                 shape="circle"
                 danger
-                onClick={click}
+                onClick={clickDelete}
                 icon={<DeleteOutlined />}
               />
             </Tooltip>
@@ -96,7 +96,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
       </div>
     );
 
-    function click() {
+    function clickDelete() {
       deleteRecordDate(dateRecord_id);
     }
     function clickEdit() {
