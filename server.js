@@ -163,16 +163,6 @@ app.post("/api/login", async (req, res) => {
   const profileImageUrl = reqParam.profileImageUrl;
   const thumbnailImageUrl = reqParam.thumbnailImageUrl;
 
-  console.log({
-    reqParam,
-    email,
-    nickname,
-    birthday,
-    gender,
-    profileImageUrl,
-    thumbnailImageUrl,
-  });
-
   pool.getConnection(async (err, connection) => {
     if (err) {
       switch (err.code) {
@@ -224,7 +214,6 @@ app.post("/api/login", async (req, res) => {
             if (err) throw err;
             responseValue.token = jwtToken;
             console.log("### 계정이 없는 경우 > responseValue", responseValue);
-
             res.send(responseValue);
           }
         );
@@ -256,6 +245,7 @@ app.post("/api/login", async (req, res) => {
           }
         );
       }
+      connection.release();
     }
   });
 });
@@ -326,6 +316,7 @@ app.get("/api/getUser", async (req, res) => {
 
       res.send(result);
     }
+    connection.release();
   });
 });
 
@@ -426,6 +417,7 @@ app.get("/api/couple/request", async (req, res) => {
         throw error;
       }
     }
+    connection.release();
   });
 });
 // # COUPLE - ACCEPT COUPLE
@@ -490,6 +482,7 @@ app.get("/api/couple/accept", async (req, res) => {
 
       res.send({ coupleId, status });
     }
+    connection.release();
   });
 });
 // # COUPLE - SEARCH USER BY EMAIL
@@ -522,6 +515,7 @@ app.get("/api/getUser/email", async (req, res) => {
         }
       );
     }
+    connection.release();
   });
 });
 
@@ -626,6 +620,7 @@ app.get("/api/dateRecord", async (req, res) => {
         throw error;
       }
     }
+    connection.release();
   });
 });
 
@@ -677,6 +672,7 @@ app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
         throw error;
       }
     }
+    connection.release();
   });
 
   // insert 로직
@@ -768,11 +764,7 @@ app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
             }
 
             for (var j = 0; j < images.length; j++) {
-              let insertParam = [
-                insertDateRecordid,
-                images[j].location,
-                // "/image/" + images[j].filename,
-              ];
+              let insertParam = [insertDateRecordid, images[j].location];
               connection.query(
                 insertDateImage,
                 insertParam,
@@ -789,6 +781,7 @@ app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
         throw error;
       }
     }
+    connection.release();
   });
 });
 
@@ -834,6 +827,7 @@ app.patch(
         let addPlaceList = JSON.parse(req.body.addPlaceList);
         let delImageFileIdList = JSON.parse(req.body.delImageFileIdList);
         let images = req.files;
+        console.log(`#파일업로드: `, images);
         let updateDateRecordParams = [title, description, req.params.id];
 
         connection.query(
@@ -867,7 +861,7 @@ app.patch(
           );
         }
         for (var j = 0; j < images.length; j++) {
-          let insertParam = [editDateRecordId, "/image/" + images[j].filename];
+          let insertParam = [editDateRecordId, images[j].location];
           connection.query(
             insertDateImage,
             insertParam,
@@ -905,6 +899,7 @@ app.patch(
           }
         );
       }
+      connection.release();
     });
   }
 );
@@ -952,6 +947,7 @@ app.delete("/api/dateRecord/:id", (req, res) => {
         }
       );
     }
+    connection.release();
   });
 });
 

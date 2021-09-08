@@ -10,10 +10,11 @@ const s3 = new aws.S3({
 
 const s3Upload = multer({
   storage: multerS3({
-    s3: s3,
+    s3,
     bucket: "ourdatinghistory",
     acl: "public-read",
     key: function (req, file, cb) {
+      console.log("### s3Upload > file: ", file);
       cb(
         null,
         Math.floor(Math.random() * 1000).toString() +
