@@ -207,6 +207,7 @@ function* deleteDateRecord(action: DeletedDateRecordAction) {
         ),
       ),
     );
+    yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
   }
