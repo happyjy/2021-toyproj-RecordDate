@@ -117,7 +117,6 @@ const MenuContainer = styled.div<MenuContainerType>`
   box-sizing: 0 5px 25px rgba(0, 0, 0, 0.1);
   border-radius: 15px;
   transition: 0.5s;
-  z-index: 200;
 
   &::before {
     z-index: 300;

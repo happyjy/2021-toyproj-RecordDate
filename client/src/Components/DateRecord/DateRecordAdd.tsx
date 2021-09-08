@@ -127,7 +127,7 @@ const CalendarContainer = styled.div`
 
 const Calendar = styled.div`
   position: relative;
-  z-index: 1000;
+  z-index: 100;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(25px);
 `;
