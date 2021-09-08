@@ -16,6 +16,9 @@ import { RootState } from '../../redux/modules/rootReducer';
 import TokenService from '../../Services/TokenService';
 import { getUserResType } from '../../types';
 import styles from './Header.module.css';
+import { deleteDaterecord as deleteDateRecordSaga } from '../../redux/modules/dateRecord';
+import { useLocation, useParams } from 'react-router';
+import { HEADERMENU } from '../../Constants';
 
 const TitleContainer = styled.div``;
 
@@ -191,18 +194,49 @@ const MenuListLink = styled.span`
   font-weight: 1000;
 `;
 
-const ProfileMenu: React.FC = () => {
+const Header: React.FC = () => {
   const [toggleProfile, setToggleProfile] = useState<Boolean>(false);
 
   const dispatch = useDispatch();
 
+  // # button list
   const goHome = useCallback(() => {
     dispatch(push('/'));
   }, [dispatch]);
 
-  const goAdd = useCallback(() => {
+  const addDate = useCallback(() => {
     dispatch(push('/addDateRecord'));
   }, [dispatch]);
+
+  const { id } = useParams();
+  const editDate = useCallback(() => {
+    dispatch(push(`/editDateRecord/${id}`));
+  }, [dispatch, id]);
+
+  const deleteDate = useCallback(
+    (dateRecordId: number) => {
+      dispatch(deleteDateRecordSaga(dateRecordId));
+    },
+    [dispatch],
+  );
+
+  // ..ing
+  let { pathname } = useLocation();
+  let headerButtonList: JSX.Element[] = [];
+  const AddDate = <Button onClick={addDate}>Add Date</Button>;
+  const EditDate = <Button onClick={editDate}>Edit Date</Button>;
+  const DeleteDate = (id) => (
+    <Button onClick={() => deleteDate(id)}>Delete Date</Button>
+  );
+  if (pathname.includes(HEADERMENU.ADDDATERECORD)) {
+  } else if (pathname.includes(HEADERMENU.DATERECORD)) {
+    //detail
+    headerButtonList.push(EditDate);
+    id && headerButtonList.push(DeleteDate(id));
+  } else if (pathname.includes(HEADERMENU.EDITDATERECORD)) {
+  } else if (pathname === '/') {
+    headerButtonList.push(AddDate);
+  }
 
   const logout = useCallback(() => {
     dispatch(logoutSaga());
@@ -245,7 +279,11 @@ const ProfileMenu: React.FC = () => {
         </Title>
       </TitleContainer>
       <RightHeaderContainer className="RightHeaderContainer">
-        <Button onClick={goAdd}>Add Date</Button>
+        {headerButtonList}
+        {headerButtonList.forEach((headerButton) => headerButton)}
+        {/* <Button onClick={goAdd}>Add Date</Button>
+        <Button onClick={goAdd}>Edit Date</Button>
+        <Button onClick={goAdd}>Delete Date</Button> */}
         <Button onClick={logout}>Logout</Button>
         <ProfileContainer className="ProfileContainer">
           <ProfileImgContainer
@@ -298,4 +336,4 @@ const ProfileMenu: React.FC = () => {
   );
 };
 
-export default ProfileMenu;
+export default Header;

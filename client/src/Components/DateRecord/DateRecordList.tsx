@@ -18,7 +18,7 @@ import { debounce, getDateFormatSearchType } from '../../redux/utils';
 const Container = styled.div`
   /* border: 5px red solid; */
   position: relative;
-  top: 64px;
+  /* top: 64px; */
   display: flex;
   flex-direction: row;
   height: 100%;
@@ -38,7 +38,7 @@ const MapContainer = styled.div`
   /* border: 5px blue solid; */
   height: calc(100vh - 64px);
   position: sticky;
-  top: 64px;
+  top: 64px; /* 브라우저 top: 6px 위치에 고정 */
   flex-basis: 60%;
   /* z-index: 100; */
   @media (max-width: 768px) {

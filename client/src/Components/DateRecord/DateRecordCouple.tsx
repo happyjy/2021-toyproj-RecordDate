@@ -7,7 +7,7 @@ import {
 } from '../../types';
 import styled, { keyframes } from 'styled-components';
 import confirm from 'antd/lib/modal/confirm';
-import { COUPLESTATUS } from '../../Constants';
+import { COUPLE_STATUS } from '../../Constants';
 
 const Container = styled.div`
   margin-top: 64px;
@@ -306,7 +306,7 @@ const DateRecordCouple: React.FC<CoupleMngtProps> = ({
     if (ownInfo && ownInfo.token) {
       onAcceptCouple({
         coupleId: ownInfo?.couple_id,
-        status: COUPLESTATUS.ACCPET,
+        status: COUPLE_STATUS.ACCPET,
         token: ownInfo.token,
       });
     }
