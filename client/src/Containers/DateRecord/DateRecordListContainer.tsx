@@ -24,18 +24,8 @@ const DateRecordListContainer: React.FC = (props) => {
   const error = useSelector<RootState, Error | null>(
     (state) => state.books.error,
   );
-  // const user = useSelector<RootState, getUserResType | null>(
-  //   (state) => state.auth.user,
-  // );
 
   const dispatch = useDispatch();
-
-  // const getUser = useCallback(
-  //   (token: String) => {
-  //     dispatch(getUserSaga(token));
-  //   },
-  //   [dispatch],
-  // );
 
   const getDateList = useCallback(
     (searchOption: searchOptionType) => {

@@ -171,19 +171,15 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     sort: 'desc',
   });
 
+  // 조회
   useEffect(() => {
     getDateList(searchOption);
   }, [getDateList, searchOption]);
 
+  // 리스트 객체 "dateRecordListState"로 관리
   useEffect(() => {
     setDateRecordListState(dateRecordList);
   }, [dateRecordList]);
-
-  useEffect(() => {
-    if (error) {
-      logout();
-    }
-  }, [error, logout]);
 
   // # 카카오 지도
   useEffect(() => {
@@ -333,9 +329,11 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     // kakaoMapObj.setBounds(bounds);
   }, [dateRecordList]);
 
-  // 지도 범위 재설정 적용
+  // # 지도 범위 재설정 적용
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
+      debugger;
+      console.log('### working > resize');
       kakaoMapObjState?.setBounds(initBoundsState);
     }, 1000);
     window.addEventListener('resize', debouncedHandleResize);
@@ -343,6 +341,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       window.removeEventListener('resize', debouncedHandleResize);
     };
   });
+
+  useEffect(() => {
+    if (error) {
+      logout();
+    }
+  }, [error, logout]);
 
   // 조회 이벤트
   const onChangeDatePicker = function (_, rangeDate: string[]) {
