@@ -16,14 +16,16 @@ import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { debounce, getDateFormatSearchType } from '../../redux/utils';
 
 const Container = styled.div`
-  /* border: 5px red solid; */
   position: relative;
-  /* top: 64px; */
   display: flex;
   flex-direction: row;
   height: 100%;
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
+    height: 100vh;
+    overflow: scroll;
+    padding: 0px 0px 16px;
+
     flex-direction: column;
     @media (max-width: 768px) {
       & > * {
@@ -80,7 +82,11 @@ const ConditionContainer = styled.div`
     }
   }
 
-  /* justify-content: space-between; */
+  @media (max-width: 768px) {
+    padding: 0 5px;
+    position: relative;
+    top: 0px;
+  }
 `;
 // const PickerContainer = styled.div``;
 const SearchContainer = styled.div`
@@ -151,6 +157,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
     [],
   ); // 선택한 위치의 picker 객체
+
+  const [innerWidth, setInnerWidth] = useState<number>(0);
 
   const [dateRecordListState, setDateRecordListState] = useState<
     dateRecordListExtendType[] | null
@@ -332,15 +340,31 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   // # 지도 범위 재설정 적용
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
-      debugger;
-      console.log('### working > resize');
+      console.log('### working > resize > innerWidth: ', window.innerWidth);
+      if (innerWidth === window.innerWidth) return;
+      setInnerWidth(window.innerWidth);
       kakaoMapObjState?.setBounds(initBoundsState);
     }, 1000);
     window.addEventListener('resize', debouncedHandleResize);
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
     };
-  });
+  }, [initBoundsState, kakaoMapObjState, innerWidth]);
+  // useEffect(() => {
+  //   debugger;
+  //   if (innerWidth === window.innerWidth) return;
+
+  //   setInnerWidth(window.innerWidth);
+  //   const debouncedHandleResize = debounce(function handleResize() {
+  //     debugger;
+  //     console.log('### working > resize > innerWidth: ', window.innerWidth);
+  //     kakaoMapObjState?.setBounds(initBoundsState);
+  //   }, 1000);
+  //   window.addEventListener('resize', debouncedHandleResize);
+  //   return () => {
+  //     window.removeEventListener('resize', debouncedHandleResize);
+  //   };
+  // }, [initBoundsState, kakaoMapObjState, innerWidth]);
 
   useEffect(() => {
     if (error) {
@@ -391,7 +415,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const onClickKeywordSearch = function () {
     keywordSearch(keywordSeach);
   };
-
   const keywordSearch = function (value) {
     let restultFromTitle: dateRecordListExtendType[] = [];
     restultFromTitle =
@@ -413,7 +436,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     let resultMerge = [...restultFromTitle, ...resultFromPlaceList];
     setDateRecordListState(resultMerge);
   };
-
   // reset marker, bound
   const resetMapByDateRecord = function (e, clickedDateRecordId) {
     // 기존 marker 제거
@@ -472,7 +494,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       kakaoMapObjState.setMaxLevel(20);
     }
   };
-
   return (
     <Layout>
       <Container className="Container">

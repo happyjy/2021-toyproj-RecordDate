@@ -90,3 +90,11 @@
 .lastCell{
   position: relative;
 }
+
+
+@media (max-width: 768px){
+  .title,
+  .dateCnt{
+    padding-left: 5px;
+  }
+}

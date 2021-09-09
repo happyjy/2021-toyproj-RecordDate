@@ -5,15 +5,6 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
-@media (max-width: 768px){
-  .ant-page-header-heading-extra{
-    float: right;
-    clear: initial;
-    width: initial;
-    padding: 0;
-  }
-}
-
 .FilterOutlinedContainer>button.ant-btn{
   border:initial;
 }
@@ -25,8 +16,24 @@ body {
 .ant-table-thead > tr > th,
 .ant-table-tbody > tr > td,
 .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
-  padding-right: 0px;
+  padding: 7px 0 7px 7px;
 }
+
+@media (max-width: 768px){
+  .ant-page-header-heading-extra{
+    float: right;
+    clear: initial;
+    width: initial;
+    padding: 0;
+  }
+
+  .ant-table-thead > tr > th,
+  .ant-table-tbody > tr > td,
+  .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
+    padding: 5px 0;
+  }
+}
+
 
 :root{
   --blueberry: #6D71F9;

@@ -38,6 +38,9 @@ const HeaderContainer = styled.div`
   position: sticky;
   top: 0px;
   z-index: 1000;
+  @media (max-width: 768px) {
+    padding: 13px 8px;
+  }
 `;
 
 interface LayoutProps {
@@ -47,7 +50,7 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
     <Container>
-      <HeaderContainer className="Header">
+      <HeaderContainer className="HeaderContainer">
         <Header></Header>
       </HeaderContainer>
       {/* <SectionContainer className="SectionContainer"></SectionContainer> */}
