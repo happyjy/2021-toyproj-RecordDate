@@ -33,7 +33,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
   }) => {
     return (
       <div className={styles.tdItemContainer}>
-        <div className={styles.firstCell}>
+        <div className={styles.dateCntTitleContinaer}>
           <div className={styles.dateCnt}>
             <span
               className={styles.spanDateCnt}

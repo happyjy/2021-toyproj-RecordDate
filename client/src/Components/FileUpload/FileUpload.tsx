@@ -30,12 +30,12 @@ const CloseIcon = styled.div<ICloseIcon>`
   }
 `;
 const Container = styled.div`
-  padding: 10px 0;
+  padding: 0;
 `;
 const UploadButton = styled.div`
   border: none;
   border-bottom: 3px solid #717070;
-  border-radius: 5px;
+  border-radius: 4px;
   padding: 10px;
   background: #ccc;
   text-transform: uppercase;
@@ -71,7 +71,7 @@ interface IContainerDragNDrop {
 }
 const ContainerDragNDrop = styled.div<IContainerDragNDrop>`
   position: relative;
-  margin-top: 20px;
+  margin-top: 5px;
   border: 4px dashed #ccc;
   text-align: center;
   display: ${(props) => (props.isHidden ? 'none' : 'block')};
@@ -91,7 +91,7 @@ const ContainerUploadImage = styled.div`
   grid-gap: 10px;
 
   position: relative;
-  margin-top: 20px;
+  margin-top: 5px;
   border: 4px dashed #ccc;
   padding: 5px;
 `;
@@ -115,17 +115,6 @@ const ThumbnailImg = styled.img`
   bottom: 0px;
   right: 0px;
   object-fit: cover;
-
-  /* &:hover {
-    content: '';
-    width: 10px;
-    height: 10px;
-    border: 1px solid red;
-    border-radius: 50%;
-    position: absolute;
-    top: 0px;
-    right: 0px;
-  } */
 `;
 
 interface FileUpload {

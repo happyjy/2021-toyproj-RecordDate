@@ -10,8 +10,7 @@ import confirm from 'antd/lib/modal/confirm';
 import { COUPLE_STATUS } from '../../Constants';
 
 const Container = styled.div`
-  margin-top: 64px;
-  height: calc(100vh - 64px);
+  height: 100vh;
 `;
 const MenuBackgroundContainer = styled.div`
   width: 100%;
@@ -314,7 +313,7 @@ const DateRecordCouple: React.FC<CoupleMngtProps> = ({
 
   return (
     <Layout menuType="profile">
-      <Container className="SectionContainer">
+      <Container className="Container">
         <MenuBackgroundContainer>
           <MenuBackgroundBlurFilterContainer>
             <ContentContainer

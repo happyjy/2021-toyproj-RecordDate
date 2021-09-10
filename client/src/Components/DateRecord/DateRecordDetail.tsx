@@ -7,7 +7,6 @@ import Chips from '../ChipsComponent/ChipsComponent';
 import dycalendar from '../Calendar/dyCalendar';
 
 const Container = styled.div`
-  /* border: 5px red solid; */
   position: relative;
   display: flex;
   flex-direction: row;
@@ -15,6 +14,9 @@ const Container = styled.div`
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    height: 100vh;
+    overflow: scroll;
+    padding: 0px 5px 5px;
     @media (max-width: 768px) {
       & > * {
         &:not(:last-child) {
@@ -50,17 +52,20 @@ const MapSpace = styled.div`
   }
 `;
 const FormContainer = styled.div`
+  display: grid;
+  grid-gap: 10px;
   border-radius: 5px;
   padding: 0px 0px 0px 10px;
   @media (max-width: 768px) {
     width: 100%;
+    padding: 0;
   }
 `;
 
 const commonFormProperty = css`
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
+  padding: 7px 12px;
+  margin: 0;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -248,11 +253,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
         </MapContainer>
         <ListContainer>
           <FormContainer>
-            <label>날짜</label>
             <CalendarContainer>
               <Calendar id="dycalendar"></Calendar>
             </CalendarContainer>
-            <label>Title</label>
             <InputEl
               value={dateRecord.title}
               type="text"
@@ -261,10 +264,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
               placeholder="title..."
               readOnly
             />
-
-            <label>place</label>
             <Chips placeList={dateRecord.placeList}></Chips>
-            <label>description</label>
             <TextAreaEl
               value={dateRecord.description}
               rows={4}

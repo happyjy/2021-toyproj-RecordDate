@@ -26,6 +26,9 @@ const Container = styled.div`
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    height: 100vh;
+    overflow: scroll;
+    padding: 0px 5px 5px;
     @media (max-width: 768px) {
       & > * {
         &:not(:last-child) {
@@ -46,7 +49,6 @@ const MapContainer = styled.div`
 `;
 const ListContainer = styled.div`
   flex-basis: 30%;
-  padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
   }
@@ -60,16 +62,19 @@ const MapSpace = styled.div`
   }
 `;
 const FormContainer = styled.div`
+  display: grid;
+  grid-gap: 10px;
   border-radius: 5px;
   padding: 0px 0px 0px 10px;
   @media (max-width: 768px) {
     width: 100%;
+    padding: 0;
   }
 `;
 const commonFormProperty = css`
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
+  padding: 7px 12px;
+  margin: 0;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -91,7 +96,7 @@ const InputSubmitContainer = styled.div`
 // const InputSubmit = styled.input.attrs({ type: 'submit' })`
 const InputSubmit = styled.button`
   width: 100%;
-  border-color: #28546a;
+  border-color: #3a86ac;
   background-color: #28546a;
   text-transform: uppercase;
   border-radius: 1px;
@@ -102,6 +107,10 @@ const InputSubmit = styled.button`
   cursor: pointer;
   &:hover {
     background-color: #1f4152;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -353,13 +362,11 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
             </div>
           </div>
         </MapContainer>
-        <ListContainer>
+        <ListContainer className="ListContainer">
           <FormContainer>
-            <label>날짜</label>
             <CalendarContainer>
               <Calendar id="dycalendar"></Calendar>
             </CalendarContainer>
-            <label>Title</label>
             <InputEl
               defaultValue={dateRecord.title}
               type="text"
@@ -368,27 +375,19 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
               placeholder="title..."
               ref={titleRef}
             />
-
-            <label>place</label>
             <Chips
               placeList={placeList}
               setPlaceList={setPlaceList}
               placeMarkerList={placeMarkerList}
               showDelIcon={true}
             ></Chips>
-
-            <label>Image uplaod</label>
             <FileUpload
               imageFile={imageFile}
               setImagefile={setImagefile}
               fileText={fileText}
               setFileText={setFileText}
-              // loadImageFiles={loadImageFiles}
-              // setLoadImageFiles={setLoadImageFiles}
               onChangeFileupload={onChangeFileupload}
             ></FileUpload>
-
-            <label>description</label>
             <TextAreaEl
               defaultValue={dateRecord.description}
               rows={4}
@@ -396,18 +395,6 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
               ref={descriptionRef}
               className={styles.input}
             />
-            {/* {dateRecord.dateImageList.length > 0 && (
-            <ContainerImageLayout>
-              {dateRecord.dateImageList.map((image, i) => (
-                <ContainerThumbnail key={image.id}>
-                  <ThumbnailImg
-                    src={'http://localhost:5000' + image.dateImageName}
-                  ></ThumbnailImg>
-                </ContainerThumbnail>
-              ))}
-            </ContainerImageLayout>
-          )} */}
-
             <InputSubmitContainer>
               <InputSubmit type="submit" value="Add" onClick={click}>
                 Update
@@ -421,7 +408,6 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
   function click() {
     const title = titleRef.current!.value;
-    // const place = placeRef.current!.value;
     const description = descriptionRef.current!.value;
 
     if (

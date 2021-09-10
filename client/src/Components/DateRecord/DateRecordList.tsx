@@ -22,11 +22,10 @@ const Container = styled.div`
   height: 100%;
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
+    flex-direction: column;
     height: 100vh;
     overflow: scroll;
     padding: 0px 0px 16px;
-
-    flex-direction: column;
     @media (max-width: 768px) {
       & > * {
         &:not(:last-child) {

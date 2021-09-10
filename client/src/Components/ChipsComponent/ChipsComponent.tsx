@@ -6,25 +6,32 @@ import { default as closeIcon } from '../../assets/img/close.svg';
 const Container = styled.div`
   width: 100%;
   margin: 0px;
-  padding: 10px 0px;
+  /* padding: 10px 0px; */
 `;
 
 const Chips = styled.div`
+  width: 100%;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
 `;
 
-const ChipItem = styled.div`
+type ChipItemType = {
+  stretchLine?: Boolean;
+  marginRight?: Number;
+  marginBottom?: Number;
+};
+const ChipItem = styled.div<ChipItemType>`
+  width: ${({ stretchLine }) => (stretchLine ? '100%' : 'initial')};
+  margin-right: ${({ marginRight }) =>
+    marginRight ? `${marginRight}px` : 'initial'};
+  margin-bottom: ${({ marginBottom }) =>
+    marginBottom ? `${marginBottom}px` : 'initial'};
   display: inline-flex;
-  padding-top: 7px;
-  padding-bottom: 7px;
-  padding-right: 8px;
-  padding-left: 12px;
+  padding: 7px 12px;
   border: solid 1px #ccc;
-  margin-right: 5px;
-  border-radius: 10px;
+  border-radius: 4px;
 `;
 
 const ChipLabel = styled.label`
@@ -115,7 +122,14 @@ const ChipsComponent: React.FC<chipsComponent> = ({
       <Chips onDragOver={onDragOver} onDrop={onDrop} onDragStart={onDragStart}>
         {placeList &&
           placeList.map((place) => (
-            <ChipItem key={place.id} draggable="true" data-index={place.id}>
+            <ChipItem
+              className="ChipItem"
+              data-index={place.id}
+              key={place.id}
+              draggable="true"
+              marginRight={1}
+              marginBottom={1}
+            >
               <ChipLabel>{place.placeName}</ChipLabel>
               {showDelIcon && (
                 <ChipDeleteIcon
@@ -127,7 +141,7 @@ const ChipsComponent: React.FC<chipsComponent> = ({
             </ChipItem>
           ))}
         {placeList.length === 0 && (
-          <ChipItem>
+          <ChipItem stretchLine={true}>
             <ChipLabel>지도에서 검색후 번호를 클릭하세요</ChipLabel>
           </ChipItem>
         )}

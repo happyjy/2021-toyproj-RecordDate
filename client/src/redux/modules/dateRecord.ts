@@ -45,17 +45,11 @@ const reducer = handleActions<DateRecordState, any>(
       loading: true,
       error: null,
     }),
-    SUCCESS: (state, action) => {
-      console.log('# modules > dateRecord.ts > reducer > SUCCESS: ', {
-        state,
-        action,
-      });
-      return {
-        dateRecordList: action.payload.dateRecordList,
-        loading: false,
-        error: null,
-      };
-    },
+    SUCCESS: (state, action) => ({
+      dateRecordList: action.payload.dateRecordList,
+      loading: false,
+      error: null,
+    }),
     FAIL: (state, action) => ({
       ...state,
       loading: false,

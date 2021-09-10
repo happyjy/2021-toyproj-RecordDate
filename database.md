@@ -210,7 +210,7 @@ ALTER TABLE userProfileImage RENAME TO usersProfileImage;
 
   INSERT INTO dateRecord (title, description, image) VALUES ('첫번째 데이트', '안양천 텐트가지고 갔어요', 'img/안양천.png');
   INSERT INTO dateRecord (title, description, image) VALUES ('두번째 데이트', '사유카페 한강진역, 리틀넥 저녁', 'img/안양천.png');
-  INSERT INTO dateRecord (title, description, image) VALUES ('세번째 데이트', '스콘 에어프라이기로 만들기, 채선당 샤브샤브', 'img/안양천.png');
+  INSERT INTO dateRecord (user_id, dateTime, title, description) VALUES (25, '2021-12-25', '세번째 데이트', '스콘 에어프라이기로 만들기, 채선당 샤브샤브');
 
   INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (23, '안양천', '123.000, 321.000');
   INSERT INTO place (dateRecord_id, place_name, latLong) VALUES (24, '사유카페', '123.000, 321.000');

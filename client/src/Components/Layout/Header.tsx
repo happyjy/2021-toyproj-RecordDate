@@ -146,7 +146,7 @@ const MenuTitle = styled.div<MenuContainerType>`
   text-align: center;
   font-size: 1rem;
   font-weight: 500;
-  transition: 1s;
+  transition: 0.5s;
 
   color: ${(props) =>
     props.isActive ? 'var(--deuteranopia)' : 'rgba(0, 0, 0, 0)'};
@@ -154,9 +154,9 @@ const MenuTitle = styled.div<MenuContainerType>`
 
 const MenuSubTitle = styled.div<MenuContainerType>`
   font-size: 0.8rem;
-  transition: 1s;
+  transition: 0.5s;
   color: ${(props) =>
-    props.isActive ? 'var(--darkGrayishBlue)' : 'rgba(0, 0, 0, 0)'};
+    props.isActive ? 'var(--deuteranopia)' : 'rgba(0, 0, 0, 0)'};
   font-weight: 400;
 `;
 
@@ -280,10 +280,7 @@ const Header: React.FC = () => {
       <RightHeaderContainer className="RightHeaderContainer">
         {headerButtonList}
         {headerButtonList.forEach((headerButton) => headerButton)}
-        {/* <Button onClick={goAdd}>Add Date</Button>
-        <Button onClick={goAdd}>Edit Date</Button>
-        <Button onClick={goAdd}>Delete Date</Button> */}
-        <Button onClick={logout}>Logout</Button>
+        {/* <Button onClick={logout}>Logout</Button> */}
         <ProfileContainer className="ProfileContainer">
           <ProfileImgContainer
             onClick={onClickProfile}
@@ -297,9 +294,9 @@ const Header: React.FC = () => {
               {ownInfo?.nickname}
               <br></br>
               <MenuSubTitle isActive={toggleProfile} className="MenuSubTitle">
-                {partnerInfo?.nickname &&
-                  partnerInfo?.couple_status === 1 &&
-                  `❤️ ${partnerInfo?.nickname}`}
+                {partnerInfo?.nickname && partnerInfo?.couple_status === 1 && (
+                  <span>❤️ &nbsp; {partnerInfo?.nickname}</span>
+                )}
               </MenuSubTitle>
             </MenuTitle>
             <MenuListContainer className="MenuListContainer">
@@ -321,7 +318,11 @@ const Header: React.FC = () => {
                   설정
                 </MenuListLink>
               </MenuList>
-              <MenuList isActive={toggleProfile} className="MenuList">
+              <MenuList
+                isActive={toggleProfile}
+                className="MenuList"
+                onClick={logout}
+              >
                 <MenuListLink>
                   <LogoutOutlined className={styles.menuIcon} />
                   로그아웃

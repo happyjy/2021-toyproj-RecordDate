@@ -21,6 +21,9 @@ const Container = styled.div`
   padding: 0px 24px 16px;
   @media (max-width: 768px) {
     flex-direction: column;
+    height: 100vh;
+    overflow: scroll;
+    padding: 0px 5px 5px;
     @media (max-width: 768px) {
       & > * {
         &:not(:last-child) {
@@ -54,16 +57,19 @@ const MapSpace = styled.div`
   }
 `;
 const FormContainer = styled.div`
+  display: grid;
+  grid-gap: 10px;
   border-radius: 5px;
   padding: 0px 0px 0px 10px;
   @media (max-width: 768px) {
     width: 100%;
+    padding: 0;
   }
 `;
 const commonFormProperty = css`
   width: 100%;
-  padding: 12px 20px;
-  margin: 8px 0;
+  padding: 7px 12px;
+  margin: 0;
   display: inline-block;
   border: 1px solid #ccc;
   border-radius: 4px;
@@ -85,7 +91,7 @@ const InputSubmitContainer = styled.div`
 `;
 const InputSubmit = styled.button`
   width: 100%;
-  border-color: #28546a;
+  border-color: #3a86ac;
   background-color: #28546a;
   text-transform: uppercase;
   border-radius: 1px;
@@ -96,6 +102,10 @@ const InputSubmit = styled.button`
   cursor: pointer;
   &:hover {
     background-color: #1f4152;
+  }
+
+  @media (max-width: 768px) {
+    width: 100%;
   }
 `;
 
@@ -284,12 +294,11 @@ const DateRecordAdd: React.FC<AddProps> = ({
         </MapContainer>
         <ListContainer className="ListContainer">
           <FormContainer className="FormContainer">
-            <label>날짜</label>
             <CalendarContainer>
               <Calendar id="dycalendar"></Calendar>
             </CalendarContainer>
             {/* {datedate} */}
-            <label>Title</label>
+            {/* <label>데이트</label> */}
             <InputEl
               type="text"
               id="title"
@@ -298,14 +307,14 @@ const DateRecordAdd: React.FC<AddProps> = ({
               ref={titleRef}
             />
 
-            <label>place</label>
+            {/* <label>방문장소</label> */}
             <Chips
               placeList={placeList}
               setPlaceList={setPlaceList}
               showDelIcon={true}
             ></Chips>
 
-            <label>Image uplaod</label>
+            {/* <label>사진업로드</label> */}
             <FileUpload
               imageFile={imageFile}
               setImagefile={setImagefile}
@@ -314,7 +323,7 @@ const DateRecordAdd: React.FC<AddProps> = ({
               onChangeFileupload={onChangeFileupload}
             ></FileUpload>
 
-            <label>description</label>
+            {/* <label>description</label> */}
             <TextAreaEl
               onChange={(e) => setText(e.target.value)}
               value={text}

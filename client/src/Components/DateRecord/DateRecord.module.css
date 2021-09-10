@@ -5,9 +5,14 @@
   overflow: hidden; */
 }
 
+
+.dateCntTitleContinaer{
+  max-width: 95px;
+}
 .dateCnt{
   /* display: table-cell; */
   min-width: 85px;
+  width: 95px;
   vertical-align: middle;
   font-size: 1.15rem;
   font-weight: bold;
@@ -29,6 +34,12 @@
   font-size: 14px;
   font-weight: bold;
   padding-left: 10px;
+
+  text-overflow: ellipsis;
+  overflow: hidden;
+  /* width: 160px;
+  height: 1.2em;  */
+  white-space: nowrap;
 }
 
 .link_detail_title {
