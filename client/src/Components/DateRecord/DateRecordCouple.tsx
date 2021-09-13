@@ -11,6 +11,7 @@ import { COUPLE_STATUS } from '../../Constants';
 
 const Container = styled.div`
   height: 100vh;
+  height: calc(100vh - 64px);
 `;
 const MenuBackgroundContainer = styled.div`
   width: 100%;

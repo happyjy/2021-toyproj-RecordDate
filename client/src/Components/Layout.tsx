@@ -12,11 +12,9 @@ const Container = styled.div`
 const SectionContainer = styled.section`
   display: flex;
   flex-direction: column;
-  align-items: stretch;
 
   margin-left: auto;
   margin-right: auto;
-  /* max-width: 1400px; */
   width: 100%;
   height: auto;
   /*
