@@ -5,6 +5,15 @@
 
 <https://happyjy0109.notion.site/fc008fca77e2466cb9f81cd272d03358>
 
+# Front-end 컴포넌트 직접 작업한 list
+
+* lib를 사용하지 않고 직접 구현한 컴포넌트 list
+    * Carousel
+    * Chips
+    * FileUpload
+    * Simple Search
+    * Calendar
+
 # 계기
 
 * 아이폰 메모 공유를 통해서 데이트 기록을하다 실시간으로 원활하게 되지 않았다.

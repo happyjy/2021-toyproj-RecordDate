@@ -48,7 +48,6 @@ const DateRecord: React.FC<DateProps> = React.memo(
               to={`/dateRecord/${dateRecord_id}`}
               className={styles.link_detail_title}
             >
-              {/* <BookOutlined />  */}
               {title}
             </Link>
           </div>

@@ -12,17 +12,13 @@ const Container = styled.div`
 const SectionContainer = styled.section`
   display: flex;
   flex-direction: column;
-
   margin-left: auto;
   margin-right: auto;
   width: 100%;
-  height: auto;
-  /*
-    [중요] hegith: auto
-      - 지도 화면에 유지 하는데 중요한 property
-      - map position은 sticky로 설정
-        : 영역은 차지 하면서 브라우저 고정된 위치에 위치 되어야 하기 때문
-  */
+
+  @media (max-width: 768px) {
+    height: calc(100vh - 58px);
+  }
 `;
 
 const HeaderContainer = styled.div`
@@ -30,9 +26,7 @@ const HeaderContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   padding: 16px 24px;
-
   background: #fff;
-  /* position: fixed; */
   position: sticky;
   top: 0px;
   z-index: 1000;

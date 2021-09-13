@@ -12,6 +12,9 @@ import { COUPLE_STATUS } from '../../Constants';
 const Container = styled.div`
   height: 100vh;
   height: calc(100vh - 64px);
+  @media (max-width: 768px) {
+    height: calc(100vh - 58px);
+  }
 `;
 const MenuBackgroundContainer = styled.div`
   width: 100%;

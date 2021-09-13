@@ -8,3 +8,7 @@ export const HEADERMENU = {
   ADDDATERECORD: 'addDateRecord',
   EDITDATERECORD: 'editDateRecord',
 };
+
+export const RESPONSIVE = {
+  mobile: 768,
+};

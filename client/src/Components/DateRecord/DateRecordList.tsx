@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
 import { Table, Button, DatePicker, Input, Dropdown, Menu } from 'antd';
 import styles from './DateRecordList.module.css';
@@ -14,6 +14,7 @@ import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
 import { debounce, getDateFormatSearchType } from '../../redux/utils';
+import { detectResponsiveMobile } from '../../utils';
 
 const Container = styled.div`
   position: relative;
@@ -150,6 +151,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   goEdit,
   logout,
 }) => {
+  const sectionRef = useRef<HTMLDivElement>(null); //
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
   // const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
@@ -437,6 +439,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   };
   // reset marker, bound
   const resetMapByDateRecord = function (e, clickedDateRecordId) {
+    if (detectResponsiveMobile() && sectionRef && sectionRef.current) {
+      sectionRef.current.scrollTop = 0;
+    }
+
     // 기존 marker 제거
     clickedPlacePickerList?.forEach((marker) => {
       marker.setMap(null);
@@ -495,7 +501,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   };
   return (
     <Layout>
-      <Container className="Container">
+      <Container className="Container" ref={sectionRef}>
         <MapContainer className="MapContainer">
           <MapSpace id="map"></MapSpace>
         </MapContainer>
