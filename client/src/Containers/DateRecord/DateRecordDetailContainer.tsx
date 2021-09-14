@@ -1,16 +1,17 @@
-import React, { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { goBack, push } from 'connected-react-router';
 import { useParams } from 'react-router-dom';
 import { RootState } from '../../redux/modules/rootReducer';
 import { dateRecordListExtendType } from '../../types';
 
 import { logout as logoutSaga } from '../../redux/modules/auth';
-import { getDatelist as getDateListSaga } from '../../redux/modules/dateRecord';
 import DateRecordDetail from '../../Components/DateRecord/DateRecordDetail';
+import DateRecordService from '../../Services/DateRecordService';
+import useToken from '../../Hooks/useToken';
 
 const DateRecordDetailContainer = () => {
   const { id } = useParams();
+  const token = useToken();
   const dateId = Number(id) || -1;
   const dateRecordList = useSelector<
     RootState,
@@ -23,30 +24,33 @@ const DateRecordDetailContainer = () => {
 
   const dispatch = useDispatch();
 
-  const getDateList = useCallback(() => {
-    dispatch(getDateListSaga());
-  }, [dispatch]);
+  const [getDataLoading, setGetDataLoading] = useState<boolean>(false);
 
-  const back = useCallback(() => {
-    dispatch(goBack());
-  }, [dispatch]);
-
-  const edit = useCallback(() => {
-    dispatch(push(`/editDateRecord/${id}`));
-  }, [dispatch, id]);
+  const [resultGetDateDetail, setResultGetDateDetail] =
+    useState<dateRecordListExtendType>();
+  const getDateDetail = useCallback(async () => {
+    if (dateId && token) {
+      setGetDataLoading(true);
+      const resultGetDateDetail = await DateRecordService.getDateDetail(
+        dateId,
+        token,
+      );
+      setGetDataLoading(false);
+      setResultGetDateDetail(resultGetDateDetail);
+    }
+  }, [dateId, token]);
 
   const logout = useCallback(() => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
-  // console.log('# recordDetail > dateRecordList: ', dateRecordList);
   return (
     <DateRecordDetail
       dateRecord={dateRecordList?.find((date) => date.dateRecord_id === dateId)}
+      resultGetDateDetail={resultGetDateDetail}
+      getDateDetail={getDateDetail}
+      getDataLoading={getDataLoading}
       error={error}
-      getDateList={getDateList}
-      back={back}
-      edit={edit}
       logout={logout}
     />
   );

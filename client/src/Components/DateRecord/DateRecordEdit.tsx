@@ -353,7 +353,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
                     onChange={(e) => inputEvent(e)}
                     onKeyPress={(e) => keypress(e)}
                   />
-                  <button onClick={() => searchPlace()}>검색하기</button>
+                  <button onClick={searchPlace}>검색하기</button>
                 </div>
               </div>
               <hr />

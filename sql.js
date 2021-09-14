@@ -125,7 +125,7 @@ module.exports = {
       OR couple2_id = (select user_id from users where token = ?)
   `,
   // 커플 인증 전
-  selectQueryByUserId: (searchOption) =>
+  selectDateRecordListByUserIdSql: (searchOption) =>
     `
     SELECT @n:=@n+1 dateCnt, t.dateRecord_id
                             , t.dateTime
@@ -163,7 +163,7 @@ module.exports = {
       WHERE ISDELETED = 0
     `,
   // 커플 인증 후
-  selectQueryByCoupleId: (searchOption) =>
+  selectDateRecordListByCoupleIdSql: (searchOption) =>
     `
       SELECT @n:=@n+1 dateCnt, t.dateRecord_id
                               , t.dateTime
@@ -196,9 +196,9 @@ module.exports = {
       ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
 
       SELECT place_id,
-              dateRecord_id,
-              place_name,
-              latLong
+             dateRecord_id,
+             place_name,
+             latLong
         FROM PLACE
         WHERE ISDELETED = 0;
 
@@ -208,4 +208,34 @@ module.exports = {
         FROM DATEIMAGE
         WHERE ISDELETED = 0;
     `,
+
+  selectDateRecordByDateRecordIdQuery: `
+    SELECT dateRecord_id,
+           dateTime,
+           title,
+           description,
+           image,
+           created_at
+      FROM dateRecord
+     WHERE 1=1
+       AND dateRecord_id = ?
+       AND ISDELETED = 0;
+
+    SELECT place_id,
+           dateRecord_id,
+           place_name,
+           latLong
+      FROM place
+     WHERE 1=1
+       AND dateRecord_id = ?
+       AND ISDELETED = 0;
+
+    SELECT dateImage_id,
+           dateRecord_id,
+           dateImage_name
+      FROM dateImage
+     WHERE 1=1
+      AND dateRecord_id = ?
+      AND ISDELETED = 0;
+  `,
 };

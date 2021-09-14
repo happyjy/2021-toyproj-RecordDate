@@ -145,9 +145,10 @@ const {
   getUserByTokenSql,
   getUsersByCoupleIdSql,
   updateDateRecordCoupleIdSql,
-  selectQueryByCoupleId,
-  selectQueryByUserId,
+  selectDateRecordListByCoupleIdSql,
+  selectDateRecordListByUserIdSql,
   getCoupleStatus,
+  selectDateRecordByDateRecordIdQuery,
 } = require("./sql");
 
 // # USER - LOGIN
@@ -519,11 +520,11 @@ app.get("/api/getUser/email", async (req, res) => {
   });
 });
 
-// # DATE - RECORD SELECT
+// # DATE - RECORD SELECT LIST
 app.get("/api/dateRecord", async (req, res) => {
-  console.log("#########################################");
-  console.log("### DATE - record select, /api/dateRecord");
-  console.log("#########################################");
+  console.log("##############################################");
+  console.log("### DATE - record select list, /api/dateRecord");
+  console.log("##############################################");
 
   const token = req.header("authorization").split(" ")[1];
   if (!req.query.searchOption) {
@@ -571,29 +572,24 @@ app.get("/api/dateRecord", async (req, res) => {
     } else {
       // connection
       try {
-        const resultSelectQueryByCoupleId = await new Promise(
-          (resolve, reject) => {
-            connection.query(
-              getCoupleStatus,
-              [token, token],
-              function (err, results) {
-                if (err) throw err;
-                resolve(results[0]);
-              }
-            );
-          }
-        );
+        const resultGetCoupleStatus = await new Promise((resolve, reject) => {
+          connection.query(
+            getCoupleStatus,
+            [token, token],
+            function (err, results) {
+              if (err) throw err;
+              resolve(results[0]);
+            }
+          );
+        });
 
         let result;
-        if (
-          resultSelectQueryByCoupleId &&
-          resultSelectQueryByCoupleId.status == 1
-        ) {
+        if (resultGetCoupleStatus && resultGetCoupleStatus.status == 1) {
           console.log("### 커플 인증 후 - 데이트리스트 ###");
           // 커플 인증 후
           result = await new Promise((resolve, reject) => {
             connection.query(
-              selectQueryByCoupleId(searchOption),
+              selectDateRecordListByCoupleIdSql(searchOption),
               selectParam1,
               function (err, results) {
                 if (err) throw err;
@@ -606,7 +602,7 @@ app.get("/api/dateRecord", async (req, res) => {
           // 커플 인증 전
           result = await new Promise((resolve, reject) => {
             connection.query(
-              selectQueryByUserId(searchOption),
+              selectDateRecordListByUserIdSql(searchOption),
               selectParam2,
               function (err, results) {
                 if (err) throw err;
@@ -616,6 +612,67 @@ app.get("/api/dateRecord", async (req, res) => {
           });
         }
         res.send(result);
+      } catch (error) {
+        throw error;
+      }
+    }
+    connection.release();
+  });
+});
+
+app.get("/api/dateRecordDetail", async (req, res) => {
+  console.log("######################################################");
+  console.log("### DATE - record select detail, /api/dateRecordDetail");
+  console.log("######################################################");
+
+  const token = req.header("authorization").split(" ")[1];
+  if (!token) {
+    res.send({ status: "FAIL" });
+    return;
+  }
+
+  const dateId = req.query.dateId;
+  console.log({ dateId, token });
+
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      // connection
+      try {
+        console.log({ selectDateRecordByDateRecordIdQuery });
+        const resultselectDateRecordListByCoupleIdSql = await new Promise(
+          (resolve, reject) => {
+            connection.query(
+              selectDateRecordByDateRecordIdQuery,
+              [dateId, dateId, dateId],
+              function (err, results) {
+                if (err) throw err;
+                resolve(results);
+              }
+            );
+          }
+        );
+
+        console.log({
+          resultselectDateRecordListByCoupleIdSql1:
+            resultselectDateRecordListByCoupleIdSql[0],
+          resultselectDateRecordListByCoupleIdSql2:
+            resultselectDateRecordListByCoupleIdSql[1],
+          resultselectDateRecordListByCoupleIdSql3:
+            resultselectDateRecordListByCoupleIdSql[2],
+        });
+        res.send(resultselectDateRecordListByCoupleIdSql);
       } catch (error) {
         throw error;
       }

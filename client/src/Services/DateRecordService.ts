@@ -15,6 +15,25 @@ const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 // const DATERECORD_API_URL = 'https://133e-121-141-1-66.ngrok.io/api/dateRecord';
 
 export default class DateRecordService {
+  public static async getDateDetail(
+    dateId: number,
+    token: string,
+  ): Promise<dateRecordListExtendType> {
+    const response = await axiosInst.get<
+      [dateRecordListExtendType[], placeType[], dateIamgeType[]]
+    >('/dateRecordDetail', {
+      params: { dateId },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const dateRecordList = response.data[0];
+    const placeListFromTable = response.data[1];
+    const imageLstFromTable = response.data[2];
+    return makeDate(dateRecordList, placeListFromTable, imageLstFromTable)[0];
+  }
+
   public static async getDateRecordList(
     token: string,
     searchOption: searchOptionType,

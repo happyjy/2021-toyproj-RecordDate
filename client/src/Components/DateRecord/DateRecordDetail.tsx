@@ -1,10 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import Layout from '../Layout';
 import { dateRecordListExtendType } from '../../types';
 import styles from './DateRecord.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/ChipsComponent';
 import dycalendar from '../Calendar/dyCalendar';
+import Carousel from '../Carousel/Carousel';
 
 const Container = styled.div`
   position: relative;
@@ -144,24 +145,35 @@ const Calendar = styled.div`
 
 interface DetailProps {
   dateRecord: dateRecordListExtendType | null | undefined;
+  resultGetDateDetail: dateRecordListExtendType | null | undefined;
+  getDateDetail: () => void;
+  getDataLoading: Boolean;
   error: Error | null;
-  back: () => void;
-  edit: () => void;
-  getDateList: () => void;
   logout: () => void;
 }
 
 const DateRecordDetail: React.FC<DetailProps> = ({
   dateRecord,
+  resultGetDateDetail,
+  getDateDetail,
+  getDataLoading,
   error,
-  edit,
-  getDateList,
-  back,
   logout: onClickLogout,
 }) => {
+  const [dateRecordDetailData, setDateRecordDetailData] =
+    useState<dateRecordListExtendType>();
   useEffect(() => {
-    getDateList();
-  }, [getDateList]);
+    if (dateRecord) {
+      console.log(1);
+      setDateRecordDetailData(dateRecord);
+    } else if (resultGetDateDetail) {
+      console.log(2);
+      setDateRecordDetailData(resultGetDateDetail);
+    } else {
+      console.log(3);
+      getDateDetail();
+    }
+  }, [dateRecord, resultGetDateDetail, getDateDetail]);
 
   useEffect(() => {
     if (error) {
@@ -210,9 +222,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
   /* cycalendar */
   useEffect(() => {
-    console.log(dateRecord);
     const dateTimeDateObj =
-      dateRecord?.dateTime && new Date(dateRecord?.dateTime);
+      dateRecordDetailData?.dateTime &&
+      new Date(dateRecordDetailData?.dateTime);
     const month = dateTimeDateObj && dateTimeDateObj?.getMonth();
     const year = dateTimeDateObj && dateTimeDateObj?.getFullYear();
     const date = dateTimeDateObj && dateTimeDateObj?.getDate();
@@ -232,12 +244,19 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     return () => {
       dycalendar.remove();
     };
-  }, [dateRecord]);
+  }, [dateRecordDetailData]);
 
-  if (dateRecord === null) {
+  if (dateRecordDetailData === null) {
     return null;
   }
-  if (dateRecord === undefined) {
+  if (getDataLoading) {
+    return (
+      <div>
+        <h1> 로딩중 </h1>
+      </div>
+    );
+  }
+  if (dateRecordDetailData === undefined || getDataLoading) {
     return (
       <div>
         <h1>NotFound dateRecord</h1>
@@ -257,24 +276,24 @@ const DateRecordDetail: React.FC<DetailProps> = ({
               <Calendar id="dycalendar"></Calendar>
             </CalendarContainer>
             <InputEl
-              value={dateRecord.title}
+              value={dateRecordDetailData.title}
               type="text"
               id="title"
               name="title"
               placeholder="title..."
               readOnly
             />
-            <Chips placeList={dateRecord.placeList}></Chips>
+            <Chips placeList={dateRecordDetailData.placeList}></Chips>
             <TextAreaEl
-              value={dateRecord.description}
+              value={dateRecordDetailData.description}
               rows={4}
               placeholder="Comment"
               className={styles.input}
               readOnly
             />
-            {dateRecord.dateImageList.length > 0 && (
+            {dateRecordDetailData.dateImageList.length > 0 && (
               <ContainerImageLayout>
-                {dateRecord.dateImageList.map((image, i) => (
+                {dateRecordDetailData.dateImageList.map((image, i) => (
                   <ContainerThumbnail key={image.id}>
                     <ThumbnailImg
                       // src={'http://localhost:5000' + image.dateImageName}
@@ -284,14 +303,12 @@ const DateRecordDetail: React.FC<DetailProps> = ({
                 ))}
               </ContainerImageLayout>
             )}
+
+            <Carousel images={dateRecordDetailData.dateImageList}></Carousel>
           </FormContainer>
         </ListContainer>
       </Container>
     </Layout>
   );
-
-  function onClickEdit() {
-    edit();
-  }
 };
 export default DateRecordDetail;
