@@ -1,8 +1,15 @@
 .tdItemContainer {
   display: flex;
   justify-content: space-between;
+  position: relative;
+  z-index: 100;
+  background-color: #fff;
   /* display: table;
   overflow: hidden; */
+}
+.tdItemContainer > * {
+  /* z-index: 100; */
+  /* background-color: #fff; */
 }
 
 
@@ -99,7 +106,44 @@
 }
 
 .lastCell{
-  position: relative;
+  /* position: relative; */
+  /* border: 1px red solid; */
+}
+
+.swiperContainer{
+  font-size: 0px;
+  background-color: #fff;
+  padding: 5px 0;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  width: 100px;
+  height: 100%;
+  z-index: 10;
+  opacity: 1;
+  /* opacity: 0; */
+  transition: 0.5s;
+  overflow: hidden;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.swiperEdit{
+  height: 100%;
+  width: 50%;
+  background-color: var(--success);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.swiperDelete{
+  height: 100%;
+  width: 50%;
+  background-color: var(--danger);
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 

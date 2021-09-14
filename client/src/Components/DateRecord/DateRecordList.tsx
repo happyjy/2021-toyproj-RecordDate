@@ -88,7 +88,6 @@ const ConditionContainer = styled.div`
     top: 0px;
   }
 `;
-// const PickerContainer = styled.div``;
 const SearchContainer = styled.div`
   /* display: flex;
   flex-direction: row;
@@ -151,7 +150,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   goEdit,
   logout,
 }) => {
-  const sectionRef = useRef<HTMLDivElement>(null); //
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState<Boolean>();
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
   // const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
@@ -180,6 +180,9 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     sort: 'desc',
   });
 
+  useEffect(() => {
+    setIsMobile(detectResponsiveMobile());
+  }, []);
   // 조회
   useEffect(() => {
     getDateList(searchOption);
@@ -347,6 +350,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       kakaoMapObjState?.setBounds(initBoundsState);
     }, 1000);
     window.addEventListener('resize', debouncedHandleResize);
+    setIsMobile(detectResponsiveMobile());
     return () => {
       window.removeEventListener('resize', debouncedHandleResize);
     };
@@ -558,6 +562,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
                         deleteRecordDate={deleteRecordDate}
                         goEdit={goEdit}
                         resetMapByDateRecord={resetMapByDateRecord}
+                        isMobile={isMobile}
                       />
                     );
                   },
