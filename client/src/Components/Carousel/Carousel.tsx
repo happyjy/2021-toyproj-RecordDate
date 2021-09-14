@@ -1,9 +1,13 @@
 import React from 'react';
-import useCarousel from '../../Hooks/useCarousel';
+import useCarousel from './useCarousel';
 import styled from 'styled-components';
+import { dateImageListType } from '../../types';
 
 /* 캐러셀의 window 역할을 한다. */
-const Container = styled.div`
+type CarouselContainerType = {
+  width: number;
+};
+const CarouselContainer = styled.div<CarouselContainerType>`
   width: ${({ width }) => width}px;
   height: ${({ width }) => width}px;
   position: relative;
@@ -13,7 +17,11 @@ const Container = styled.div`
   opacity: ${({ width }) => (width ? 1 : 0)}; ;
 `;
 
-const Slides = styled.div`
+type SlidesType = {
+  duration: number;
+  currentSlide: number;
+};
+const Slides = styled.div<SlidesType>`
   /* 수평 정렬 */
   display: flex;
   transition: transform ${({ duration }) => duration}ms ease-out;
@@ -23,13 +31,32 @@ const Slides = styled.div`
   transform: translateX(${({ currentSlide }) => currentSlide * -100}%);
 `;
 
-const Img = styled.img`
+type ImgContainerType = {
+  width: number;
+  height: number;
+};
+const ImgContainer = styled.div<ImgContainerType>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  width: ${({ width }) => `${width}px`};
+  height: ${({ height }) => `${height}px`};
+`;
+
+type ImgType = {
+  width: number;
+};
+const Img = styled.img<ImgType>`
   padding: 5px;
-  width: ${({ width }) => width};
+  width: ${({ width }) => `${width}px`};
   object-fit: cover;
 `;
 
-const Control = styled.button`
+type ControlType = {
+  id: string;
+};
+const Control = styled.button<ControlType>`
   /*
     # POINT: transform: translate가 필요한 이유
       * positon: absolute, top, left: 50%로인해 중앙에 온다
@@ -64,6 +91,10 @@ const NextControl = styled(Control)`
   right: 0;
 `;
 
+// interface CarouselProps {
+//   images: dateImageListType[];
+// }
+/* : React.FC<CarouselProps> */
 const Carousel = ({ images }) => {
   const {
     width,
@@ -81,7 +112,10 @@ const Carousel = ({ images }) => {
     move(1);
   };
 
-  const handleClick = ({ target: { id } }) => {
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    const {
+      currentTarget: { id },
+    } = event;
     // isMoving 상태를 확인하여 transition 중에는 이동을 허용하지 않는다.
     if (isMoving) return;
 
@@ -103,29 +137,31 @@ const Carousel = ({ images }) => {
   };
 
   return (
-    <Container width={width}>
+    <CarouselContainer width={width}>
       <Slides
         currentSlide={currentSlide}
         duration={duration}
         onTransitionEnd={handleTransitionEnd}
       >
         {[images[images.length - 1], ...images, images[0]].map((image, i) => (
-          <Img
-            key={image.id}
-            src={'http://localhost:5000' + image.dateImageName}
-            // src={image.dateImageName}
-            width={width}
-            onLoad={handleImageLoad}
-          />
+          <ImgContainer width={width} height={width}>
+            <Img
+              key={image.id}
+              // src={'http://localhost:5000' + image.dateImageName}
+              src={image.dateImageName}
+              width={width}
+              onLoad={handleImageLoad}
+            />
+          </ImgContainer>
         ))}
       </Slides>
-      <PrevControl id="prev" onClick={handleClick}>
+      <PrevControl id="prev" key={1} onClick={(e) => handleClick(e)}>
         &laquo;
       </PrevControl>
-      <NextControl id="next" onClick={handleClick}>
+      <NextControl id="next" key={2} onClick={(e) => handleClick(e)}>
         &raquo;
       </NextControl>
-    </Container>
+    </CarouselContainer>
   );
 };
 
