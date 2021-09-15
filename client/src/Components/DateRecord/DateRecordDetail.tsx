@@ -6,6 +6,7 @@ import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/ChipsComponent';
 import dycalendar from '../Calendar/dyCalendar';
 import Carousel from '../Carousel/Carousel';
+import Modal from '../Modal/Modal';
 
 const Container = styled.div`
   position: relative;
@@ -164,13 +165,10 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     useState<dateRecordListExtendType>();
   useEffect(() => {
     if (dateRecord) {
-      console.log(1);
       setDateRecordDetailData(dateRecord);
     } else if (resultGetDateDetail) {
-      console.log(2);
       setDateRecordDetailData(resultGetDateDetail);
     } else {
-      console.log(3);
       getDateDetail();
     }
   }, [dateRecord, resultGetDateDetail, getDateDetail]);
@@ -183,41 +181,47 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
   // 다음 지도
   useEffect(() => {
-    const mapContainer = document.getElementById('map'), // 지도를 표시할 div
-      mapOption = {
-        center: new window.kakao.maps.LatLng(
-          37.52279639598579,
-          126.88244947391755,
-        ), // 지도의 중심좌표
-        level: 5, // 지도의 확대 레벨
-      };
-    const map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
-    const placeList = (dateRecord && dateRecord.placeList) || [];
-    const bounds = new window.kakao.maps.LatLngBounds();
+    setTimeout(() => {
+      const mapContainer = document.getElementById('map'), // 지도를 표시할 div
+        mapOption = {
+          center: new window.kakao.maps.LatLng(
+            37.52279639598579,
+            126.88244947391755,
+          ), // 지도의 중심좌표
+          level: 5, // 지도의 확대 레벨
+        };
+      const map = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
+      const placeList =
+        (dateRecordDetailData && dateRecordDetailData.placeList) || [];
+      const bounds = new window.kakao.maps.LatLngBounds();
 
-    const imageSrc =
-      'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
-    const imageSize = new window.kakao.maps.Size(24, 35);
+      const imageSrc =
+        'https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/markerStar.png';
+      const imageSize = new window.kakao.maps.Size(24, 35);
 
-    for (let i = 0; i < placeList.length; i++) {
-      // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
-      let latLong = placeList[i].latLong.split(', ');
-      let placePosition1 = new window.kakao.maps.LatLng(latLong[0], latLong[1]);
-      const markerImage = new window.kakao.maps.MarkerImage(
-        imageSrc,
-        imageSize,
-      );
+      for (let i = 0; i < placeList.length; i++) {
+        // 배열의 좌표들이 잘 보이게 마커를 지도에 추가합니다
+        let latLong = placeList[i].latLong.split(', ');
+        let placePosition1 = new window.kakao.maps.LatLng(
+          latLong[0],
+          latLong[1],
+        );
+        const markerImage = new window.kakao.maps.MarkerImage(
+          imageSrc,
+          imageSize,
+        );
 
-      let marker = new window.kakao.maps.Marker({
-        position: placePosition1,
-        title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
-        image: markerImage, // 마커 이미지
-      });
+        let marker = new window.kakao.maps.Marker({
+          position: placePosition1,
+          title: placeList[i].placeName, // 마커의 타이틀, 마커에 마우스를 올리면 타이틀이 표시됩니다
+          image: markerImage, // 마커 이미지
+        });
 
-      marker.setMap(map);
-      bounds.extend(placePosition1);
-    }
-    map.setBounds(bounds);
+        marker.setMap(map);
+        bounds.extend(placePosition1);
+      }
+      map.setBounds(bounds);
+    });
   });
 
   /* cycalendar */
@@ -246,6 +250,20 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     };
   }, [dateRecordDetailData]);
 
+  const ModalContainer = styled.div`
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    top: 0;
+    left: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 2000;
+  `;
+  const [modal, setModal] = useState(<div></div>);
+
   if (dateRecordDetailData === null) {
     return null;
   }
@@ -263,6 +281,22 @@ const DateRecordDetail: React.FC<DetailProps> = ({
       </div>
     );
   }
+
+  const modalTemplate = (
+    <Modal>
+      <ModalContainer className="modal">
+        <Carousel
+          images={dateRecordDetailData.dateImageList}
+          width={700}
+        ></Carousel>
+        {/* <button onClick={this.handleHide}>Hide modal</button> */}
+      </ModalContainer>
+    </Modal>
+  );
+  const onClickContainerImageLayout = () => {
+    console.log('onClickContainerImageLayout');
+    setModal(modalTemplate);
+  };
 
   return (
     <Layout>
@@ -292,7 +326,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
               readOnly
             />
             {dateRecordDetailData.dateImageList.length > 0 && (
-              <ContainerImageLayout>
+              <ContainerImageLayout onClick={onClickContainerImageLayout}>
                 {dateRecordDetailData.dateImageList.map((image, i) => (
                   <ContainerThumbnail key={image.id}>
                     <ThumbnailImg
@@ -304,7 +338,9 @@ const DateRecordDetail: React.FC<DetailProps> = ({
               </ContainerImageLayout>
             )}
 
-            <Carousel images={dateRecordDetailData.dateImageList}></Carousel>
+            {modal}
+
+            {/* <Carousel images={dateRecordDetailData.dateImageList}></Carousel> */}
           </FormContainer>
         </ListContainer>
       </Container>

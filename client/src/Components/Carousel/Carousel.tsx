@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import useCarousel from './useCarousel';
 import styled from 'styled-components';
 import { dateImageListType } from '../../types';
@@ -8,15 +8,22 @@ type CarouselContainerType = {
   width: number;
 };
 const CarouselContainer = styled.div<CarouselContainerType>`
-  width: ${({ width }) => width}px;
-  height: ${({ width }) => width}px;
+  width: 50vw;
+  height: 50vw;
+  ${({ width }) =>
+    `max-width: ${width}px;
+     max-height: ${width}px;`}
   position: relative;
   margin: 0 auto;
   overflow: hidden;
-  /* carousel 요소의 width 셋팅이 완료될 때까지 감춘다. */
-  opacity: ${({ width }) => (width ? 1 : 0)}; ;
-`;
+  /* [중요!]carousel 요소의 width 셋팅이 완료될 때까지 감춘다. */
+  opacity: ${({ width }) => (width ? 1 : 0)};
 
+  @media (max-width: 768px) {
+    width: 100vw;
+    height: 100vw;
+  }
+`;
 type SlidesType = {
   duration: number;
   currentSlide: number;
@@ -30,7 +37,6 @@ const Slides = styled.div<SlidesType>`
     currentSlide * -100}%, 0, 0); */
   transform: translateX(${({ currentSlide }) => currentSlide * -100}%);
 `;
-
 type ImgContainerType = {
   width: number;
   height: number;
@@ -40,19 +46,39 @@ const ImgContainer = styled.div<ImgContainerType>`
   justify-content: center;
   align-items: center;
 
-  width: ${({ width }) => `${width}px`};
-  height: ${({ height }) => `${height}px`};
-`;
+  width: 50vw;
+  height: 50vw;
+  ${({ width }) =>
+    `max-width: ${width}px;
+     max-height: ${width}px;`} /* width: 700px;
+  height: 700px; */
 
+  /* width: ${({ width }) => `${width}px`};
+  height: ${({ height }) => `${height}px`}; */
+
+  @media (max-width: 768px) {
+    width: 100vw;
+    height: 100vw;
+  }
+`;
 type ImgType = {
   width: number;
 };
 const Img = styled.img<ImgType>`
   padding: 5px;
-  width: ${({ width }) => `${width}px`};
+  width: 50vw;
+  height: 50vw;
+  ${({ width }) =>
+    `max-width: ${width}px;
+     max-height: ${width}px;`}
+  /* width: ${({ width }) => `${width}px`}; */
   object-fit: cover;
-`;
 
+  @media (max-width: 768px) {
+    width: 100vw;
+    height: 100vw;
+  }
+`;
 type ControlType = {
   id: string;
 };
@@ -82,33 +108,44 @@ const Control = styled.button<ControlType>`
     outline: none;
   }
 `;
-
 const PrevControl = styled(Control)`
   left: 0;
 `;
-
 const NextControl = styled(Control)`
   right: 0;
 `;
 
-// interface CarouselProps {
-//   images: dateImageListType[];
-// }
-/* : React.FC<CarouselProps> */
-const Carousel = ({ images }) => {
-  const {
-    width,
-    currentSlide,
-    duration,
-    isMoving,
-    setWidth,
-    setIsMoving,
-    move,
-  } = useCarousel();
+interface CarouselProps {
+  images: dateImageListType[];
+  width?: number;
+}
+
+const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
+  // const {
+  //   width,
+  //   currentSlide,
+  //   duration,
+  //   isMoving,
+  //   setWidth,
+  //   setIsMoving,
+  //   move,
+  // } = useCarousel();
+
+  const [width, setWidth] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [isMoving, setIsMoving] = useState(false);
+
+  const move = (_currentSlide: number, _duration = 0) => {
+    // _duration이 0이 아니면 transition이 시작된다. isMoving은 transionend 이벤트가 발생하면 false가 된다.
+    if (_duration) setIsMoving(true);
+    setCurrentSlide(_currentSlide);
+    setDuration(_duration);
+  };
 
   const handleImageLoad = ({ target }) => {
     // if (width !== target.offsetWidth) setWidth(target.offsetWidth);
-    setWidth(350);
+    customWidth && setWidth(customWidth);
     move(1);
   };
 
@@ -137,7 +174,7 @@ const Carousel = ({ images }) => {
   };
 
   return (
-    <CarouselContainer width={width}>
+    <CarouselContainer className="CarouselContainer" width={width}>
       <Slides
         currentSlide={currentSlide}
         duration={duration}
