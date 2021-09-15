@@ -16,7 +16,7 @@ const CarouselContainer = styled.div<CarouselContainerType>`
   position: relative;
   margin: 0 auto;
   overflow: hidden;
-  /* [중요!]carousel 요소의 width 셋팅이 완료될 때까지 감춘다. */
+  /* [point]carousel 요소의 width 셋팅이 완료될 때까지 감춘다. */
   opacity: ${({ width }) => (width ? 1 : 0)};
 
   @media (max-width: 768px) {
@@ -29,7 +29,6 @@ type SlidesType = {
   currentSlide: number;
 };
 const Slides = styled.div<SlidesType>`
-  /* 수평 정렬 */
   display: flex;
   transition: transform ${({ duration }) => duration}ms ease-out;
   /* transform: translate3D(calc(var(--currentSlide) * -100%), 0, 0); */
@@ -50,11 +49,7 @@ const ImgContainer = styled.div<ImgContainerType>`
   height: 50vw;
   ${({ width }) =>
     `max-width: ${width}px;
-     max-height: ${width}px;`} /* width: 700px;
-  height: 700px; */
-
-  /* width: ${({ width }) => `${width}px`};
-  height: ${({ height }) => `${height}px`}; */
+     max-height: ${width}px;`}
 
   @media (max-width: 768px) {
     width: 100vw;
@@ -71,7 +66,6 @@ const Img = styled.img<ImgType>`
   ${({ width }) =>
     `max-width: ${width}px;
      max-height: ${width}px;`}
-  /* width: ${({ width }) => `${width}px`}; */
   object-fit: cover;
 
   @media (max-width: 768px) {
@@ -98,6 +92,8 @@ const Control = styled.button<ControlType>`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  width: 2em;
+  height: 2em;
   font-size: 2em;
   color: #fff;
   background-color: transparent;
@@ -121,16 +117,6 @@ interface CarouselProps {
 }
 
 const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
-  // const {
-  //   width,
-  //   currentSlide,
-  //   duration,
-  //   isMoving,
-  //   setWidth,
-  //   setIsMoving,
-  //   move,
-  // } = useCarousel();
-
   const [width, setWidth] = useState(0);
   const [currentSlide, setCurrentSlide] = useState(0);
   const [duration, setDuration] = useState(0);
@@ -158,7 +144,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
 
     // prev 버튼이 클릭되면 currentSlide를 -1하고 next 버튼이 클릭되면 currentSlide를 +1한다.
     const delta = id === 'prev' ? -1 : 1;
-    move(currentSlide + 1 * delta, 500);
+    move(currentSlide + 1 * delta, 300);
   };
 
   const handleTransitionEnd = () => {
@@ -172,9 +158,16 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
     // 클론 슬라이드가 아니면(delta === 0) 이동하지 않는다.
     if (delta) move(currentSlide + images.length * delta);
   };
-
+  const handleHide1 = (e) => {
+    console.log(1);
+    e.stopPropagation();
+  };
   return (
-    <CarouselContainer className="CarouselContainer" width={width}>
+    <CarouselContainer
+      className="CarouselContainer"
+      width={width}
+      onClick={handleHide1}
+    >
       <Slides
         currentSlide={currentSlide}
         duration={duration}

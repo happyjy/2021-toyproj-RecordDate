@@ -251,6 +251,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   }, [dateRecordDetailData]);
 
   const ModalContainer = styled.div`
+    position: relative;
     background-color: rgba(0, 0, 0, 0.5);
     position: fixed;
     height: 100%;
@@ -261,6 +262,34 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     align-items: center;
     justify-content: center;
     z-index: 2000;
+  `;
+
+  const CloseIcon = styled.div`
+    /* background: midnightblue; */
+    position: absolute;
+    width: 40px;
+    height: 40px;
+    top: 8px;
+    right: 8px;
+    opacity: 0.7;
+    cursor: pointer;
+
+    &:after,
+    &:before {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 80%;
+      top: 50%;
+      left: 50%;
+      background: #fff;
+    }
+    &::after {
+      transform: translate(-50%, -50%) rotate(45deg);
+    }
+    &::before {
+      transform: translate(-50%, -50%) rotate(-45deg);
+    }
   `;
   const [modal, setModal] = useState(<div></div>);
 
@@ -282,19 +311,21 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     );
   }
 
+  const handleHide = () => {
+    setModal(<></>);
+  };
   const modalTemplate = (
     <Modal>
-      <ModalContainer className="modal">
+      <ModalContainer className="modal" onClick={handleHide}>
         <Carousel
           images={dateRecordDetailData.dateImageList}
           width={700}
         ></Carousel>
-        {/* <button onClick={this.handleHide}>Hide modal</button> */}
+        <CloseIcon onClick={handleHide}></CloseIcon>
       </ModalContainer>
     </Modal>
   );
   const onClickContainerImageLayout = () => {
-    console.log('onClickContainerImageLayout');
     setModal(modalTemplate);
   };
 
