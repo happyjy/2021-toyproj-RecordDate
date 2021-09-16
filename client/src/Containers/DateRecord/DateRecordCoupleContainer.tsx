@@ -19,10 +19,10 @@ import UserService from '../../Services/UserService';
 
 const DateRecordCoupleContainer = () => {
   const loading = useSelector<RootState, boolean>(
-    (state) => state.books.loading,
+    (state) => state.auth.loading,
   );
   const error = useSelector<RootState, Error | null>(
-    (state) => state.books.error,
+    (state) => state.auth.error,
   );
   const ownInfo = useSelector<RootState, getUserResType | null>(
     (state) => state.auth && state.auth.user && state.auth.user[0],

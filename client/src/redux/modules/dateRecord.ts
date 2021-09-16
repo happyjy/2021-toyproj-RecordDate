@@ -1,7 +1,7 @@
 import { push } from 'connected-react-router';
 import { AnyAction } from 'redux';
 import { createActions, handleActions } from 'redux-actions';
-import { call, put, select, takeEvery } from 'redux-saga/effects';
+import { call, put, select, takeEvery, delay } from 'redux-saga/effects';
 import DateRecordService from '../../Services/DateRecordService';
 import {
   DateRecordReqType,
@@ -174,6 +174,7 @@ function* editDateRecord(action: EditDateRecordSagaAction) {
         return dateRecord;
       }
     });
+    // yield delay(3000);
     yield put(success(newResult));
     yield put(push('/'));
   } catch (error) {

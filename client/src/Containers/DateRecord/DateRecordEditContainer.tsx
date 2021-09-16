@@ -11,6 +11,7 @@ import {
   editDaterecord as editDateRecordsaga,
 } from '../../redux/modules/dateRecord';
 import DateRecordEdit from '../../Components/DateRecord/DateRecordEdit';
+import { createLogicalAnd } from 'typescript';
 
 const DateRecordEditContainer = () => {
   const { id } = useParams();
@@ -21,10 +22,10 @@ const DateRecordEditContainer = () => {
   >((state) => state.dateRecord.dateRecordList);
 
   const loading = useSelector<RootState, boolean>(
-    (state) => state.books.loading,
+    (state) => state.dateRecord.loading,
   );
   const error = useSelector<RootState, Error | null>(
-    (state) => state.books.error,
+    (state) => state.dateRecord.error,
   );
 
   const dispatch = useDispatch();

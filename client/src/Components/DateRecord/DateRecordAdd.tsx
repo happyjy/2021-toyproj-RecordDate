@@ -12,6 +12,8 @@ import useFileUpload from '../../Hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 import dycalendar from '../Calendar/dyCalendar';
 import moment from 'moment';
+import Modal from '../Modal/Modal';
+import Loader from '../Loader/Loader';
 
 const Container = styled.div`
   position: relative;
@@ -259,8 +261,14 @@ const DateRecordAdd: React.FC<AddProps> = ({
     }
   }, [error, logout]);
 
+  const [loader, setLoader] = useState(<div></div>);
+  const LoaderTemplate = <Loader></Loader>;
+  useEffect(() => {
+    loading ? setLoader(LoaderTemplate) : setLoader(<></>);
+  }, [loading]);
   return (
     <Layout>
+      {loader}
       <Container className="Container">
         <MapContainer className="MapContainer">
           <div

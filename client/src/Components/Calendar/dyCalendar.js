@@ -236,7 +236,7 @@ const cycalendar = (function (global) {
     // dycalendar.currentYear = option.year;
 
     // container = document.createElement('div');
-    console.log('# drawCalendarMonthTable: ', container);
+    // console.log('# drawCalendarMonthTable: ', container);
     container.setAttribute('class', 'dycalendar-month-container');
 
     //-------------------------- Header ------------------

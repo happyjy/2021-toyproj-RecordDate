@@ -265,7 +265,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   `;
 
   const CloseIcon = styled.div`
-    /* background: midnightblue; */
     position: absolute;
     width: 40px;
     height: 40px;
@@ -370,8 +369,6 @@ const DateRecordDetail: React.FC<DetailProps> = ({
             )}
 
             {modal}
-
-            {/* <Carousel images={dateRecordDetailData.dateImageList}></Carousel> */}
           </FormContainer>
         </ListContainer>
       </Container>

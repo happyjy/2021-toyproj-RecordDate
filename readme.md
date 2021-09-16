@@ -8,11 +8,20 @@
 # Front-end 컴포넌트 직접 작업한 list
 
 * lib를 사용하지 않고 직접 구현한 컴포넌트 list
+    * Modal
     * Carousel
+    * Loader
     * Chips
     * FileUpload
     * Simple Search
     * Calendar
+
+* 알고리즘
+    * 메인 리스트 "x번째" 데이트(DB sql query 작업)
+    * 지도에 위치 보여주는 데이터 구조
+
+* 문제 해결
+    * 호스팅(heroku-FE, BE, DB, AWS s3)
 
 # 계기
 

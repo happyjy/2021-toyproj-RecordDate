@@ -16,6 +16,7 @@ import useFileUpload from '../../Hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 import dycalendar from '../Calendar/dyCalendar';
 import moment from 'moment';
+import Loader from '../Loader/Loader';
 
 const Container = styled.div`
   /* border: 5px red solid; */
@@ -283,7 +284,6 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
   /* cycalendar */
   useEffect(() => {
-    console.log(dateRecord);
     const dateTimeDateObj =
       dateRecord?.dateTime && new Date(dateRecord?.dateTime);
     const month = dateTimeDateObj && dateTimeDateObj?.getMonth();
@@ -317,6 +317,13 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
       logout();
     }
   }, [error, logout]);
+
+  const [loader, setLoader] = useState(<div></div>);
+  const LoaderTemplate = <Loader></Loader>;
+  useEffect(() => {
+    loading ? setLoader(LoaderTemplate) : setLoader(<></>);
+  }, [loading]);
+
   if (dateRecord === null) {
     return null;
   }
@@ -330,6 +337,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
 
   return (
     <Layout>
+      {loader}
       <Container className="Container">
         <MapContainer className="MapContainer">
           <div

@@ -11,10 +11,10 @@ import DateRecordAdd from '../../Components/DateRecord/DateRecordAdd';
 
 const DateRecordAddContainer = () => {
   const loading = useSelector<RootState, boolean>(
-    (state) => state.books.loading,
+    (state) => state.dateRecord.loading,
   );
   const error = useSelector<RootState, Error | null>(
-    (state) => state.books.error,
+    (state) => state.dateRecord.error,
   );
   const dispatch = useDispatch();
 
