@@ -1,14 +1,11 @@
 import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Home from './Pages/Home';
-import Add from './Pages/Add';
 import Signin from './Pages/Signin';
 import NotFound from './Pages/NotFound';
 import Error from './Pages/Error';
 import ErrorBoundary from 'react-error-boundary';
 import { ConnectedRouter } from 'connected-react-router';
-import Detail from './Pages/Detail';
-import Edit from './Pages/Edit';
 
 import DateRecordDetail from './Pages/DateRecordDetail';
 import DateRecordEdit from './Pages/DateRecordEdit';

@@ -3,7 +3,16 @@ body {
   font-family: 'Roboto' sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  max-width: 100%;
+  overflow-x: hidden;
 }
+
+html {
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+
 
 .FilterOutlinedContainer>button.ant-btn{
   border:initial;
