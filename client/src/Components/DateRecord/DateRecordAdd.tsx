@@ -12,7 +12,6 @@ import useFileUpload from '../../Hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 import dycalendar from '../Calendar/dyCalendar';
 import moment from 'moment';
-import Modal from '../Modal/Modal';
 import Loader from '../Loader/Loader';
 
 const Container = styled.div`
@@ -20,7 +19,7 @@ const Container = styled.div`
   display: flex;
   flex-direction: row;
   height: calc(100vh - 64px);
-  padding: 0px 24px 16px;
+  padding: 0px 24px 0px;
   @media (max-width: 768px) {
     flex-direction: column;
     height: 100vh;

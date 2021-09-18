@@ -4,6 +4,7 @@
   position: relative;
   z-index: 100;
   background-color: #fff;
+  width: 100%;
   /* display: table;
   overflow: hidden; */
 }
@@ -112,8 +113,8 @@
 
 .swiperContainer{
   font-size: 0px;
-  background-color: #fff;
-  padding: 5px 0;
+  color: #fff;
+  /* padding: 5px 0; */
   position: absolute;
   top: 0px;
   right: 0px;

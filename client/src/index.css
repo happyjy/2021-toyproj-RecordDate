@@ -13,11 +13,11 @@ body {
   padding: 4px 12px;
 }
 
-.ant-table-thead > tr > th,
+/* .ant-table-thead > tr > th,
 .ant-table-tbody > tr > td,
 .ant-table tfoot > tr > th, .ant-table tfoot > tr > td {
   padding: 7px 0 7px 7px;
-}
+} */
 
 @media (max-width: 768px){
   .ant-page-header-heading-extra{

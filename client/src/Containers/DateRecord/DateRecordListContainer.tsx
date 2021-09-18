@@ -3,10 +3,15 @@ import { useSelector, useDispatch } from 'react-redux';
 import { push } from 'connected-react-router';
 
 import { RootState } from '../../redux/modules/rootReducer';
-import { dateRecordListExtendType, searchOptionType } from '../../types';
+import {
+  dateRecordListExtendType,
+  paginationType,
+  searchOptionType,
+} from '../../types';
 import { logout as logoutSaga } from '../../redux/modules/auth';
 
 import {
+  getDatelistpaginated as getDateListPaginatedSaga,
   getDatelist as getDateListSaga,
   deleteDaterecord as deleteDateRecordSaga,
 } from '../../redux/modules/dateRecord';
@@ -18,6 +23,9 @@ const DateRecordListContainer: React.FC = (props) => {
     dateRecordListExtendType[] | null
   >((state) => state.dateRecord.dateRecordList);
 
+  const dateRecordListRowCount = useSelector<RootState, number>(
+    (state) => state.dateRecord.dateRecordListRowCount,
+  );
   const loading = useSelector<RootState, boolean>(
     (state) => state.dateRecord.loading,
   );
@@ -26,6 +34,13 @@ const DateRecordListContainer: React.FC = (props) => {
   );
 
   const dispatch = useDispatch();
+
+  const getDateListPaginated = useCallback(
+    (searchOption: searchOptionType, pagination: paginationType) => {
+      dispatch(getDateListPaginatedSaga(searchOption, pagination));
+    },
+    [dispatch],
+  );
 
   const getDateList = useCallback(
     (searchOption: searchOptionType) => {
@@ -60,9 +75,11 @@ const DateRecordListContainer: React.FC = (props) => {
   return (
     <DateRecordList
       {...props}
+      dateRecordListRowCount={dateRecordListRowCount}
       dateRecordList={dateRecordList}
       loading={loading}
       error={error}
+      getDateListPaginated={getDateListPaginated}
       getDateList={getDateList}
       deleteRecordDate={deleteRecordDate}
       goAdd={goAdd}

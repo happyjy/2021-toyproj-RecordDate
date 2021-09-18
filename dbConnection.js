@@ -3,7 +3,7 @@ const env = process.argv[2] || "prod";
 
 let connection = "";
 let dbConfigObj;
-
+console.log("### env ### ", env);
 if (env !== "dev") {
   console.log("### dbConnection.js > mysql connection 설정 - prod");
   dbConfigObj = {

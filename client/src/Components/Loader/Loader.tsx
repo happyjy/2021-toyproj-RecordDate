@@ -6,8 +6,6 @@ const Modal: React.FC = ({ children }) => {
   const el = document.createElement('div');
   const loaderRoot = document.getElementById('loader-root');
 
-  console.log({ loaderRoot, children, el });
-
   useEffect(() => {
     loaderRoot?.appendChild(el);
     return () => {

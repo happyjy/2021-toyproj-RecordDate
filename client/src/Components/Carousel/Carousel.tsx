@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import useCarousel from './useCarousel';
 import styled from 'styled-components';
 import { dateImageListType } from '../../types';
 
@@ -144,7 +143,7 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
 
     // prev 버튼이 클릭되면 currentSlide를 -1하고 next 버튼이 클릭되면 currentSlide를 +1한다.
     const delta = id === 'prev' ? -1 : 1;
-    move(currentSlide + 1 * delta, 300);
+    move(currentSlide + 1 * delta, 200);
   };
 
   const handleTransitionEnd = () => {

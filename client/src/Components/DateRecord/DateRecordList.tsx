@@ -9,19 +9,21 @@ import {
   // keywordSearchType,
   placeListType,
   TypeWillMarkedPlaceList,
+  paginationType,
 } from '../../types';
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
-import { debounce, getDateFormatSearchType } from '../../redux/utils';
+import { debounce, getDateFormatSearchType, throttle } from '../../redux/utils';
 import { detectResponsiveMobile } from '../../utils';
+import Loader from '../Loader/Loader';
 
 const Container = styled.div`
   position: relative;
   display: flex;
   flex-direction: row;
   height: 100%;
-  padding: 0px 24px 16px;
+  padding: 0px 24px 0px;
   @media (max-width: 768px) {
     flex-direction: column;
     height: 100vh;
@@ -65,7 +67,10 @@ const MapSpace = styled.div`
 `;
 const ListContainer = styled.div`
   /* border: 5px black solid; */
+  position: relative;
   flex-basis: 40%;
+  /* height: calc(100vh - 64px);
+  overflow: scroll; */
 `;
 const ConditionContainer = styled.div`
   display: flex;
@@ -73,6 +78,7 @@ const ConditionContainer = styled.div`
   padding-left: 16px;
   position: sticky;
   top: 64px;
+  /* top: 0px; */
   z-index: 500;
   background: #fff;
 
@@ -109,10 +115,11 @@ const FilterOutlinedContainer = styled.div`
   transform: translate(0, -50%); */
 `;
 const TableContainer = styled.div`
+  padding-left: 16px;
   width: 100%;
   margin-top: 0px;
   @media (max-width: 768px) {
-    width: 100%;
+    padding-left: 0px;
   }
 `;
 const InputContainer = styled.div`
@@ -129,11 +136,85 @@ const SearchOutlinedContainer = styled.div`
   cursor: point;
 `;
 
+/* 그리드 */
+const TableUl = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  /* border-top: solid 1px #ccc; */
+`;
+const TableLi = styled.li`
+  display: flex;
+  flex-direction: row;
+  border-bottom: solid 1px #ccc;
+  font-size: 0.8em;
+  color: #999;
+  position: relative;
+`;
+type FetchMoreType = {
+  isLoading: Boolean;
+};
+const FetchMore = styled.div<FetchMoreType>`
+  position: absolute;
+  ${({ isLoading }) => {
+    let result;
+    if (isLoading) {
+      result = `
+        postiion: absolute;
+        width: 100%;
+        height: 100%;
+        height: 100%;
+        opacity: 0.2;
+        z-index: 500;
+        background: blue;
+        animation-name: bgColor;
+        animation-duration: 0.5s;
+        animation-iteration-count: infinite;
+
+        @keyframes bgColor {
+          0% {
+            background: blue;
+          }
+          // 50% {
+          //   background
+          // }
+          100% {
+            background: red;
+          }
+        }
+
+        &:after {
+          content: "... 로딩중 ...";
+          font-size: 3rem;
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        }
+      `;
+    } else {
+      result = `
+        // border: 20px solid red;
+        // top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+      `;
+    }
+    return result;
+  }}
+`;
+
 interface DateRecordsProps {
+  dateRecordListRowCount: number;
   dateRecordList: dateRecordListExtendType[] | null;
+  getDateListPaginated: (
+    searchOption: searchOptionType,
+    pagination: paginationType,
+  ) => void;
+  getDateList: (searchOption: searchOptionType) => void;
   loading: boolean;
   error: Error | null;
-  getDateList: (searchOption: searchOptionType) => void;
   deleteRecordDate: (bookId: number) => void;
   goAdd: () => void;
   goEdit: (bookId: number) => void;
@@ -141,7 +222,9 @@ interface DateRecordsProps {
 }
 
 const DateRecordList: React.FC<DateRecordsProps> = ({
+  dateRecordListRowCount,
   dateRecordList,
+  getDateListPaginated,
   getDateList,
   error,
   loading,
@@ -158,20 +241,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
     [],
   ); // 선택한 위치의 picker 객체
-
   const [innerWidth, setInnerWidth] = useState<number>(0);
-
-  const [dateRecordListState, setDateRecordListState] = useState<
-    dateRecordListExtendType[] | null
-  >(dateRecordList); // list state
-
-  const targetDate = new Date();
-  targetDate.setMonth(targetDate.getMonth() - 6);
-
   // 검색조건(키워드)
   const [keywordSeach, setKeywordSearch] = useState<String>('');
-
   // 검색조건(기간, 정렬)
+  const targetDate = new Date();
+  targetDate.setMonth(targetDate.getMonth() - 6);
   const [searchOption, setSearchOption] = useState<searchOptionType>({
     rangeDate: [
       getDateFormatSearchType(targetDate),
@@ -180,13 +255,63 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     sort: 'desc',
   });
 
-  useEffect(() => {
-    setIsMobile(detectResponsiveMobile());
-  }, []);
+  /* 그리드 */
+  const [gridCurrentPage, setGridCurrentPage] = useState<number>(0);
+  const [gridMaxPage, setGridMaxPage] = useState<number>(0);
+  const [gridListNum, setGridListNum] = useState<number>(30);
+  // const [gridLoading, setGridLoading] = useState(false);
+  const [dateRecordListState, setDateRecordListState] = useState<
+    dateRecordListExtendType[] | null
+  >(dateRecordList); // grid list state
+
+  const [lastRow, setLastRow] = useState<HTMLDivElement>();
+  const removeTableRowstyle = () => {
+    if (lastRow && lastRow.style) {
+      lastRow.style.cssText = `transition: transform 0.5s; transform: translateX(0px)`;
+    }
+  };
+
   // 조회
   useEffect(() => {
-    getDateList(searchOption);
-  }, [getDateList, searchOption]);
+    const gridOffset = gridListNum * gridCurrentPage;
+    if (
+      gridCurrentPage === 0 ||
+      (gridCurrentPage !== 0 && gridCurrentPage < gridMaxPage)
+    ) {
+      getDateListPaginated(searchOption, {
+        gridOffset,
+        gridListNum,
+        gridCurrentPage,
+      });
+    }
+  }, [getDateListPaginated, gridListNum, gridCurrentPage]);
+
+  /* 그리드 - fetchMore */
+  useEffect(() => {
+    setGridMaxPage(Math.ceil(dateRecordListRowCount / gridListNum));
+  }, [setGridMaxPage, dateRecordListRowCount]);
+
+  const fetchMoreTrigger = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const fetchMoreObserver = new IntersectionObserver(
+      debounce(([{ intersectionRatio, isIntersecting, target }]) => {
+        if (isIntersecting) {
+          setGridCurrentPage((prev) => prev + 1);
+        }
+      }, 500),
+    );
+    // setTimeout(() => {
+    // }, 1000);
+    if (fetchMoreTrigger.current) {
+      fetchMoreObserver.observe(fetchMoreTrigger.current);
+    }
+
+    return () => {
+      if (fetchMoreTrigger && fetchMoreTrigger.current) {
+        fetchMoreObserver.unobserve(fetchMoreTrigger.current);
+      }
+    };
+  }, []);
 
   // 리스트 객체 "dateRecordListState"로 관리
   useEffect(() => {
@@ -344,7 +469,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   // # 지도 범위 재설정 적용
   useEffect(() => {
     const debouncedHandleResize = debounce(function handleResize() {
-      console.log('### working > resize > innerWidth: ', window.innerWidth);
+      // console.log('### working > resize > innerWidth: ', window.innerWidth);
       if (innerWidth === window.innerWidth) return;
       setInnerWidth(window.innerWidth);
       kakaoMapObjState?.setBounds(initBoundsState);
@@ -355,93 +480,37 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       window.removeEventListener('resize', debouncedHandleResize);
     };
   }, [initBoundsState, kakaoMapObjState, innerWidth]);
-  // useEffect(() => {
-  //   debugger;
-  //   if (innerWidth === window.innerWidth) return;
 
-  //   setInnerWidth(window.innerWidth);
-  //   const debouncedHandleResize = debounce(function handleResize() {
-  //     debugger;
-  //     console.log('### working > resize > innerWidth: ', window.innerWidth);
-  //     kakaoMapObjState?.setBounds(initBoundsState);
-  //   }, 1000);
-  //   window.addEventListener('resize', debouncedHandleResize);
-  //   return () => {
-  //     window.removeEventListener('resize', debouncedHandleResize);
-  //   };
-  // }, [initBoundsState, kakaoMapObjState, innerWidth]);
+  // 모바일 여부
+  useEffect(() => {
+    setIsMobile(detectResponsiveMobile());
+  }, []);
+  /*
+  useEffect(() => {
+    debugger;
+    if (innerWidth === window.innerWidth) return;
 
+    setInnerWidth(window.innerWidth);
+    const debouncedHandleResize = debounce(function handleResize() {
+      debugger;
+      console.log('### working > resize > innerWidth: ', window.innerWidth);
+      kakaoMapObjState?.setBounds(initBoundsState);
+    }, 1000);
+    window.addEventListener('resize', debouncedHandleResize);
+    return () => {
+      window.removeEventListener('resize', debouncedHandleResize);
+    };
+  }, [initBoundsState, kakaoMapObjState, innerWidth]);
+  */
+
+  /* 에러처리 */
   useEffect(() => {
     if (error) {
       logout();
     }
   }, [error, logout]);
 
-  // 조회 이벤트
-  const onChangeDatePicker = function (_, rangeDate: string[]) {
-    setSearchOption((option) => {
-      return { ...option, rangeDate };
-    });
-  };
-  const onClickSearchButton = function () {
-    getDateList(searchOption);
-  };
-  const onClickSortButton = function (type) {
-    setSearchOption((option) => {
-      return { ...option, sort: type };
-    });
-  };
-  const { RangePicker } = DatePicker;
-  const dropdownMenu = (
-    <Menu>
-      <Menu.Item>
-        <div onClick={() => onClickSortButton('desc')}>내림차순 정렬</div>
-      </Menu.Item>
-      <Menu.Item>
-        <div onClick={() => onClickSortButton('asc')}>오름차순 정렬</div>
-      </Menu.Item>
-    </Menu>
-  );
-  const onChangeKeywordSearch = function ({ target: { value } }) {
-    setKeywordSearch(value);
-  };
-  const onKeydownKeywordSearch: (keywordSearchType) => void = function ({
-    key,
-    target: { value },
-  }) {
-    if (key === 'Enter') {
-      if (!value) {
-        setDateRecordListState(dateRecordList);
-      } else {
-        keywordSearch(value);
-      }
-    }
-  };
-  const onClickKeywordSearch = function () {
-    keywordSearch(keywordSeach);
-  };
-  const keywordSearch = function (value) {
-    let restultFromTitle: dateRecordListExtendType[] = [];
-    restultFromTitle =
-      dateRecordList?.filter((v) => {
-        return v.title.includes(value);
-      }) || [];
-
-    let resultFromPlaceList: dateRecordListExtendType[] = [];
-    dateRecordList?.forEach((v) => {
-      let result = v.placeList?.filter((v) =>
-        v.placeName.includes(value),
-      ).length;
-
-      if (result > 0) {
-        resultFromPlaceList.push(v);
-      }
-    });
-
-    let resultMerge = [...restultFromTitle, ...resultFromPlaceList];
-    setDateRecordListState(resultMerge);
-  };
-  // reset marker, bound
+  /* reset marker, bound */
   const resetMapByDateRecord = function (e, clickedDateRecordId) {
     if (detectResponsiveMobile() && sectionRef && sectionRef.current) {
       sectionRef.current.scrollTop = 0;
@@ -503,8 +572,88 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       kakaoMapObjState.setMaxLevel(20);
     }
   };
+  /* 조회 이벤트 */
+  const onChangeDatePicker = function (_, rangeDate: string[]) {
+    setSearchOption((option) => {
+      return { ...option, rangeDate };
+    });
+  };
+  const onClickSearchButton = function () {
+    // getDateList(searchOption);
+
+    setGridCurrentPage(0);
+    const gridOffset = gridListNum * gridCurrentPage;
+    getDateListPaginated(searchOption, {
+      gridOffset,
+      gridListNum,
+      gridCurrentPage: 0,
+    });
+  };
+  const onClickSortButton = function (type) {
+    setSearchOption((option) => {
+      return { ...option, sort: type };
+    });
+  };
+  const { RangePicker } = DatePicker;
+  const dropdownMenu = (
+    <Menu>
+      <Menu.Item>
+        <div onClick={() => onClickSortButton('desc')}>내림차순 정렬</div>
+      </Menu.Item>
+      <Menu.Item>
+        <div onClick={() => onClickSortButton('asc')}>오름차순 정렬</div>
+      </Menu.Item>
+    </Menu>
+  );
+  const onChangeKeywordSearch = function ({ target: { value } }) {
+    !!value.trim() && setKeywordSearch(value);
+  };
+  const onKeydownKeywordSearch: (keywordSearchType) => void = function ({
+    key,
+    target: { value },
+  }) {
+    if (key === 'Enter') {
+      if (!value) {
+        setDateRecordListState(dateRecordList);
+      } else {
+        keywordSearch(value);
+      }
+    }
+  };
+  const onClickKeywordSearch = function () {
+    keywordSearch(keywordSeach);
+  };
+  const keywordSearch = function (value) {
+    let restultFromTitle: dateRecordListExtendType[] = [];
+    restultFromTitle =
+      dateRecordList?.filter((v) => {
+        return v.title.includes(value);
+      }) || [];
+
+    let resultFromPlaceList: dateRecordListExtendType[] = [];
+    dateRecordList?.forEach((v) => {
+      let result = v.placeList?.filter((v) =>
+        v.placeName.includes(value),
+      ).length;
+
+      if (result > 0) {
+        resultFromPlaceList.push(v);
+      }
+    });
+
+    let resultMerge = [...restultFromTitle, ...resultFromPlaceList];
+    setDateRecordListState(resultMerge);
+  };
+
+  /* 로더 */
+  const [loader, setLoader] = useState(<div></div>);
+  const LoaderTemplate = <Loader></Loader>;
+  useEffect(() => {
+    loading ? setLoader(LoaderTemplate) : setLoader(<></>);
+  }, [loading]);
   return (
     <Layout>
+      {loader}
       <Container className="Container" ref={sectionRef}>
         <MapContainer className="MapContainer">
           <MapSpace id="map"></MapSpace>
@@ -546,35 +695,24 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
             </SearchContainer>
           </ConditionContainer>
           <TableContainer className="TableContainer">
-            <Table
-              style={{ marginTop: 0 }}
-              dataSource={dateRecordListState || []}
-              columns={[
-                {
-                  title: 'DateRecord',
-                  dataIndex: 'dateRecord',
-                  key: 'dateRecord',
-                  render: (text, record) => {
-                    return (
-                      <DateRecord
-                        key={record.dateRecord_id}
-                        {...record}
-                        deleteRecordDate={deleteRecordDate}
-                        goEdit={goEdit}
-                        resetMapByDateRecord={resetMapByDateRecord}
-                        isMobile={isMobile}
-                      />
-                    );
-                  },
-                },
-              ]}
-              showHeader={false}
-              pagination={false}
-              loading={dateRecordListState === null || loading}
-              className={styles.table}
-              rowKey="dateRecord_id"
-            />
+            <TableUl>
+              {dateRecordListState?.map((dateRecord) => (
+                <TableLi>
+                  <DateRecord
+                    key={dateRecord.dateRecord_id}
+                    {...dateRecord}
+                    deleteRecordDate={deleteRecordDate}
+                    goEdit={goEdit}
+                    resetMapByDateRecord={resetMapByDateRecord}
+                    isMobile={isMobile}
+                    setLastRow={setLastRow}
+                    removeTableRowstyle={removeTableRowstyle}
+                  />
+                </TableLi>
+              ))}
+            </TableUl>
           </TableContainer>
+          <FetchMore id="fetchMore" isLoading={false} ref={fetchMoreTrigger} />
         </ListContainer>
       </Container>
     </Layout>

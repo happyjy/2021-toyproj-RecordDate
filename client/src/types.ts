@@ -14,6 +14,11 @@ export interface dateRecordListExtendType extends dateRecordListType {
   placeList: placeListType[];
   dateImageList: dateImageListType[];
 }
+
+export interface dateRecordListPaginatedType {
+  dateRecordList: dateRecordListExtendType[];
+  dateRecordListRowCount: number;
+}
 export interface placeType {
   place_id: number;
   dateRecord_id: number;
@@ -84,6 +89,15 @@ export interface searchOptionType {
   sort: string | undefined;
 }
 
+// # pagination Type
+export interface paginationType {
+  gridOffset: number;
+  gridListNum: number;
+  gridCurrentPage: number;
+}
+export interface countRowType {
+  countRow: number;
+}
 // # map
 export type TypeWillMarkedPlaceList = {
   dateCnt: number | number[];

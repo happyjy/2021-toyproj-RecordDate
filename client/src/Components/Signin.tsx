@@ -50,6 +50,16 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
               birthday,
               gender,
             } = kakao_account;
+
+            // console.log({
+            //   email,
+            //   nickname,
+            //   profile_image_url,
+            //   thumbnail_image_url,
+            //   birthday,
+            //   gender,
+            // });
+
             snsLogin({
               email,
               nickname,
@@ -100,46 +110,6 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
   //     alert('logout ok\naccess token -> ' + window.Kakao.Auth.getAccessToken());
   //   });
   // };
-
-  const postApiTest = async (event) => {
-    event.preventDefault();
-    const response = await axiosInst.post(
-      `/test`,
-      // `https://ourdatinghistory.herokuapp.com/api/test`,
-      // `http://localhost:5000/api/test`,
-      {
-        params: { testparam: 'test' },
-      },
-    );
-
-    console.log('### postApiTest - ', response.data);
-  };
-  const getApiTest = async (event) => {
-    event.preventDefault();
-    const response = await axiosInst.get(
-      `/test`,
-      // `https://ourdatinghistory.herokuapp.com/api/test`,
-      // `http://localhost:5000/api/test`,
-      {
-        params: { testparam: 'test' },
-      },
-    );
-
-    console.log('### getApiTest - ', response.data);
-  };
-  const getApiTest1 = async (event) => {
-    event.preventDefault();
-    const response = await axiosInst.get(
-      `/test1`,
-      // `https://ourdatinghistory.herokuapp.com/api/test1`,
-      // `http://localhost:5000/api/test1`,
-      {
-        params: { testparam: 'test1', testparam2: 'test2' },
-      },
-    );
-
-    console.log('### getApiTest(getusers[0]) - ', response.data);
-  };
 
   return (
     <form>

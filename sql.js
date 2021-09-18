@@ -124,53 +124,17 @@ module.exports = {
    WHERE couple1_id = (select user_id from users where token = ?)
       OR couple2_id = (select user_id from users where token = ?)
   `,
-  // 커플 인증 전
-  selectDateRecordListByUserIdSql: (searchOption) =>
+  // 커플 인증 후 - Pagination
+  selectDateRecordListByCoupleIdPaginatedSql: (searchOption) =>
     `
-    SELECT @n:=@n+1 dateCnt, t.dateRecord_id
-                            , t.dateTime
-                            , t.title
-                            , t.description
-                            , t.image
-                            , t.created_at
-      FROM (SELECT @n:=( SELECT count(*)
-                          FROM dateRecord
-                          WHERE 1=1
-                          AND ISDELETED = 0
-                          AND dateTime < ?)) initvars, (SELECT *
-                                                          FROM dateRecord
-                                                          WHERE 1=1
-                                                            AND ISDELETED = 0
-                                                            AND user_id = (
-                                                              select user_id from users where token = ?
-                                                            )
-                                                            AND dateTime BETWEEN ? AND ?
-                                                       ORDER BY dateTime ASC) t
-    WHERE 1=1
-    ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
 
-    SELECT place_id,
-            dateRecord_id,
-            place_name,
-            latLong
-      FROM PLACE
-      WHERE ISDELETED = 0;
 
-    SELECT dateImage_id,
-            dateRecord_id,
-            dateImage_name
-      FROM DATEIMAGE
-      WHERE ISDELETED = 0
-    `,
-  // 커플 인증 후
-  selectDateRecordListByCoupleIdSql: (searchOption) =>
-    `
       SELECT @n:=@n+1 dateCnt, t.dateRecord_id
-                              , t.dateTime
-                              , t.title
-                              , t.description
-                              , t.image
-                              , t.created_at
+                             , t.dateTime
+                             , t.title
+                             , t.description
+                             , t.image
+                             , t.created_at
         FROM (SELECT @n:=( SELECT count(*)
                             FROM dateRecord
                             WHERE 1=1
@@ -180,33 +144,159 @@ module.exports = {
                                                             WHERE 1=1
                                                               AND ISDELETED = 0
                                                               AND couple_id = (
-                                                                select couple_id
-                                                                from couple
-                                                                where 1=1
-                                                                and couple1_id = (
-                                                                  select user_id from users where token = ?
-                                                                )
-                                                                or couple2_id = (
-                                                                  select user_id from users where token = ?
-                                                                )
-                                                              )
+                                                                                SELECT couple_id
+                                                                                  FROM couple
+                                                                                 WHERE 1=1
+                                                                                   AND couple1_id = (SELECT user_id FROM users WHERE token = ?)
+                                                                                    OR couple2_id = (SELECT user_id FROM users WHERE token = ?)
+                                                                               )
                                                               AND dateTime BETWEEN ? AND ?
-                                                        ORDER BY dateTime ASC) t
-      WHERE 1=1
-      ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
+                                                            ORDER BY dateTime ASC
+                                                          ) t
+       WHERE 1=1
+       ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"}
+       LIMIT ? OFFSET ?;
 
       SELECT place_id,
              dateRecord_id,
              place_name,
              latLong
         FROM PLACE
-        WHERE ISDELETED = 0;
+       WHERE ISDELETED = 0;
 
       SELECT dateImage_id,
               dateRecord_id,
               dateImage_name
         FROM DATEIMAGE
-        WHERE ISDELETED = 0;
+       WHERE ISDELETED = 0;
+
+       SELECT count(*) as countRow
+        FROM dateRecord
+        WHERE 1=1
+         AND ISDELETED = 0
+         AND couple_id = (
+                            SELECT couple_id
+                              FROM couple
+                             WHERE 1=1
+                               AND couple1_id = (SELECT user_id FROM users WHERE token = ?)
+                                OR couple2_id = (SELECT user_id FROM users WHERE token = ?)
+                          )
+         AND dateTime BETWEEN ? AND ?;
+    `,
+  // 커플 인증 전 - Pagination
+  selectDateRecordListByUserIdSql: (searchOption) =>
+    `
+    SELECT @n:=@n+1 dateCnt, t.dateRecord_id
+                            , t.dateTime
+                            , t.title
+                            , t.description
+                            , t.image
+                            , t.created_at
+      FROM (SELECT @n:=( SELECT count(*) + ?
+                          FROM dateRecord
+                          WHERE 1=1
+                          AND ISDELETED = 0
+                          AND dateTime < ?)) initvars, (SELECT *
+                                                          FROM dateRecord
+                                                         WHERE 1=1
+                                                           AND ISDELETED = 0
+                                                           AND user_id = (SELECT user_id FROM users WHERE token = ?)
+                                                           AND dateTime BETWEEN ? AND ?
+                                                         ORDER BY dateTime ASC) t
+     WHERE 1=1
+     ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"}
+     LIMIT ? OFFSET ?;
+
+    SELECT place_id,
+            dateRecord_id,
+            place_name,
+            latLong
+      FROM PLACE
+     WHERE ISDELETED = 0;
+
+    SELECT dateImage_id,
+            dateRecord_id,
+            dateImage_name
+      FROM DATEIMAGE
+     WHERE ISDELETED = 0
+    `,
+  // 커플 인증 전
+  selectDateRecordListByUserIdSql: (searchOption) =>
+    `
+    SELECT @n:=@n+1 dateCnt, t.dateRecord_id
+                           , t.dateTime
+                           , t.title
+                           , t.description
+                           , t.image
+                           , t.created_at
+      FROM (SELECT @n:=( SELECT count(*)
+                           FROM dateRecord
+                          WHERE 1=1
+                            AND ISDELETED = 0
+                            AND dateTime < ?)) initvars, (SELECT *
+                                                            FROM dateRecord
+                                                           WHERE 1=1
+                                                             AND ISDELETED = 0
+                                                             AND user_id = (select user_id from users where token = ?)
+                                                             AND dateTime BETWEEN ? AND ?
+                                                           ORDER BY dateTime ASC) t
+     WHERE 1=1
+     ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
+
+    SELECT place_id,
+           dateRecord_id,
+           place_name,
+           latLong
+      FROM PLACE
+     WHERE ISDELETED = 0;
+
+    SELECT dateImage_id,
+           dateRecord_id,
+           dateImage_name
+      FROM DATEIMAGE
+     WHERE ISDELETED = 0
+    `,
+  // 커플 인증 후
+  selectDateRecordListByCoupleIdSql: (searchOption) =>
+    `
+      SELECT @n:=@n+1 dateCnt, t.dateRecord_id
+                             , t.dateTime
+                             , t.title
+                             , t.description
+                             , t.image
+                             , t.created_at
+        FROM (SELECT @n:=( SELECT count(*)
+                             FROM dateRecord
+                            WHERE 1=1
+                              AND ISDELETED = 0
+                              AND dateTime < ?)) initvars, (SELECT *
+                                                              FROM dateRecord
+                                                             WHERE 1=1
+                                                               AND ISDELETED = 0
+                                                               AND couple_id = (
+                                                                                SELECT couple_id
+                                                                                  FROM couple
+                                                                                 WHERE 1=1
+                                                                                   AND couple1_id = (SELECT user_id from users WHERE token = ?)
+                                                                                    OR couple2_id = (SELECT user_id FROM users WHERE token = ?)
+                                                                                )
+                                                               AND dateTime BETWEEN ? AND ?
+                                                             ORDER BY dateTime ASC) t
+       WHERE 1=1
+       ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"};
+
+      SELECT place_id,
+             dateRecord_id,
+             place_name,
+             latLong
+        FROM PLACE
+       WHERE ISDELETED = 0;
+
+      SELECT dateImage_id,
+             dateRecord_id,
+             dateImage_name
+        FROM DATEIMAGE
+       WHERE ISDELETED = 0;
     `,
 
   selectDateRecordByDateRecordIdQuery: `

@@ -9,17 +9,25 @@ import {
   dateRecordListExtendType,
   EditDateRecordReqType,
   searchOptionType,
+  paginationType,
+  dateRecordListPaginatedType,
 } from '../../types';
 import { getDateRecordFromState, getTokenFromState } from '../utils';
 
+/*
+  # dateRecord redux
+*/
+
 export interface DateRecordState {
   dateRecordList: dateRecordListExtendType[] | null;
+  dateRecordListRowCount: number;
   loading: boolean;
   error: Error | null;
 }
 
 const initialState: DateRecordState = {
   dateRecordList: null,
+  dateRecordListRowCount: 0,
   loading: true,
   error: null,
 };
@@ -28,10 +36,12 @@ const options = {
   prefix: 'record-date/dateRecordList',
 };
 
-// action creator
 export const { success, pending, fail } = createActions(
   {
-    SUCCESS: (dateRecordList) => ({ dateRecordList }),
+    SUCCESS: (dateRecordList, dateRecordListRowCount) => ({
+      dateRecordList,
+      dateRecordListRowCount,
+    }),
   },
   'PENDING',
   'FAIL',
@@ -40,14 +50,17 @@ export const { success, pending, fail } = createActions(
 
 const reducer = handleActions<DateRecordState, any>(
   {
+    SUCCESS: (state, action) => {
+      return {
+        dateRecordList: action.payload.dateRecordList,
+        dateRecordListRowCount: action.payload.dateRecordListRowCount,
+        loading: false,
+        error: null,
+      };
+    },
     PENDING: (state, action) => ({
       ...state,
       loading: true,
-      error: null,
-    }),
-    SUCCESS: (state, action) => ({
-      dateRecordList: action.payload.dateRecordList,
-      loading: false,
       error: null,
     }),
     FAIL: (state, action) => ({
@@ -62,36 +75,44 @@ const reducer = handleActions<DateRecordState, any>(
 
 export default reducer;
 
-export const { addDaterecord, getDatelist, deleteDaterecord, editDaterecord } =
-  createActions(
-    {
-      ADD_DATERECORD: (dateRecord: DateRecordReqType) => ({
-        dateRecord,
-      }),
-      EDIT_DATERECORD: (
-        dateRecordId: number,
-        dateRecord: DateRecordReqType,
-      ) => ({
-        dateRecordId,
-        dateRecord,
-      }),
-      DELETE_DATERECORD: (dateRecordId: number) => ({ dateRecordId }),
-      GET_DATELIST: (searchOption: searchOptionType) => {
-        return { searchOption };
-      },
+/*
+# dateRecord saga
+*/
+export const {
+  addDaterecord,
+  getDatelistpaginated,
+  getDatelist,
+  deleteDaterecord,
+  editDaterecord,
+} = createActions(
+  {
+    ADD_DATERECORD: (dateRecord: DateRecordReqType) => ({
+      dateRecord,
+    }),
+    GET_DATELISTPAGINATED: (
+      searchOption: searchOptionType,
+      pagination: paginationType,
+    ) => {
+      return { searchOption, pagination };
     },
-    options,
-  );
-
-// console.log({
-//   addDaterecord: addDaterecord(),
-//   getDatelist: getDatelist(),
-//   editDaterecord: editDaterecord(),
-//   deleteDaterecord: deleteDaterecord(),
-// });
+    GET_DATELIST: (searchOption: searchOptionType) => {
+      return { searchOption };
+    },
+    EDIT_DATERECORD: (dateRecordId: number, dateRecord: DateRecordReqType) => ({
+      dateRecordId,
+      dateRecord,
+    }),
+    DELETE_DATERECORD: (dateRecordId: number) => ({ dateRecordId }),
+  },
+  options,
+);
 
 export function* sagas() {
   yield takeEvery(`${options.prefix}/ADD_DATERECORD`, addDateRecordSaga);
+  yield takeEvery(
+    `${options.prefix}/GET_DATELISTPAGINATED`,
+    getDateListPaginatedSaga,
+  );
   yield takeEvery(`${options.prefix}/GET_DATELIST`, getDateListSaga);
   yield takeEvery(`${options.prefix}/EDIT_DATERECORD`, editDateRecord);
   yield takeEvery(`${options.prefix}/DELETE_DATERECORD`, deleteDateRecord);
@@ -106,7 +127,6 @@ interface AddDateRecordSagaAction extends AnyAction {
 function* addDateRecordSaga(action: AddDateRecordSagaAction) {
   try {
     yield put(pending());
-    //[ ] getTokenFromState 인자값은 어떻게 관리되는지 분석글 작성하기
     const token: string = yield select(getTokenFromState);
     // const dateRecord: dateRecordListExtendType = yield call(
     yield call(
@@ -114,7 +134,6 @@ function* addDateRecordSaga(action: AddDateRecordSagaAction) {
       token,
       action.payload.dateRecord,
     );
-    //[ ] getDateRecordFromState 인자값은 어떻게 관리되는지 분석글 작성하기
     const dateRecordList: dateRecordListExtendType[] = yield select(
       getDateRecordFromState,
     );
@@ -123,10 +142,44 @@ function* addDateRecordSaga(action: AddDateRecordSagaAction) {
     // yield put(success([...dateRecordList, dateRecord]));
     yield put(push('/'));
   } catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
   }
 }
 
+interface getDateListPaginatedSagaAction extends AnyAction {
+  payload: {
+    searchOption: searchOptionType;
+    pagination: paginationType;
+  };
+}
+
+function* getDateListPaginatedSaga(action: getDateListPaginatedSagaAction) {
+  try {
+    yield put(pending());
+    const token: string = yield select((state) => state.auth.token);
+    const dateRecordList: dateRecordListPaginatedType = yield call(
+      DateRecordService.getDateRecordListPaginated,
+      token,
+      action.payload.searchOption,
+      action.payload.pagination,
+    );
+    const dateRecordListFromState: dateRecordListExtendType[] = yield select(
+      getDateRecordFromState,
+    );
+    // yield delay(30000000);
+    const gridCurrentPage = action.payload.pagination.gridCurrentPage;
+    yield put(
+      success(
+        gridCurrentPage === 0
+          ? dateRecordList.dateRecordList
+          : [...dateRecordListFromState, ...dateRecordList.dateRecordList],
+        dateRecordList.dateRecordListRowCount,
+      ),
+    );
+  } catch (error) {
+    yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
+  }
+}
 interface getDateListSagaAction extends AnyAction {
   payload: {
     searchOption: searchOptionType;
@@ -144,7 +197,7 @@ function* getDateListSaga(action: getDateListSagaAction) {
     );
     yield put(success(dateRecordList));
   } catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
   }
 }
 
@@ -178,7 +231,7 @@ function* editDateRecord(action: EditDateRecordSagaAction) {
     yield put(success(newResult));
     yield put(push('/'));
   } catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
   }
 }
 
@@ -204,6 +257,6 @@ function* deleteDateRecord(action: DeletedDateRecordAction) {
     );
     yield put(push('/'));
   } catch (error) {
-    yield put(fail(new Error(error?.response?.data?.error || 'UNKNOWN_ERROR')));
+    yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
   }
 }

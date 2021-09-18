@@ -18,6 +18,8 @@ interface DateProps {
   goEdit: (recordDateId: number) => void;
   resetMapByDateRecord: (e: React.MouseEvent, dateRecord_id: number) => void;
   isMobile: Boolean | undefined;
+  setLastRow: (row: HTMLDivElement) => void;
+  removeTableRowstyle: () => void;
 }
 
 const DateRecord: React.FC<DateProps> = React.memo(
@@ -32,6 +34,8 @@ const DateRecord: React.FC<DateProps> = React.memo(
     goEdit,
     resetMapByDateRecord,
     isMobile,
+    setLastRow,
+    removeTableRowstyle,
   }) => {
     const containerRef = useRef<HTMLDivElement>(null);
     const swiperRef = useRef<HTMLDivElement>(null);
@@ -44,14 +48,15 @@ const DateRecord: React.FC<DateProps> = React.memo(
       const matrix = new WebKitCSSMatrix(style.transform);
       return matrix.m41;
     };
-
     const onTouchStart = (e) => {
       setFirstTouchX(e.touches[0].clientX);
       setTouchstartNth1TranslateX(getTranslateX(containerRef.current));
       if (containerRef && containerRef.current) {
         containerRef.current.style.transition = `0.5s`;
       }
+      removeTableRowstyle();
     };
+    /* 모바일용 이벤트 */
     const onTouchEnd = (e) => {
       setFirstTouchX(0);
       const touchendNth1TranslateX = getTranslateX(containerRef.current);
@@ -62,6 +67,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
         } else {
           containerRef.current.style.cssText = `transition: transform 0.5s; transform: translateX(-100px)`;
         }
+        setLastRow(containerRef.current);
       }
     };
     const onTouchMove = (e) => {
@@ -100,6 +106,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
       }
     };
 
+    /* 클릭 이벤트 */
     const clickDelete = () => {
       deleteRecordDate(dateRecord_id);
     };

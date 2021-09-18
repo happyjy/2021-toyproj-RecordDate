@@ -21,6 +21,8 @@
     * 지도에 위치 보여주는 데이터 구조
 
 * 문제 해결
+    * vanilla.js로 만들어진 카카오 맵 적용
+    * vanilla.js로 만들어진 캘린더 코어 적용(IIFE)
     * 호스팅(heroku-FE, BE, DB, AWS s3)
 
 # 계기

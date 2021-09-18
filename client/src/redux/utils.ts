@@ -6,6 +6,7 @@ import {
   dateRecordListExtendType,
   placeListType,
   placeType,
+  countRowType,
 } from '../types';
 
 export function getTokenFromState(state: RootState): string | null {
@@ -15,7 +16,7 @@ export function getTokenFromState(state: RootState): string | null {
 export function getDateRecordFromState(
   state: RootState,
 ): dateRecordListExtendType[] | null {
-  return state.dateRecord.dateRecordList;
+  return state.dateRecord.dateRecordList || [];
 }
 
 export function getBooksFromState(state: RootState): BookResType[] | null {
@@ -68,6 +69,19 @@ export function debounce(fn, ms = 1000) {
     }, ms);
   };
 }
+
+export const throttle = (func, delay) => {
+  let throttled = false;
+  return (...args) => {
+    if (!throttled) {
+      throttled = true;
+      setTimeout(() => {
+        func(...args);
+        throttled = false;
+      }, delay);
+    }
+  };
+};
 
 export function getDateFormatSearchType(date: Date) {
   const yearNum = date.getFullYear().toString();

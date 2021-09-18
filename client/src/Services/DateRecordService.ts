@@ -1,4 +1,3 @@
-import axios from 'axios';
 import { axiosInst } from '../axiosConfig';
 import { makeDate } from '../redux/utils';
 
@@ -9,9 +8,12 @@ import {
   EditDateRecordReqType,
   placeType,
   searchOptionType,
+  paginationType,
+  countRowType,
+  dateRecordListPaginatedType,
 } from '../types';
 
-const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
+// const DATERECORD_API_URL = 'http://localhost:5000/api/dateRecord';
 // const DATERECORD_API_URL = 'https://133e-121-141-1-66.ngrok.io/api/dateRecord';
 
 export default class DateRecordService {
@@ -32,6 +34,35 @@ export default class DateRecordService {
     const placeListFromTable = response.data[1];
     const imageLstFromTable = response.data[2];
     return makeDate(dateRecordList, placeListFromTable, imageLstFromTable)[0];
+  }
+
+  public static async getDateRecordListPaginated(
+    token: string,
+    searchOption: searchOptionType,
+    pagination: paginationType,
+  ): Promise<dateRecordListPaginatedType> {
+    const response = await axiosInst.get<
+      [dateRecordListExtendType[], placeType[], dateIamgeType[], countRowType[]]
+    >('/dateRecordPaginated', {
+      params: { searchOption, pagination },
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const dateRecordList = response.data[0];
+    const placeListFromTable = response.data[1];
+    const imageLstFromTable = response.data[2];
+    const dateRecordListRowCount =
+      response.data[3][0] && response.data[3][0].countRow;
+    return {
+      dateRecordList: makeDate(
+        dateRecordList,
+        placeListFromTable,
+        imageLstFromTable,
+      ),
+      dateRecordListRowCount,
+    };
   }
 
   public static async getDateRecordList(

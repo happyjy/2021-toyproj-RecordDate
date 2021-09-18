@@ -149,8 +149,12 @@ const {
   selectDateRecordListByUserIdSql,
   getCoupleStatus,
   selectDateRecordByDateRecordIdQuery,
+  selectDateRecordListByCoupleIdPaginatedSql,
 } = require("./sql");
 
+/*
+  USER API
+*/
 // # USER - LOGIN
 app.post("/api/login", async (req, res) => {
   console.log("#########################");
@@ -296,7 +300,7 @@ app.get("/api/getUser", async (req, res) => {
             resolve(results[0]);
           });
         });
-        printQuery(getUserByTokenSql, [token]);
+        // printQuery(getUserByTokenSql, [token]);
 
         result.push(ownUserInfoSolo);
       } else {
@@ -321,6 +325,9 @@ app.get("/api/getUser", async (req, res) => {
   });
 });
 
+/*
+  COUPLE API
+*/
 // # COUPLE - REQUEST COUPLE
 app.get("/api/couple/request", async (req, res) => {
   console.log("#################################");
@@ -520,6 +527,133 @@ app.get("/api/getUser/email", async (req, res) => {
   });
 });
 
+/*
+  DATE RECORD API
+*/
+// # DATE - RECORD PAGINATED SELECT LIST
+app.get("/api/dateRecordPaginated", async (req, res) => {
+  console.log("#######################################################");
+  console.log("### DATE - record select list, /api/dateRecordPaginated");
+  console.log("#######################################################");
+
+  const token = req.header("authorization").split(" ")[1];
+  if (!req.query.searchOption) {
+    res.send({ status: "FAIL" });
+    return;
+  }
+
+  const searchOption = JSON.parse(req.query.searchOption);
+  const pagination = JSON.parse(req.query.pagination);
+
+  const endOfRange = searchOption.rangeDate[1];
+  const splitedEndOfRange = endOfRange.split("-");
+  const lastDateEndOfRange = new Date(
+    splitedEndOfRange[0],
+    splitedEndOfRange[1],
+    0
+  ).getDate();
+
+  const rowCountParam = [
+    token,
+    token,
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
+  ];
+  const coupleDateRecordListParam = [
+    searchOption.rangeDate[0] + "-01",
+    token,
+    token,
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
+    pagination.gridListNum,
+    pagination.gridOffset,
+    ...rowCountParam,
+  ];
+  // const couplePlace;
+  // const coupleImage;
+  const coupleSqlParam = [...coupleDateRecordListParam];
+  // console.log({ coupleSqlParam });
+
+  const singleDateRecordListParam = [
+    pagination.gridOffset,
+    searchOption.rangeDate[0] + "-01",
+    token,
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
+  ];
+  const singleSqlParam = [...singleDateRecordListParam];
+
+  pool.getConnection(async (err, connection) => {
+    if (err) {
+      switch (err.code) {
+        case "PROTOCOL_CONNECTION_LOST":
+          console.error("Database connection was closed.");
+          break;
+        case "ER_CON_COUNT_ERROR":
+          console.error("Database has too many connections.");
+          break;
+        case "ECONNREFUSED":
+          console.error("Database connection was refused.");
+          break;
+      }
+    } else {
+      // connection
+      try {
+        const resultGetCoupleStatus = await new Promise((resolve, reject) => {
+          connection.query(
+            getCoupleStatus,
+            [token, token],
+            function (err, results) {
+              if (err) throw err;
+              resolve(results[0]);
+            }
+          );
+        });
+
+        let result;
+        if (resultGetCoupleStatus && resultGetCoupleStatus.status == 1) {
+          console.log("### 커플 인증 후 - 데이트리스트 pagnination ###");
+          // 커플 인증 후
+          printQuery(
+            selectDateRecordListByCoupleIdPaginatedSql(searchOption),
+            coupleSqlParam
+          );
+          result = await new Promise((resolve, reject) => {
+            connection.query(
+              selectDateRecordListByCoupleIdPaginatedSql(searchOption),
+              coupleSqlParam,
+              function (err, results) {
+                if (err) throw err;
+                resolve(results);
+              }
+            );
+          });
+        } else {
+          console.log("### 커플 인증 전 - 데이트리스트 pagnination ###");
+          // 커플 인증 전
+          printQuery(
+            selectDateRecordListByUserIdSql(searchOption),
+            singleSqlParam
+          );
+          result = await new Promise((resolve, reject) => {
+            connection.query(
+              selectDateRecordListByUserIdSql(searchOption),
+              singleSqlParam,
+              function (err, results) {
+                if (err) throw err;
+                resolve(results);
+              }
+            );
+          });
+        }
+        res.send(result);
+      } catch (error) {
+        throw error;
+      }
+    }
+    connection.release();
+  });
+});
 // # DATE - RECORD SELECT LIST
 app.get("/api/dateRecord", async (req, res) => {
   console.log("##############################################");
@@ -586,7 +720,11 @@ app.get("/api/dateRecord", async (req, res) => {
         let result;
         if (resultGetCoupleStatus && resultGetCoupleStatus.status == 1) {
           console.log("### 커플 인증 후 - 데이트리스트 ###");
-          // 커플 인증 후
+          // 커플 인증 후 getQuery
+          printQuery(
+            selectDateRecordListByCoupleIdSql(searchOption),
+            selectParam1
+          );
           result = await new Promise((resolve, reject) => {
             connection.query(
               selectDateRecordListByCoupleIdSql(searchOption),
@@ -600,6 +738,10 @@ app.get("/api/dateRecord", async (req, res) => {
         } else {
           console.log("### 커플 인증 전 - 데이트리스트 ###");
           // 커플 인증 전
+          printQuery(
+            selectDateRecordListByUserIdSql(searchOption),
+            selectParam2
+          );
           result = await new Promise((resolve, reject) => {
             connection.query(
               selectDateRecordListByUserIdSql(searchOption),
@@ -1009,6 +1151,7 @@ app.delete("/api/dateRecord/:id", (req, res) => {
 });
 
 // # 라우트 설정
+// heroku로 배포하기 위한 설정.
 // build foler: npm run build로 생성된 static한 파일들
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname + "/client/build" + "/index.html"));
