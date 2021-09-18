@@ -147,36 +147,6 @@ const Calendar = styled.div`
   backdrop-filter: blur(25px);
 `;
 
-// const ContainerImageLayout = styled.div`
-//   display: grid;
-//   grid-template-columns: repeat(3, 1fr);
-//   justify-content: space-around;
-//   grid-gap: 10px;
-//   position: relative;
-//   margin-top: 20px;
-//   padding: 5px;
-// `;
-// const ContainerThumbnail = styled.div`
-//   position: relative;
-//   &:before {
-//     content: ' ';
-//     display: block;
-//     width: 100%;
-//     padding-top: 100%; /* Percentage value in padding derived from the width  */
-//   }
-// `;
-// const ThumbnailImg = styled.img`
-//   width: 100%;
-//   height: 100%;
-//   box-shadow: 0 2px 2px rgba(0, 0, 0, 0.5);
-//   position: absolute;
-//   top: 0px;
-//   left: 0px;
-//   bottom: 0px;
-//   right: 0px;
-//   object-fit: cover;
-// `;
-
 interface DateRecordEditProps {
   dateRecord: dateRecordListExtendType | null | undefined;
   getDateList: () => void;
@@ -186,7 +156,6 @@ interface DateRecordEditProps {
   back: () => void;
   logout: () => void;
 }
-
 const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   dateRecord,
   getDateList,

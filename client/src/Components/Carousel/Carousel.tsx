@@ -158,7 +158,6 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
     if (delta) move(currentSlide + images.length * delta);
   };
   const handleHide1 = (e) => {
-    console.log(1);
     e.stopPropagation();
   };
   return (

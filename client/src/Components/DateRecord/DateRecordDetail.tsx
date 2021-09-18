@@ -37,14 +37,12 @@ const MapContainer = styled.div`
     width: auto;
   }
 `;
-
 const ListContainer = styled.div`
   flex-basis: 30%;
   @media (max-width: 768px) {
     flex-direction: column;
   }
 `;
-
 const MapSpace = styled.div`
   width: 100%;
   height: 100%;
@@ -63,7 +61,6 @@ const FormContainer = styled.div`
     padding: 0;
   }
 `;
-
 const commonFormProperty = css`
   width: 100%;
   padding: 7px 12px;
@@ -77,11 +74,9 @@ const commonFormProperty = css`
 const InputEl = styled.input.attrs({ type: 'text' })`
   ${commonFormProperty};
 `;
-
 const TextAreaEl = styled.textarea`
   ${commonFormProperty};
 `;
-
 const ContainerImageLayout = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -111,7 +106,6 @@ const ThumbnailImg = styled.img`
   right: 0px;
   object-fit: cover;
 `;
-
 const CalendarContainer = styled.div`
   position: relative;
   background: #161623;
@@ -136,7 +130,6 @@ const CalendarContainer = styled.div`
     transform: translate(180px, -110px);
   }
 `;
-
 const Calendar = styled.div`
   position: relative;
   z-index: 100;
@@ -152,7 +145,6 @@ interface DetailProps {
   error: Error | null;
   logout: () => void;
 }
-
 const DateRecordDetail: React.FC<DetailProps> = ({
   dateRecord,
   resultGetDateDetail,
@@ -226,6 +218,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
 
   /* cycalendar */
   useEffect(() => {
+    if (!dateRecordDetailData) return;
     const dateTimeDateObj =
       dateRecordDetailData?.dateTime &&
       new Date(dateRecordDetailData?.dateTime);

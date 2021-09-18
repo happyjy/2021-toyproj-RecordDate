@@ -714,7 +714,7 @@ const cycalendar = (function (global) {
         return false;
     }
 
-    //draw calendar
+    // attach calendar
     if (targetedElementBy === 'id') {
       document.getElementById(targetElem) &&
         document.getElementById(targetElem).append(calendarHTML);

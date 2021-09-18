@@ -258,7 +258,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   /* 그리드 */
   const [gridCurrentPage, setGridCurrentPage] = useState<number>(0);
   const [gridMaxPage, setGridMaxPage] = useState<number>(0);
-  const [gridListNum, setGridListNum] = useState<number>(30);
+  const [gridListNum, setGridListNum] = useState<number>(10);
   // const [gridLoading, setGridLoading] = useState(false);
   const [dateRecordListState, setDateRecordListState] = useState<
     dateRecordListExtendType[] | null
