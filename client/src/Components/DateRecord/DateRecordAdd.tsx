@@ -41,6 +41,7 @@ const MapContainer = styled.div`
   @media (max-width: 768px) {
     position: initial;
     width: 100%;
+    padding: 0;
   }
 `;
 const ListContainer = styled.div`
@@ -75,10 +76,23 @@ const commonFormProperty = css`
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  padding: 0px;
+
+  &:not(read-only) {
+    padding: 5px;
+  }
+  &:read-only {
+    padding: 0px;
+    border: none;
+  }
 `;
 // https://stackoverflow.com/questions/56378356/how-do-i-convert-css-to-styled-components-with-inputtype-submit-attribute
 const InputEl = styled.input.attrs({ type: 'text' })`
   ${commonFormProperty};
+  @media (max-width: 768px) {
+    height: 30px;
+    width: initial;
+  }
 `;
 const TextAreaEl = styled.textarea`
   ${commonFormProperty};
@@ -134,6 +148,10 @@ const CalendarContainer = styled.div`
     border-radius: 50%;
     transform: translate(180px, -110px);
   }
+  @media (max-width: 768px) {
+    width: 50%;
+    height: fit-content;
+  }
 `;
 
 const Calendar = styled.div`
@@ -143,11 +161,30 @@ const Calendar = styled.div`
   backdrop-filter: blur(25px);
 `;
 
-declare global {
-  interface Window {
-    kakao: any;
+// declare global {
+//   interface Window {
+//     kakao: any;
+//   }
+// }
+const TitleChipsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  @media (max-width: 768px) {
+    width: 50%;
+    margin-left: 5px;
   }
-}
+  /* justify-content: space-between; */
+`;
+
+const CalendartitleChipsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
+`;
 
 interface AddProps {
   addDateRecord: (dateRecord: DateRecordReqType) => void;
@@ -301,27 +338,25 @@ const DateRecordAdd: React.FC<AddProps> = ({
         </MapContainer>
         <ListContainer className="ListContainer">
           <FormContainer className="FormContainer">
-            <CalendarContainer>
-              <Calendar id="dycalendar"></Calendar>
-            </CalendarContainer>
-            {/* {datedate} */}
-            {/* <label>데이트</label> */}
-            <InputEl
-              type="text"
-              id="title"
-              name="title"
-              placeholder="title..."
-              ref={titleRef}
-            />
-
-            {/* <label>방문장소</label> */}
-            <Chips
-              placeList={placeList}
-              setPlaceList={setPlaceList}
-              showDelIcon={true}
-            ></Chips>
-
-            {/* <label>사진업로드</label> */}
+            <CalendartitleChipsContainer className="CalendartitleChipsContainer">
+              <CalendarContainer className="CalendarContainer">
+                <Calendar className="Caldendar" id="dycalendar"></Calendar>
+              </CalendarContainer>
+              <TitleChipsContainer className="TitleChipsContainer">
+                <InputEl
+                  type="text"
+                  id="title"
+                  name="title"
+                  placeholder="title..."
+                  ref={titleRef}
+                />
+                <Chips
+                  placeList={placeList}
+                  setPlaceList={setPlaceList}
+                  showDelIcon={true}
+                ></Chips>
+              </TitleChipsContainer>
+            </CalendartitleChipsContainer>
             <FileUpload
               imageFile={imageFile}
               setImagefile={setImagefile}
@@ -329,8 +364,6 @@ const DateRecordAdd: React.FC<AddProps> = ({
               setFileText={setFileText}
               onChangeFileupload={onChangeFileupload}
             ></FileUpload>
-
-            {/* <label>description</label> */}
             <TextAreaEl
               onChange={(e) => setText(e.target.value)}
               value={text}

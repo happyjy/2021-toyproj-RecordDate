@@ -36,12 +36,14 @@
 
 #dycalendar table{
   width: 100%;
+  /* mobile target */
   margin-top: 40px;
   border-spacing: 5px;
   /* point4: border-spacing: ;
   - 가로로 늘여져 있는 table tr td 요소들 사이 border가 띄워져 있다.
   - td selectotr에 border-spacing적용 안된다
     (#dycalendar table tr:nth-child(1) td)*/
+
 }
 
 #dycalendar table tr:nth-child(1) td{
@@ -110,7 +112,57 @@
   font-weight: 500;
 }
 
-
 .dycalendar-body table{
   border-collapse: initial;
+}
+
+@media (max-width: 768px) {
+  .dycalendar-month-container .dycalendar-span-month-year{
+    font-size: 1rem;
+  }
+  #dycalendar{
+    /* width: 50%; */
+  }
+  #dycalendar table{
+    margin-top: 0;
+  }
+  .dycalendar-body{
+    /* width: 50%; */
+  }
+  .dycalendar-month-container{
+    padding: 0px;
+  }
+  .dycalendar-body table td {
+    /* display: block; */
+    /* display: inline; */
+    padding: 3px;
+    margin-right: 2px;
+    width: 20px
+  }
+  #dycalendar table tr td{
+    padding: 0px
+  }
+  .dycalendar-month-container div{
+    margin-bottom: 0px;
+  }
+
+.dycalendar-prev-next-btn{
+
+  }
+  .dycalendar-month-container
+  .dycalendar-header
+  .dycalendar-prev-next-btn.prev-btn{
+    height: 20px;
+    width: 20px;
+    top: 6px;
+    left: 5px;
+  }
+  .dycalendar-month-container
+  .dycalendar-header
+  .dycalendar-prev-next-btn.next-btn{
+    height: 20px;
+    width: 20px;
+    top: 6px;
+    right: 5px;
+  }
 }

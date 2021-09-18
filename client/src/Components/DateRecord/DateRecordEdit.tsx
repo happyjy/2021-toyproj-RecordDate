@@ -46,6 +46,7 @@ const MapContainer = styled.div`
   @media (max-width: 768px) {
     position: initial;
     width: auto;
+    padding: 0;
   }
 `;
 const ListContainer = styled.div`
@@ -80,10 +81,21 @@ const commonFormProperty = css`
   border: 1px solid #ccc;
   border-radius: 4px;
   box-sizing: border-box;
+  &:not(read-only) {
+    padding: 5px;
+  }
+  &:read-only {
+    padding: 0px;
+    border: none;
+  }
 `;
 // https://stackoverflow.com/questions/56378356/how-do-i-convert-css-to-styled-components-with-inputtype-submit-attribute
 const InputEl = styled.input.attrs({ type: 'text' })`
   ${commonFormProperty};
+  @media (max-width: 768px) {
+    height: 30px;
+    width: initial;
+  }
 `;
 
 const TextAreaEl = styled.textarea`
@@ -138,6 +150,10 @@ const CalendarContainer = styled.div`
     border-radius: 50%;
     transform: translate(180px, -110px);
   }
+  @media (max-width: 768px) {
+    width: 50%;
+    height: fit-content;
+  }
 `;
 
 const Calendar = styled.div`
@@ -146,7 +162,25 @@ const Calendar = styled.div`
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(25px);
 `;
+const TitleChipsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  @media (max-width: 768px) {
+    width: 50%;
+    margin-left: 5px;
+  }
+  /* justify-content: space-between; */
+`;
 
+const CalendartitleChipsContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  row-gap: 10px;
+  @media (max-width: 768px) {
+    flex-direction: row;
+  }
+`;
 interface DateRecordEditProps {
   dateRecord: dateRecordListExtendType | null | undefined;
   getDateList: () => void;
@@ -340,24 +374,28 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
           </div>
         </MapContainer>
         <ListContainer className="ListContainer">
-          <FormContainer>
-            <CalendarContainer>
-              <Calendar id="dycalendar"></Calendar>
-            </CalendarContainer>
-            <InputEl
-              defaultValue={dateRecord.title}
-              type="text"
-              id="title"
-              name="title"
-              placeholder="title..."
-              ref={titleRef}
-            />
-            <Chips
-              placeList={placeList}
-              setPlaceList={setPlaceList}
-              placeMarkerList={placeMarkerList}
-              showDelIcon={true}
-            ></Chips>
+          <FormContainer className="FormContainer">
+            <CalendartitleChipsContainer className="CalendartitleChipsContainer">
+              <CalendarContainer className="CalendarContainer">
+                <Calendar className="Caldendar" id="dycalendar"></Calendar>
+              </CalendarContainer>
+              <TitleChipsContainer className="TitleChipsContainer">
+                <InputEl
+                  defaultValue={dateRecord.title}
+                  type="text"
+                  id="title"
+                  name="title"
+                  placeholder="title..."
+                  ref={titleRef}
+                />
+                <Chips
+                  placeList={placeList}
+                  setPlaceList={setPlaceList}
+                  placeMarkerList={placeMarkerList}
+                  showDelIcon={true}
+                ></Chips>
+              </TitleChipsContainer>
+            </CalendartitleChipsContainer>
             <FileUpload
               imageFile={imageFile}
               setImagefile={setImagefile}

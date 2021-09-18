@@ -6,7 +6,10 @@ import { default as closeIcon } from '../../assets/img/close.svg';
 const Container = styled.div`
   width: 100%;
   margin: 0px;
-  /* padding: 10px 0px; */
+  @media (max-width: 768px) {
+    width: initial;
+    margin-top: 20px;
+  }
 `;
 
 const Chips = styled.div`
@@ -15,6 +18,9 @@ const Chips = styled.div`
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
+  @media (max-width: 768px) {
+    width: initial;
+  }
 `;
 
 type ChipItemType = {
@@ -32,6 +38,9 @@ const ChipItem = styled.div<ChipItemType>`
   padding: 7px 12px;
   border: solid 1px #ccc;
   border-radius: 4px;
+  @media (max-width: 768px) {
+    padding: 3px;
+  }
 `;
 
 const ChipLabel = styled.label`
