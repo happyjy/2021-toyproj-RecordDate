@@ -337,11 +337,14 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   useEffect(() => {
     const mapContainer = document.getElementById('map'); // 지도를 표시할 div
     const mapOption = {
+      // 영등포 양평동
+      // 37.52279639598579,
+      // 126.88244947391755,
       center: new window.kakao.maps.LatLng(
-        37.52279639598579,
-        126.88244947391755,
+        37.52683772990574, // 남산
+        126.9815751295536,
       ), // 지도의 중심좌표
-      level: 5, // 지도의 확대 레벨
+      level: 10, // 지도의 확대 레벨
     };
     const kakaoMapObj = new window.kakao.maps.Map(mapContainer, mapOption); // 지도를 생성합니다
 
