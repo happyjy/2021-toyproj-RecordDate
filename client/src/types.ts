@@ -18,6 +18,7 @@ export interface dateRecordListExtendType extends dateRecordListType {
 export interface dateRecordListPaginatedType {
   dateRecordList: dateRecordListExtendType[];
   dateRecordListRowCount: number;
+  // dateRecordListCurrentPage: number;
 }
 export interface placeType {
   place_id: number;

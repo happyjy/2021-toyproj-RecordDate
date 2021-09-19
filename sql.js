@@ -219,6 +219,19 @@ module.exports = {
             dateImage_name
       FROM DATEIMAGE
      WHERE ISDELETED = 0
+
+    SELECT count(*) as countRow
+      FROM dateRecord
+     WHERE 1=1
+       AND ISDELETED = 0
+       AND couple_id = (
+                         SELECT couple_id
+                           FROM couple
+                          WHERE 1=1
+                            AND couple1_id = (SELECT user_id FROM users WHERE token = ?)
+                             OR couple2_id = (SELECT user_id FROM users WHERE token = ?)
+                       )
+       AND dateTime BETWEEN ? AND ?;
     `,
   // 커플 인증 전
   selectDateRecordListByUserIdSql: (searchOption) =>

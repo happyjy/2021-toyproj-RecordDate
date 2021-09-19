@@ -285,8 +285,15 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
     setPlaceMarkerList(placeMarkerObjList);
   }, [placeList]);
 
-  /* cycalendar */
+  /* cycalendar, setting textArea rows  */
   useEffect(() => {
+    if (!dateRecord) return;
+
+    const textAreaRow = dateRecord?.description.split('\n').length + 1;
+    if (descriptionRef && descriptionRef.current) {
+      descriptionRef.current.rows = textAreaRow;
+    }
+
     const dateTimeDateObj =
       dateRecord?.dateTime && new Date(dateRecord?.dateTime);
     const month = dateTimeDateObj && dateTimeDateObj?.getMonth();
@@ -404,8 +411,8 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
               onChangeFileupload={onChangeFileupload}
             ></FileUpload>
             <TextAreaEl
+              // rows={4}
               defaultValue={dateRecord.description}
-              rows={4}
               placeholder="Comment"
               ref={descriptionRef}
               className={styles.input}

@@ -14,7 +14,7 @@ import {
 import DateRecord from './DateRecord';
 import styled from 'styled-components';
 import { FilterOutlined, SearchOutlined } from '@ant-design/icons';
-import { debounce, getDateFormatSearchType, throttle } from '../../redux/utils';
+import { debounce, getDateFormatSearchType } from '../../redux/utils';
 import { detectResponsiveMobile } from '../../utils';
 import Loader from '../Loader/Loader';
 
@@ -207,6 +207,7 @@ const FetchMore = styled.div<FetchMoreType>`
 
 interface DateRecordsProps {
   dateRecordListRowCount: number;
+  dateRecordListCurrentPage: number;
   dateRecordList: dateRecordListExtendType[] | null;
   getDateListPaginated: (
     searchOption: searchOptionType,
@@ -223,6 +224,7 @@ interface DateRecordsProps {
 
 const DateRecordList: React.FC<DateRecordsProps> = ({
   dateRecordListRowCount,
+  dateRecordListCurrentPage,
   dateRecordList,
   getDateListPaginated,
   getDateList,
@@ -238,13 +240,14 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [kakaoMapObjState, setKakaoMapObjState] = useState<any>(); // map 객체
   const [initBoundsState, setInitBoundsState] = useState(); // bounds 객체
   // const [initMarkerArrState, setInitMarkerArrState] = useState<any[]>(); // 위치 객체
+  // # 선택한 위치의 picker 객체
   const [clickedPlacePickerList, setClickedPlacePickerList] = useState<any[]>(
     [],
-  ); // 선택한 위치의 picker 객체
+  );
   const [innerWidth, setInnerWidth] = useState<number>(0);
-  // 검색조건(키워드)
+  // # 검색조건(키워드)
   const [keywordSeach, setKeywordSearch] = useState<String>('');
-  // 검색조건(기간, 정렬)
+  // # 검색조건(기간, 정렬)
   const targetDate = new Date();
   targetDate.setMonth(targetDate.getMonth() - 6);
   const [searchOption, setSearchOption] = useState<searchOptionType>({
@@ -255,8 +258,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     sort: 'desc',
   });
 
-  /* 그리드 */
-  const [gridCurrentPage, setGridCurrentPage] = useState<number>(0);
+  /* # 그리드 */
+  const [gridCurrentPage, setGridCurrentPage] = useState<number>(
+    dateRecordListCurrentPage,
+  );
   const [gridMaxPage, setGridMaxPage] = useState<number>(0);
   const [gridListNum, setGridListNum] = useState<number>(10);
   // const [gridLoading, setGridLoading] = useState(false);
@@ -271,8 +276,15 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     }
   };
 
-  // 조회
+  // # 조회
   useEffect(() => {
+    if (
+      dateRecordListState &&
+      dateRecordListState.length > 0 &&
+      gridCurrentPage === 0
+    )
+      return;
+
     const gridOffset = gridListNum * gridCurrentPage;
     if (
       gridCurrentPage === 0 ||
@@ -286,11 +298,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     }
   }, [getDateListPaginated, gridListNum, gridCurrentPage]);
 
-  /* 그리드 - fetchMore */
+  /* 그리드 - 검색조건의 전체 row 수 */
   useEffect(() => {
     setGridMaxPage(Math.ceil(dateRecordListRowCount / gridListNum));
   }, [setGridMaxPage, dateRecordListRowCount]);
 
+  /* 그리드 - fetchMore */
   const fetchMoreTrigger = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const fetchMoreObserver = new IntersectionObserver(
@@ -572,7 +585,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       kakaoMapObjState.setMaxLevel(20);
     }
   };
-  /* 조회 이벤트 */
+  /* # 검색 조회 이벤트 */
   const onChangeDatePicker = function (_, rangeDate: string[]) {
     setSearchOption((option) => {
       return { ...option, rangeDate };

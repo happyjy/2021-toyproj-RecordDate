@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import Layout from '../Layout';
 import { dateRecordListExtendType } from '../../types';
 import styles from './DateRecord.module.css';
@@ -252,9 +252,16 @@ const DateRecordDetail: React.FC<DetailProps> = ({
     });
   });
 
-  /* cycalendar */
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  /* cycalendar, setting textArea rows */
   useEffect(() => {
     if (!dateRecordDetailData) return;
+    if (textAreaRef && textAreaRef.current) {
+      const textAreaRow =
+        dateRecordDetailData.description?.split('\n').length + 1;
+      textAreaRef.current.rows = textAreaRow;
+    }
+
     const dateTimeDateObj =
       dateRecordDetailData?.dateTime &&
       new Date(dateRecordDetailData?.dateTime);
@@ -383,6 +390,8 @@ const DateRecordDetail: React.FC<DetailProps> = ({
             </CalendartitleChipsContainer>
 
             <TextAreaEl
+              ref={textAreaRef}
+              // row={textAreaRow}
               value={dateRecordDetailData.description}
               placeholder="Comment"
               className={styles.input}

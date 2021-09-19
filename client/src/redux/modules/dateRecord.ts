@@ -1,7 +1,7 @@
 import { push } from 'connected-react-router';
 import { AnyAction } from 'redux';
 import { createActions, handleActions } from 'redux-actions';
-import { call, put, select, takeEvery, delay } from 'redux-saga/effects';
+import { call, put, select, takeEvery } from 'redux-saga/effects';
 import DateRecordService from '../../Services/DateRecordService';
 import {
   DateRecordReqType,
@@ -17,10 +17,10 @@ import { getDateRecordFromState, getTokenFromState } from '../utils';
 /*
   # dateRecord redux
 */
-
 export interface DateRecordState {
   dateRecordList: dateRecordListExtendType[] | null;
   dateRecordListRowCount: number;
+  dateRecordListCurrentPage: number;
   loading: boolean;
   error: Error | null;
 }
@@ -28,6 +28,7 @@ export interface DateRecordState {
 const initialState: DateRecordState = {
   dateRecordList: null,
   dateRecordListRowCount: 0,
+  dateRecordListCurrentPage: 0,
   loading: true,
   error: null,
 };
@@ -38,9 +39,14 @@ const options = {
 
 export const { success, pending, fail } = createActions(
   {
-    SUCCESS: (dateRecordList, dateRecordListRowCount) => ({
+    SUCCESS: (
       dateRecordList,
       dateRecordListRowCount,
+      dateRecordListCurrentPage,
+    ) => ({
+      dateRecordList,
+      dateRecordListRowCount,
+      dateRecordListCurrentPage,
     }),
   },
   'PENDING',
@@ -54,6 +60,7 @@ const reducer = handleActions<DateRecordState, any>(
       return {
         dateRecordList: action.payload.dateRecordList,
         dateRecordListRowCount: action.payload.dateRecordListRowCount,
+        dateRecordListCurrentPage: action.payload.dateRecordListCurrentPage,
         loading: false,
         error: null,
       };
@@ -174,6 +181,7 @@ function* getDateListPaginatedSaga(action: getDateListPaginatedSagaAction) {
           ? dateRecordList.dateRecordList
           : [...dateRecordListFromState, ...dateRecordList.dateRecordList],
         dateRecordList.dateRecordListRowCount,
+        gridCurrentPage,
       ),
     );
   } catch (error) {
