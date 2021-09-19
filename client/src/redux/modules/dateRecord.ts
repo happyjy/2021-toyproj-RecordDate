@@ -21,6 +21,7 @@ export interface DateRecordState {
   dateRecordList: dateRecordListExtendType[] | null;
   dateRecordListRowCount: number;
   dateRecordListCurrentPage: number;
+  dateRecordListScrollTop: number;
   loading: boolean;
   error: Error | null;
 }
@@ -29,6 +30,7 @@ const initialState: DateRecordState = {
   dateRecordList: null,
   dateRecordListRowCount: 0,
   dateRecordListCurrentPage: 0,
+  dateRecordListScrollTop: 0,
   loading: true,
   error: null,
 };
@@ -37,8 +39,11 @@ const options = {
   prefix: 'record-date/dateRecordList',
 };
 
-export const { success, pending, fail } = createActions(
+export const { lastclickscrolltop, success, pending, fail } = createActions(
   {
+    LASTCLICKSCROLLTOP: (dateRecordListScrollTop) => ({
+      dateRecordListScrollTop,
+    }),
     SUCCESS: (
       dateRecordList,
       dateRecordListRowCount,
@@ -56,15 +61,18 @@ export const { success, pending, fail } = createActions(
 
 const reducer = handleActions<DateRecordState, any>(
   {
-    SUCCESS: (state, action) => {
-      return {
-        dateRecordList: action.payload.dateRecordList,
-        dateRecordListRowCount: action.payload.dateRecordListRowCount,
-        dateRecordListCurrentPage: action.payload.dateRecordListCurrentPage,
-        loading: false,
-        error: null,
-      };
-    },
+    LASTCLICKSCROLLTOP: (state, action) => ({
+      ...state,
+      dateRecordListScrollTop: action.payload.dateRecordListScrollTop,
+    }),
+    SUCCESS: (state, action) => ({
+      dateRecordList: action.payload.dateRecordList,
+      dateRecordListRowCount: action.payload.dateRecordListRowCount,
+      dateRecordListCurrentPage: action.payload.dateRecordListCurrentPage,
+      dateRecordListScrollTop: state.dateRecordListScrollTop,
+      loading: false,
+      error: null,
+    }),
     PENDING: (state, action) => ({
       ...state,
       loading: true,

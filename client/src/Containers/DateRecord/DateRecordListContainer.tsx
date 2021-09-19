@@ -29,6 +29,9 @@ const DateRecordListContainer: React.FC = (props) => {
   const dateRecordListCurrentPage = useSelector<RootState, number>(
     (state) => state.dateRecord.dateRecordListCurrentPage,
   );
+  const dateRecordListScrollTop = useSelector<RootState, number>(
+    (state) => state.dateRecord.dateRecordListScrollTop,
+  );
   const loading = useSelector<RootState, boolean>(
     (state) => state.dateRecord.loading,
   );
@@ -80,6 +83,7 @@ const DateRecordListContainer: React.FC = (props) => {
       {...props}
       dateRecordListRowCount={dateRecordListRowCount}
       dateRecordListCurrentPage={dateRecordListCurrentPage}
+      dateRecordListScrollTop={dateRecordListScrollTop}
       dateRecordList={dateRecordList}
       loading={loading}
       error={error}

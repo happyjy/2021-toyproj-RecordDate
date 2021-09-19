@@ -6,6 +6,8 @@ import moment from 'moment';
 
 import styles from './DateRecord.module.css';
 import { placeListType } from '../../types';
+import { lastclickscrolltop } from '../../redux/modules/dateRecord';
+import { useDispatch } from 'react-redux';
 
 interface DateProps {
   dateCnt: number;
@@ -14,10 +16,11 @@ interface DateProps {
   description: string;
   dateTime: string;
   placeList: placeListType[];
+  isMobile: Boolean | undefined;
+  sectionScrollTop: number | undefined;
   deleteRecordDate: (recordDateId: number) => void;
   goEdit: (recordDateId: number) => void;
   resetMapByDateRecord: (e: React.MouseEvent, dateRecord_id: number) => void;
-  isMobile: Boolean | undefined;
   setLastRow: (row: HTMLDivElement) => void;
   removeTableRowstyle: () => void;
 }
@@ -30,10 +33,11 @@ const DateRecord: React.FC<DateProps> = React.memo(
     description,
     placeList,
     dateTime,
+    isMobile,
+    sectionScrollTop,
     deleteRecordDate,
     goEdit,
     resetMapByDateRecord,
-    isMobile,
     setLastRow,
     removeTableRowstyle,
   }) => {
@@ -113,6 +117,11 @@ const DateRecord: React.FC<DateProps> = React.memo(
     const clickEdit = () => {
       goEdit(dateRecord_id);
     };
+    const dispatch = useDispatch();
+    const onClickLastDate = (e) => {
+      if (sectionScrollTop === undefined) return;
+      dispatch(lastclickscrolltop(sectionScrollTop));
+    };
 
     return (
       <>
@@ -122,6 +131,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
           onTouchEnd={onTouchEnd}
           onTouchMove={onTouchMove}
           ref={containerRef}
+          onClick={onClickLastDate}
         >
           <div className={styles.dateCntTitleContinaer}>
             <div className={styles.dateCnt}>

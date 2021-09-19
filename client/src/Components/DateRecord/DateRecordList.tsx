@@ -208,6 +208,7 @@ const FetchMore = styled.div<FetchMoreType>`
 interface DateRecordsProps {
   dateRecordListRowCount: number;
   dateRecordListCurrentPage: number;
+  dateRecordListScrollTop: number;
   dateRecordList: dateRecordListExtendType[] | null;
   getDateListPaginated: (
     searchOption: searchOptionType,
@@ -225,6 +226,7 @@ interface DateRecordsProps {
 const DateRecordList: React.FC<DateRecordsProps> = ({
   dateRecordListRowCount,
   dateRecordListCurrentPage,
+  dateRecordListScrollTop,
   dateRecordList,
   getDateListPaginated,
   getDateList,
@@ -263,7 +265,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     dateRecordListCurrentPage,
   );
   const [gridMaxPage, setGridMaxPage] = useState<number>(0);
-  const [gridListNum, setGridListNum] = useState<number>(10);
+  const [gridListNum, setGridListNum] = useState<number>(30);
   // const [gridLoading, setGridLoading] = useState(false);
   const [dateRecordListState, setDateRecordListState] = useState<
     dateRecordListExtendType[] | null
@@ -494,7 +496,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     };
   }, [initBoundsState, kakaoMapObjState, innerWidth]);
 
-  // 모바일 여부
+  useEffect(() => {
+    if (sectionRef && sectionRef.current) {
+      sectionRef.current.scrollTop = dateRecordListScrollTop;
+    }
+  }, [dateRecordListScrollTop]);
+  // #모바일 여부
   useEffect(() => {
     setIsMobile(detectResponsiveMobile());
   }, []);
@@ -718,6 +725,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
                     goEdit={goEdit}
                     resetMapByDateRecord={resetMapByDateRecord}
                     isMobile={isMobile}
+                    sectionScrollTop={sectionRef?.current?.scrollTop}
                     setLastRow={setLastRow}
                     removeTableRowstyle={removeTableRowstyle}
                   />
