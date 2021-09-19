@@ -349,19 +349,21 @@ const DateRecordDetail: React.FC<DetailProps> = ({
   const handleHide = () => {
     setModal(<></>);
   };
-  const modalTemplate = (
+  const modalTemplate = (clickIdx) => (
     <Modal>
       <ModalContainer className="modal" onClick={handleHide}>
         <Carousel
           images={dateRecordDetailData.dateImageList}
+          clickIdx={clickIdx}
           width={700}
         ></Carousel>
         <CloseIcon onClick={handleHide}></CloseIcon>
       </ModalContainer>
     </Modal>
   );
-  const onClickContainerImageLayout = () => {
-    setModal(modalTemplate);
+  const onClickContainerImageLayout = (e) => {
+    const clickIdx = e.target.dataset.index || 0;
+    setModal(modalTemplate(Number(clickIdx)));
   };
 
   return (
@@ -400,9 +402,13 @@ const DateRecordDetail: React.FC<DetailProps> = ({
             {dateRecordDetailData.dateImageList.length > 0 && (
               <ContainerImageLayout onClick={onClickContainerImageLayout}>
                 {dateRecordDetailData.dateImageList.map((image, i) => (
-                  <ContainerThumbnail key={image.id}>
+                  <ContainerThumbnail
+                    className="ContainerThumbnail"
+                    key={image.id}
+                  >
                     <ThumbnailImg
                       // src={'http://localhost:5000' + image.dateImageName}
+                      data-index={i + 1}
                       src={image.dateImageName}
                     ></ThumbnailImg>
                   </ContainerThumbnail>

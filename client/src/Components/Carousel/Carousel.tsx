@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { dateImageListType } from '../../types';
 
@@ -113,13 +113,22 @@ const NextControl = styled(Control)`
 interface CarouselProps {
   images: dateImageListType[];
   width?: number;
+  clickIdx: number;
 }
 
-const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
+const Carousel: React.FC<CarouselProps> = ({
+  images,
+  width: customWidth,
+  clickIdx,
+}) => {
   const [width, setWidth] = useState(0);
-  const [currentSlide, setCurrentSlide] = useState(0);
+  const [currentSlide, setCurrentSlide] = useState(clickIdx);
   const [duration, setDuration] = useState(0);
   const [isMoving, setIsMoving] = useState(false);
+
+  useEffect(() => {
+    move(currentSlide);
+  }, [currentSlide]);
 
   const move = (_currentSlide: number, _duration = 0) => {
     // _duration이 0이 아니면 transition이 시작된다. isMoving은 transionend 이벤트가 발생하면 false가 된다.
@@ -131,7 +140,8 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
   const handleImageLoad = ({ target }) => {
     // if (width !== target.offsetWidth) setWidth(target.offsetWidth);
     customWidth && setWidth(customWidth);
-    move(1);
+    // move(0);
+    // move(currentSlide); //slider 맨 앞뒤로 사진이 마지막, 첫번째 사진이 더 붙는다.
   };
 
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -142,8 +152,10 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
     if (isMoving) return;
 
     // prev 버튼이 클릭되면 currentSlide를 -1하고 next 버튼이 클릭되면 currentSlide를 +1한다.
+
+    const finalCurrentSlide = currentSlide || 0;
     const delta = id === 'prev' ? -1 : 1;
-    move(currentSlide + 1 * delta, 200);
+    move(finalCurrentSlide + 1 * delta, 200);
   };
 
   const handleTransitionEnd = () => {
@@ -155,7 +167,8 @@ const Carousel: React.FC<CarouselProps> = ({ images, width: customWidth }) => {
       currentSlide === 0 ? 1 : currentSlide === images.length + 1 ? -1 : 0;
 
     // 클론 슬라이드가 아니면(delta === 0) 이동하지 않는다.
-    if (delta) move(currentSlide + images.length * delta);
+    const finalCurrentSlide = currentSlide || 0;
+    if (delta) move(finalCurrentSlide + images.length * delta);
   };
   const handleHide1 = (e) => {
     e.stopPropagation();
