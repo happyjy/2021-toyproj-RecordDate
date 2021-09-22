@@ -6,7 +6,6 @@ import Layout from '../Layout';
 import {
   dateRecordListExtendType,
   searchOptionType,
-  // keywordSearchType,
   placeListType,
   TypeWillMarkedPlaceList,
   paginationType,
@@ -305,13 +304,17 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     setGridMaxPage(Math.ceil(dateRecordListRowCount / gridListNum));
   }, [setGridMaxPage, dateRecordListRowCount]);
 
-  /* 그리드 - fetchMore */
+  /* 그리드 - fetchMore(그리드 끝 도달시) */
   const fetchMoreTrigger = useRef<HTMLDivElement>(null);
   useEffect(() => {
     const fetchMoreObserver = new IntersectionObserver(
       debounce(([{ intersectionRatio, isIntersecting, target }]) => {
         if (isIntersecting) {
           setGridCurrentPage((prev) => prev + 1);
+          // # arguments scope 유지 되는 것 때문에 이슈 발생
+          //  * dateRecordListRowCount가 업데이트 되어도 이 곳에서는 useEffect가 수행될대의 값이 기억()
+          //  * dependency list에 값을 넣어줄 경우 update된 것이 반영된다.
+          //  * 이 점을 미루어 보아 useEffect에서 scope이 결정되는 것으로 보인다.
         }
       }, 500),
     );

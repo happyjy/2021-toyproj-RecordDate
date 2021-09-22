@@ -554,13 +554,15 @@ app.get("/api/dateRecordPaginated", async (req, res) => {
     0
   ).getDate();
 
-  const rowCountParam = [
+  const coupleRowCountParam = [
     token,
     token,
     searchOption.rangeDate[0] + "-01",
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
   ];
   const coupleDateRecordListParam = [
+    token,
+    token,
     searchOption.rangeDate[0] + "-01",
     token,
     token,
@@ -568,21 +570,27 @@ app.get("/api/dateRecordPaginated", async (req, res) => {
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
     pagination.gridListNum,
     pagination.gridOffset,
-    ...rowCountParam,
+    ...coupleRowCountParam,
   ];
   // const couplePlace;
   // const coupleImage;
   const coupleSqlParam = [...coupleDateRecordListParam];
   // console.log({ coupleSqlParam });
 
+  const singleRowCountParam = [
+    token,
+    searchOption.rangeDate[0] + "-01",
+    searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
+  ];
   const singleDateRecordListParam = [
+    token,
     searchOption.rangeDate[0] + "-01",
     token,
     searchOption.rangeDate[0] + "-01",
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
     pagination.gridListNum,
     pagination.gridOffset,
-    ...rowCountParam,
+    ...singleRowCountParam,
   ];
   const singleSqlParam = [...singleDateRecordListParam];
 

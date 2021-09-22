@@ -137,6 +137,13 @@ module.exports = {
                             FROM dateRecord
                             WHERE 1=1
                             AND ISDELETED = 0
+                            AND couple_id = (
+                                              SELECT couple_id
+                                                FROM couple
+                                               WHERE 1=1
+                                                 AND couple1_id = (SELECT user_id FROM users WHERE token = ?)
+                                                  OR couple2_id = (SELECT user_id FROM users WHERE token = ?)
+                                            )
                             AND dateTime < ?)) initvars, (SELECT *
                                                             FROM dateRecord
                                                             WHERE 1=1
@@ -194,6 +201,7 @@ module.exports = {
                           FROM dateRecord
                           WHERE 1=1
                           AND ISDELETED = 0
+                          AND user_id = (SELECT user_id FROM users WHERE token = ?)
                           AND dateTime < ?)) initvars, (SELECT *
                                                           FROM dateRecord
                                                          WHERE 1=1
@@ -222,13 +230,7 @@ module.exports = {
       FROM dateRecord
      WHERE 1=1
        AND ISDELETED = 0
-       AND couple_id = (
-                         SELECT couple_id
-                           FROM couple
-                          WHERE 1=1
-                            AND couple1_id = (SELECT user_id FROM users WHERE token = ?)
-                             OR couple2_id = (SELECT user_id FROM users WHERE token = ?)
-                       )
+       AND user_id = (SELECT user_id FROM users WHERE token = ?)
        AND dateTime BETWEEN ? AND ?;
     `,
   // 커플 인증 전

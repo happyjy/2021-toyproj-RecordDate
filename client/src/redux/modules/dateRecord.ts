@@ -213,7 +213,7 @@ function* getDateListPaginatedSaga(action: getDateListPaginatedSagaAction) {
         gridCurrentPage === 0
           ? dateRecordList.dateRecordList
           : [...dateRecordListFromState, ...dateRecordList.dateRecordList],
-        dateRecordList.dateRecordListRowCount,
+        dateRecordList.dateRecordListRowCount, // 조회된 리스트
         gridCurrentPage,
       ),
     );
