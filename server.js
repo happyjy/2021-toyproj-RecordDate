@@ -150,6 +150,7 @@ const {
   getCoupleStatus,
   selectDateRecordByDateRecordIdQuery,
   selectDateRecordListByCoupleIdPaginatedSql,
+  selectDateRecordListByUserIdPaginatedSql,
 } = require("./sql");
 
 /*
@@ -575,11 +576,13 @@ app.get("/api/dateRecordPaginated", async (req, res) => {
   // console.log({ coupleSqlParam });
 
   const singleDateRecordListParam = [
-    pagination.gridOffset,
     searchOption.rangeDate[0] + "-01",
     token,
     searchOption.rangeDate[0] + "-01",
     searchOption.rangeDate[1] + "-" + lastDateEndOfRange + " 23:59:59",
+    pagination.gridListNum,
+    pagination.gridOffset,
+    ...rowCountParam,
   ];
   const singleSqlParam = [...singleDateRecordListParam];
 
@@ -632,12 +635,12 @@ app.get("/api/dateRecordPaginated", async (req, res) => {
           console.log("### 커플 인증 전 - 데이트리스트 pagnination ###");
           // 커플 인증 전
           printQuery(
-            selectDateRecordListByUserIdSql(searchOption),
+            selectDateRecordListByUserIdPaginatedSql(searchOption),
             singleSqlParam
           );
           result = await new Promise((resolve, reject) => {
             connection.query(
-              selectDateRecordListByUserIdSql(searchOption),
+              selectDateRecordListByUserIdPaginatedSql(searchOption),
               singleSqlParam,
               function (err, results) {
                 if (err) throw err;
@@ -646,6 +649,7 @@ app.get("/api/dateRecordPaginated", async (req, res) => {
             );
           });
         }
+        // console.log("### response data > 데이트리스트 pagnination  ", result);
         res.send(result);
       } catch (error) {
         throw error;

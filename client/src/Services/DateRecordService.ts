@@ -78,6 +78,7 @@ export default class DateRecordService {
       },
     });
 
+    debugger;
     const dateRecordList = response.data[0];
     const placeListFromTable = response.data[1];
     const imageLstFromTable = response.data[2];

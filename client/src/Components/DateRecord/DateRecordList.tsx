@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import moment from 'moment';
-import { Table, Button, DatePicker, Input, Dropdown, Menu } from 'antd';
+import { Button, DatePicker, Input, Dropdown, Menu } from 'antd';
 import styles from './DateRecordList.module.css';
 import Layout from '../Layout';
 import {
@@ -672,6 +672,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [loader, setLoader] = useState(<div></div>);
   const LoaderTemplate = <Loader></Loader>;
   useEffect(() => {
+    console.log({ loading });
     loading ? setLoader(LoaderTemplate) : setLoader(<></>);
   }, [loading]);
   return (

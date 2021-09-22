@@ -127,8 +127,6 @@ module.exports = {
   // 커플 인증 후 - Pagination
   selectDateRecordListByCoupleIdPaginatedSql: (searchOption) =>
     `
-
-
       SELECT @n:=@n+1 dateCnt, t.dateRecord_id
                              , t.dateTime
                              , t.title
@@ -152,7 +150,7 @@ module.exports = {
                                                                                )
                                                               AND dateTime BETWEEN ? AND ?
                                                             ORDER BY dateTime ASC
-                                                          ) t
+                                                         ) t
        WHERE 1=1
        ORDER BY DATECNT ${searchOption.sort == "desc" ? "desc" : "asc"}
        LIMIT ? OFFSET ?;
@@ -184,7 +182,7 @@ module.exports = {
          AND dateTime BETWEEN ? AND ?;
     `,
   // 커플 인증 전 - Pagination
-  selectDateRecordListByUserIdSql: (searchOption) =>
+  selectDateRecordListByUserIdPaginatedSql: (searchOption) =>
     `
     SELECT @n:=@n+1 dateCnt, t.dateRecord_id
                             , t.dateTime
@@ -192,7 +190,7 @@ module.exports = {
                             , t.description
                             , t.image
                             , t.created_at
-      FROM (SELECT @n:=( SELECT count(*) + ?
+      FROM (SELECT @n:=( SELECT count(*)
                           FROM dateRecord
                           WHERE 1=1
                           AND ISDELETED = 0
@@ -218,7 +216,7 @@ module.exports = {
             dateRecord_id,
             dateImage_name
       FROM DATEIMAGE
-     WHERE ISDELETED = 0
+     WHERE ISDELETED = 0;
 
     SELECT count(*) as countRow
       FROM dateRecord

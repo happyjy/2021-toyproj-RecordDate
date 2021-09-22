@@ -171,6 +171,7 @@ interface getDateListPaginatedSagaAction extends AnyAction {
 function* getDateListPaginatedSaga(action: getDateListPaginatedSagaAction) {
   try {
     yield put(pending());
+    debugger;
     const token: string = yield select((state) => state.auth.token);
     const dateRecordList: dateRecordListPaginatedType = yield call(
       DateRecordService.getDateRecordListPaginated,
@@ -193,6 +194,7 @@ function* getDateListPaginatedSaga(action: getDateListPaginatedSagaAction) {
       ),
     );
   } catch (error) {
+    console.log({ error });
     yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
   }
 }
