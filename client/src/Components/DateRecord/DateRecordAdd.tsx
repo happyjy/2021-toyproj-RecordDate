@@ -188,6 +188,7 @@ const CalendartitleChipsContainer = styled.div`
 
 interface AddProps {
   addDateRecord: (dateRecord: DateRecordReqType) => void;
+  setDateRecordLoading: (isLoading: Boolean) => void;
   loading: boolean;
   error: Error | null;
   back: () => void;
@@ -196,6 +197,7 @@ interface AddProps {
 
 const DateRecordAdd: React.FC<AddProps> = ({
   addDateRecord,
+  setDateRecordLoading,
   loading,
   error,
   back,
@@ -251,8 +253,10 @@ const DateRecordAdd: React.FC<AddProps> = ({
     searchPlaces();
   };
 
-  /* cycalendar */
+  /* cycalendar, & loading false */
   useEffect(() => {
+    setDateRecordLoading(false);
+
     const setDatedateFn = function (date) {
       setDateTime(moment(new Date(date)).format('YYYY-MM-DD'));
     };

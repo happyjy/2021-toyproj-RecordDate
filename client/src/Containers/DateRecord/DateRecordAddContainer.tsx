@@ -8,15 +8,25 @@ import { logout as logoutSaga } from '../../redux/modules/auth';
 import { addDaterecord as addDateRecordSaga } from '../../redux/modules/dateRecord';
 import { DateRecordReqType } from '../../types';
 import DateRecordAdd from '../../Components/DateRecord/DateRecordAdd';
+import { loading as dateRecordLoading } from '../../redux/modules/dateRecord';
 
 const DateRecordAddContainer = () => {
   const loading = useSelector<RootState, boolean>(
     (state) => state.dateRecord.loading,
   );
+
   const error = useSelector<RootState, Error | null>(
     (state) => state.dateRecord.error,
   );
+
   const dispatch = useDispatch();
+
+  const setDateRecordLoading = useCallback(
+    (isLoading) => {
+      dispatch(dateRecordLoading(isLoading));
+    },
+    [dispatch],
+  );
 
   const addDateRecord = useCallback(
     (addDateRecord: DateRecordReqType) => {
@@ -36,6 +46,7 @@ const DateRecordAddContainer = () => {
   return (
     <DateRecordAdd
       addDateRecord={addDateRecord}
+      setDateRecordLoading={setDateRecordLoading}
       loading={loading}
       error={error}
       back={back}

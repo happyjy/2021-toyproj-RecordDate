@@ -289,8 +289,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
     const gridOffset = gridListNum * gridCurrentPage;
     if (
-      gridCurrentPage === 0 ||
-      (gridCurrentPage !== 0 && gridCurrentPage < gridMaxPage)
+      gridCurrentPage === 0 || // 첫페이지 조회
+      (gridCurrentPage !== 0 && gridCurrentPage < gridMaxPage) // 첫페이지 이후 조회
     ) {
       getDateListPaginated(searchOption, {
         gridOffset,

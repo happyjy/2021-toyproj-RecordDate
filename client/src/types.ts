@@ -17,8 +17,12 @@ export interface dateRecordListExtendType extends dateRecordListType {
 
 export interface dateRecordListPaginatedType {
   dateRecordList: dateRecordListExtendType[];
-  dateRecordListRowCount: number;
+  dateRecordListRowCount: number; // 조회된 리스트 개수
   // dateRecordListCurrentPage: number;
+}
+export interface dateRecordPageStatusType {
+  dateRecordListRowCount: number;
+  dateRecordListCurrentPage: number;
 }
 export interface placeType {
   place_id: number;

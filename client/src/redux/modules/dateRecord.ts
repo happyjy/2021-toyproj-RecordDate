@@ -11,8 +11,13 @@ import {
   searchOptionType,
   paginationType,
   dateRecordListPaginatedType,
+  dateRecordPageStatusType,
 } from '../../types';
-import { getDateRecordFromState, getTokenFromState } from '../utils';
+import {
+  getDateRecordFromState,
+  getDateRecordPageStatusFromState,
+  getTokenFromState,
+} from '../utils';
 
 /*
   # dateRecord redux
@@ -39,28 +44,36 @@ const options = {
   prefix: 'record-date/dateRecordList',
 };
 
-export const { lastclickscrolltop, success, pending, fail } = createActions(
-  {
-    LASTCLICKSCROLLTOP: (dateRecordListScrollTop) => ({
-      dateRecordListScrollTop,
-    }),
-    SUCCESS: (
-      dateRecordList,
-      dateRecordListRowCount,
-      dateRecordListCurrentPage,
-    ) => ({
-      dateRecordList,
-      dateRecordListRowCount,
-      dateRecordListCurrentPage,
-    }),
-  },
-  'PENDING',
-  'FAIL',
-  options,
-);
+export const { loading, lastclickscrolltop, success, pending, fail } =
+  createActions(
+    {
+      LOADING: (isLoading) => ({
+        isLoading,
+      }),
+      LASTCLICKSCROLLTOP: (dateRecordListScrollTop) => ({
+        dateRecordListScrollTop,
+      }),
+      SUCCESS: (
+        dateRecordList,
+        dateRecordListRowCount,
+        dateRecordListCurrentPage,
+      ) => ({
+        dateRecordList,
+        dateRecordListRowCount,
+        dateRecordListCurrentPage,
+      }),
+    },
+    'PENDING',
+    'FAIL',
+    options,
+  );
 
 const reducer = handleActions<DateRecordState, any>(
   {
+    LOADING: (state, action) => ({
+      ...state,
+      loading: action.payload.isLoading,
+    }),
     LASTCLICKSCROLLTOP: (state, action) => ({
       ...state,
       dateRecordListScrollTop: action.payload.dateRecordListScrollTop,
@@ -148,17 +161,26 @@ function* addDateRecordSaga(action: AddDateRecordSagaAction) {
       token,
       action.payload.dateRecord,
     );
-    const dateRecordList: dateRecordListExtendType[] = yield select(
+    const originDateRecordList: dateRecordListExtendType[] = yield select(
       getDateRecordFromState,
     );
-    console.log({ dateRecordList });
-    const originList = dateRecordList;
-    // s3에 업로드할 사진 명칭 s3로 부터(s3->server->client) 받아와야한다.
-    // [todo] response data structure 맞춰 success 완성 시키기
-    console.log({ originList, newDateRecord });
-    newDateRecord.dateCnt = originList[0].dateCnt + 1;
-    yield put(success([newDateRecord, ...originList]));
-    yield put(push('/'));
+    const dateRecordPageStatusFromState: dateRecordPageStatusType =
+      yield select(getDateRecordPageStatusFromState);
+    let addr = '/';
+    let newDateRecordList: dateRecordListExtendType[] = [];
+    if (originDateRecordList.length === 0) {
+    } else {
+      newDateRecord.dateCnt = originDateRecordList[0].dateCnt + 1;
+      newDateRecordList = [newDateRecord, ...originDateRecordList];
+    }
+    yield put(
+      success(
+        newDateRecordList,
+        dateRecordPageStatusFromState.dateRecordListRowCount,
+        dateRecordPageStatusFromState.dateRecordListCurrentPage,
+      ),
+    );
+    yield put(push(addr));
   } catch (error) {
     yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
   }

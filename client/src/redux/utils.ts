@@ -1,12 +1,12 @@
 import { RootState } from './modules/rootReducer';
 import {
-  BookResType,
   dateImageListType,
   dateIamgeType,
   dateRecordListExtendType,
   placeListType,
   placeType,
-  countRowType,
+  dateRecordPageStatusType,
+  BookResType,
 } from '../types';
 
 export function getTokenFromState(state: RootState): string | null {
@@ -17,6 +17,15 @@ export function getDateRecordFromState(
   state: RootState,
 ): dateRecordListExtendType[] | null {
   return state.dateRecord.dateRecordList || [];
+}
+
+export function getDateRecordPageStatusFromState(
+  state: RootState,
+): dateRecordPageStatusType {
+  return {
+    dateRecordListRowCount: state.dateRecord.dateRecordListRowCount,
+    dateRecordListCurrentPage: state.dateRecord.dateRecordListCurrentPage,
+  };
 }
 
 export function getBooksFromState(state: RootState): BookResType[] | null {

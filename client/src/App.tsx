@@ -42,6 +42,7 @@ const App = () => (
           component={DateRecordEdit}
         />
         <Route exact path="/" component={Home} />
+        <Route exact path="/fromAddPage" component={Home} />
         <Route component={NotFound} />
       </Switch>
     </ConnectedRouter>
