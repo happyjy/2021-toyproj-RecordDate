@@ -765,7 +765,7 @@ app.get("/api/dateRecord", async (req, res) => {
     connection.release();
   });
 });
-
+// # DATE - RECORD SELECT DETAIL
 app.get("/api/dateRecordDetail", async (req, res) => {
   console.log("######################################################");
   console.log("### DATE - record select detail, /api/dateRecordDetail");
@@ -796,12 +796,16 @@ app.get("/api/dateRecordDetail", async (req, res) => {
     } else {
       // connection
       try {
-        console.log({ selectDateRecordByDateRecordIdQuery });
-        const resultselectDateRecordListByCoupleIdSql = await new Promise(
+        const selectDateRecordByDateRecordIdQueryParam = [
+          dateId,
+          dateId,
+          dateId,
+        ];
+        const resultSelectDateRecordByDateRecordIdQuery = await new Promise(
           (resolve, reject) => {
             connection.query(
               selectDateRecordByDateRecordIdQuery,
-              [dateId, dateId, dateId],
+              selectDateRecordByDateRecordIdQueryParam,
               function (err, results) {
                 if (err) throw err;
                 resolve(results);
@@ -810,15 +814,7 @@ app.get("/api/dateRecordDetail", async (req, res) => {
           }
         );
 
-        console.log({
-          resultselectDateRecordListByCoupleIdSql1:
-            resultselectDateRecordListByCoupleIdSql[0],
-          resultselectDateRecordListByCoupleIdSql2:
-            resultselectDateRecordListByCoupleIdSql[1],
-          resultselectDateRecordListByCoupleIdSql3:
-            resultselectDateRecordListByCoupleIdSql[2],
-        });
-        res.send(resultselectDateRecordListByCoupleIdSql);
+        res.send(resultSelectDateRecordByDateRecordIdQuery);
       } catch (error) {
         throw error;
       }
@@ -895,29 +891,21 @@ app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
     } else {
       // connection
       let insertDateRecord = `
-      INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
-      SELECT (SELECT couple_id
-                FROM couple
-               WHERE 1=1
-                 AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
-                  OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
-                ) as couple_id,
-                user_id,
-                ? as dateTime,
-                ? as title,
-                ? as description
-        FROM users
-      WHERE 1=1
-        AND token= ?
+        INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
+        SELECT (SELECT couple_id
+                  FROM couple
+                 WHERE 1=1
+                   AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
+                    OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
+               ) as couple_id,
+                  user_id,
+                  ? as dateTime,
+                  ? as title,
+                  ? as description
+          FROM users
+         WHERE 1=1
+           AND token= ?
     `;
-
-      // let insertDateRecord = `INSERT INTO dateRecord(couple_id, user_id, dateTime, title, description)
-      //     SELECT couple_id, (SELECT user_id FROM users WHERE token= ?) as user_id, ? as dateTime, ? as title, ? as description
-      //       FROM couple
-      //      WHERE 1=1
-      //        AND couple1_id = (SELECT user_id FROM users WHERE token= ?)
-      //         OR couple2_id = (SELECT user_id FROM users WHERE token= ?)
-      // `;
       let insertPlace =
         "INSERT INTO place(dateRecord_id, place_name, address, latLong) VALUES (?, ?, ?, ?);";
       let insertDateImage =
@@ -938,48 +926,86 @@ app.post("/api/dateRecord", s3Upload.array("imageFile"), async (req, res) => {
         token,
       ];
 
-      let insertDateRecordid;
-
+      // insert date record
+      let insertDateRecordId;
       try {
-        await connection.query(
-          insertDateRecord,
-          insertDateRecordParams,
-          (err, results, fields) => {
-            console.log(`### result insertDateRecord`);
-            insertDateRecordid = results.insertId;
-            if (err) throw err;
-
-            for (var i = 0; i < placeList.length; i++) {
-              let insertParam = [
-                insertDateRecordid,
-                placeList[i].placeName,
-                placeList[i].address,
-                placeList[i].latLong,
-              ];
-              connection.query(
-                insertPlace,
-                insertParam,
-                (err, results, field) => {
-                  console.log(`### result insertPlace`);
-                  if (err) throw err;
-                }
+        const result = await new Promise((resolve, reject) => {
+          connection.query(
+            insertDateRecord,
+            insertDateRecordParams,
+            (err, results, fields) => {
+              console.log(
+                `### result insertDateRecord > insertDateRecordId: `,
+                insertDateRecordId,
+                results
               );
-            }
+              insertDateRecordId = results.insertId;
+              if (err) throw err;
 
-            for (var j = 0; j < images.length; j++) {
-              let insertParam = [insertDateRecordid, images[j].location];
-              connection.query(
-                insertDateImage,
-                insertParam,
-                (err, results, field) => {
-                  console.log(`### result insertDateImage`);
-                  if (err) throw err;
-                }
-              );
+              for (var i = 0; i < placeList.length; i++) {
+                let insertParam = [
+                  insertDateRecordId,
+                  placeList[i].placeName,
+                  placeList[i].address,
+                  placeList[i].latLong,
+                ];
+                connection.query(
+                  insertPlace,
+                  insertParam,
+                  (err, results, field) => {
+                    console.log(`### result insertPlace`);
+                    if (err) throw err;
+                  }
+                );
+              }
+
+              for (var j = 0; j < images.length; j++) {
+                let insertParam = [insertDateRecordId, images[j].location];
+                connection.query(
+                  insertDateImage,
+                  insertParam,
+                  (err, results, field) => {
+                    console.log(`### result insertDateImage`);
+                    if (err) throw err;
+                  }
+                );
+              }
+              resolve(insertDateRecordId);
             }
-            res.send(results);
+          );
+        });
+
+        console.log({ insertDateRecordId111: insertDateRecordId });
+      } catch (error) {
+        throw error;
+      }
+      console.log({ insertDateRecordId222: insertDateRecordId });
+
+      // select inserted date record
+      try {
+        const selectDateRecordByDateRecordIdQueryParam = [
+          insertDateRecordId,
+          insertDateRecordId,
+          insertDateRecordId,
+        ];
+        const resultSelectDateRecordByDateRecordIdQuery = await new Promise(
+          (resolve, reject) => {
+            connection.query(
+              selectDateRecordByDateRecordIdQuery,
+              selectDateRecordByDateRecordIdQueryParam,
+              function (err, results) {
+                if (err) throw err;
+                resolve(results);
+              }
+            );
           }
         );
+
+        console.log({
+          selectDateRecordByDateRecordIdQueryParam,
+          resultSelectDateRecordByDateRecordIdQuery,
+        });
+        res.send(resultSelectDateRecordByDateRecordIdQuery);
       } catch (error) {
         throw error;
       }
@@ -1033,74 +1059,89 @@ app.patch(
         console.log(`#파일업로드: `, images);
         let updateDateRecordParams = [title, description, req.params.id];
 
-        connection.query(
-          updateDateRecord,
-          updateDateRecordParams,
-          (err, results, field) => {
-            if (err) throw err;
-          }
-        );
+        // update date record
+        try {
+          connection.query(
+            updateDateRecord,
+            updateDateRecordParams,
+            (err, results, field) => {
+              if (err) throw err;
+            }
+          );
 
-        for (var i = 0; i < addPlaceList.length; i++) {
-          let insertParam = [
+          for (var i = 0; i < addPlaceList.length; i++) {
+            let insertParam = [
+              editDateRecordId,
+              addPlaceList[i].placeName,
+              addPlaceList[i].address,
+              addPlaceList[i].latLong,
+            ];
+            connection.query(
+              insertPlace,
+              insertParam,
+              (err, results, field) => {
+                if (err) throw err;
+              }
+            );
+          }
+          for (var i = 0; i < delPlaceList.length; i++) {
+            let updatePlaceParams = [delPlaceList[i].id];
+            connection.query(
+              deletePlace,
+              updatePlaceParams,
+              (err, results, field) => {
+                if (err) throw err;
+              }
+            );
+          }
+          for (var j = 0; j < images.length; j++) {
+            let insertParam = [editDateRecordId, images[j].location];
+            connection.query(
+              insertDateImage,
+              insertParam,
+              (err, results, field) => {
+                if (err) throw err;
+              }
+            );
+          }
+          for (var k = 0; k < delImageFileIdList.length; k++) {
+            let insertParam = [1, delImageFileIdList[k]];
+            connection.query(
+              deleteDateImage,
+              insertParam,
+              (err, results, field) => {
+                if (err) throw err;
+              }
+            );
+          }
+        } catch (error) {
+          throw error;
+        }
+
+        // select updated date record
+        try {
+          const selectDateRecordByDateRecordIdQueryParam = [
             editDateRecordId,
-            addPlaceList[i].placeName,
-            addPlaceList[i].address,
-            addPlaceList[i].latLong,
+            editDateRecordId,
+            editDateRecordId,
           ];
-          connection.query(insertPlace, insertParam, (err, results, field) => {
-            if (err) throw err;
-          });
-        }
-
-        for (var i = 0; i < delPlaceList.length; i++) {
-          let updatePlaceParams = [delPlaceList[i].id];
-          connection.query(
-            deletePlace,
-            updatePlaceParams,
-            (err, results, field) => {
-              if (err) throw err;
+          const resultSelectDateRecordByDateRecordIdQuery = await new Promise(
+            (resolve, reject) => {
+              connection.query(
+                selectDateRecordByDateRecordIdQuery,
+                selectDateRecordByDateRecordIdQueryParam,
+                function (err, results) {
+                  if (err) throw err;
+                  resolve(results);
+                }
+              );
             }
           );
-        }
-        for (var j = 0; j < images.length; j++) {
-          let insertParam = [editDateRecordId, images[j].location];
-          connection.query(
-            insertDateImage,
-            insertParam,
-            (err, results, field) => {
-              if (err) throw err;
-            }
-          );
-        }
-        for (var k = 0; k < delImageFileIdList.length; k++) {
-          let insertParam = [1, delImageFileIdList[k]];
-          connection.query(
-            deleteDateImage,
-            insertParam,
-            (err, results, field) => {
-              if (err) throw err;
-            }
-          );
-        }
 
-        connection.query(
-          `SELECT *
-             FROM DATERECORD
-            WHERE ISDELETED = 0
-              AND DATERECORD_ID = ?;
-
-            SELECT *
-              FROM PLACE
-             WHERE ISDELETED = 0
-               AND DATERECORD_ID = ?`,
-          [editDateRecordId, editDateRecordId],
-          (err, results) => {
-            if (err) throw err;
-            console.log("edit after: ", results);
-            res.send(results);
-          }
-        );
+          res.send(resultSelectDateRecordByDateRecordIdQuery);
+        } catch (error) {
+          throw error;
+        }
       }
       connection.release();
     });

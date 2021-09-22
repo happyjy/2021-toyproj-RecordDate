@@ -143,8 +143,7 @@ function* addDateRecordSaga(action: AddDateRecordSagaAction) {
   try {
     yield put(pending());
     const token: string = yield select(getTokenFromState);
-    // const dateRecord: dateRecordListExtendType = yield call(
-    yield call(
+    const newDateRecord: dateRecordListExtendType = yield call(
       DateRecordService.addDateRecord,
       token,
       action.payload.dateRecord,
@@ -153,8 +152,12 @@ function* addDateRecordSaga(action: AddDateRecordSagaAction) {
       getDateRecordFromState,
     );
     console.log({ dateRecordList });
+    const originList = dateRecordList;
+    // s3에 업로드할 사진 명칭 s3로 부터(s3->server->client) 받아와야한다.
     // [todo] response data structure 맞춰 success 완성 시키기
-    // yield put(success([...dateRecordList, dateRecord]));
+    console.log({ originList, newDateRecord });
+    newDateRecord.dateCnt = originList[0].dateCnt + 1;
+    yield put(success([newDateRecord, ...originList]));
     yield put(push('/'));
   } catch (error) {
     yield put(fail(new Error(error.response.data.error || 'UNKNOWN_ERROR')));
@@ -171,7 +174,6 @@ interface getDateListPaginatedSagaAction extends AnyAction {
 function* getDateListPaginatedSaga(action: getDateListPaginatedSagaAction) {
   try {
     yield put(pending());
-    debugger;
     const token: string = yield select((state) => state.auth.token);
     const dateRecordList: dateRecordListPaginatedType = yield call(
       DateRecordService.getDateRecordListPaginated,
@@ -229,18 +231,18 @@ function* editDateRecord(action: EditDateRecordSagaAction) {
   try {
     yield put(pending());
     const token: string = yield select(getTokenFromState);
-    const newDateRecord: dateRecordListExtendType = yield call(
+    const editedDateRecord: dateRecordListExtendType = yield call(
       DateRecordService.editDateRecord,
       token,
       action.payload.dateRecordId,
       action.payload.dateRecord,
     );
     const dateRecordList: DateResType[] = yield select(getDateRecordFromState);
-    newDateRecord.dateCnt = dateRecordList[0].dateCnt;
+    editedDateRecord.dateCnt = dateRecordList[0].dateCnt;
     const newResult = dateRecordList.map((dateRecord) => {
-      if (dateRecord.dateRecord_id === newDateRecord.dateRecord_id) {
-        newDateRecord.dateCnt = dateRecord.dateCnt;
-        return newDateRecord;
+      if (dateRecord.dateRecord_id === editedDateRecord.dateRecord_id) {
+        editedDateRecord.dateCnt = dateRecord.dateCnt;
+        return editedDateRecord;
       } else {
         return dateRecord;
       }

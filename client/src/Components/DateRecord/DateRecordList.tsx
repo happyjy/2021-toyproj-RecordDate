@@ -510,12 +510,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   }, []);
   /*
   useEffect(() => {
-    debugger;
     if (innerWidth === window.innerWidth) return;
 
     setInnerWidth(window.innerWidth);
     const debouncedHandleResize = debounce(function handleResize() {
-      debugger;
       console.log('### working > resize > innerWidth: ', window.innerWidth);
       kakaoMapObjState?.setBounds(initBoundsState);
     }, 1000);

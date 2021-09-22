@@ -37,7 +37,6 @@ const useFileUpload = () => {
       reader.onloadend = function (e) {
         if (cntFileTypeImages === 0) {
           setFileText((fileText) => [...fileText, ...arr]);
-          console.log(fileText);
         }
       };
     });

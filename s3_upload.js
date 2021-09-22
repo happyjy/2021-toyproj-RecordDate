@@ -2,6 +2,8 @@ const multer = require("multer");
 const multerS3 = require("multer-s3");
 const aws = require("aws-sdk");
 
+// # 아마존 s3 서비스 모듈
+//  * 사진 업로드를 위해서 아마존 s3 서비스 모듈 사용
 const s3 = new aws.S3({
   accessKeyId: process.env.accessKeyId,
   secretAccessKey: process.env.secretAccessKey,
@@ -13,9 +15,9 @@ const s3Upload = multer({
     s3,
     bucket: "ourdatinghistory",
     acl: "public-read",
-    key: function (req, file, cb) {
+    key: function (req, file, callbackFunc) {
       console.log("### s3Upload > file: ", file);
-      cb(
+      callbackFunc(
         null,
         Math.floor(Math.random() * 1000).toString() +
           Date.now() +

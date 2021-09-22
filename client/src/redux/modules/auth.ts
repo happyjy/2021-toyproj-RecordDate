@@ -82,7 +82,6 @@ const reducer = handleActions<AuthState, any>(
 
       // return produce(state, (draft) => {
       //   if (draft && draft.user) {
-      //     debugger;
       //     draft.user[0].couple_id = action.payload.user[0].couple_id;
       //     draft.user[0].couple_status = action.payload.user[0].couple_status;
       //   }

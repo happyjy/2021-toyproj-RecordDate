@@ -78,7 +78,6 @@ export default class DateRecordService {
       },
     });
 
-    debugger;
     const dateRecordList = response.data[0];
     const placeListFromTable = response.data[1];
     const imageLstFromTable = response.data[2];
@@ -98,17 +97,20 @@ export default class DateRecordService {
       formData.append('imageFile', v);
     });
 
-    const response = await axiosInst.post<dateRecordListExtendType>(
-      '/dateRecord',
-      formData,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          'content-type': 'multipart/form-data',
-        },
+    const response = await axiosInst.post<
+      [dateRecordListExtendType[], placeType[], dateIamgeType[]]
+    >('/dateRecord', formData, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        'content-type': 'multipart/form-data',
       },
-    );
-    return response.data;
+    });
+
+    const dateRecordList = response.data[0];
+    const placeListFromTable = response.data[1];
+    const imageLstFromTable = response.data[2];
+
+    return makeDate(dateRecordList, placeListFromTable, imageLstFromTable)[0];
   }
 
   public static async editDateRecord(
@@ -131,7 +133,7 @@ export default class DateRecordService {
       });
 
     const response = await axiosInst.patch<
-      [dateRecordListExtendType[], placeType[]]
+      [dateRecordListExtendType[], placeType[], dateIamgeType[]]
     >(`/dateRecord/${dateRecordId}`, formData, {
       headers: {
         Authorization: `Bearer ${token}`,
@@ -141,7 +143,9 @@ export default class DateRecordService {
 
     const dateRecordList = response.data[0];
     const placeListFromTable = response.data[1];
-    return makeDate(dateRecordList, placeListFromTable)[0];
+    const imageLstFromTable = response.data[2];
+
+    return makeDate(dateRecordList, placeListFromTable, imageLstFromTable)[0];
   }
 
   public static async deleteDateRecord(
