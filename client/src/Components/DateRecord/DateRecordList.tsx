@@ -195,6 +195,7 @@ const FetchMore = styled.div<FetchMoreType>`
       result = `
         // border: 20px solid red;
         // top: 0;
+        height: 10px;
         bottom: 0;
         left: 0;
         right: 0;
