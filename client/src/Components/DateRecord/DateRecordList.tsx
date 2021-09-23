@@ -312,7 +312,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const fetchMoreObserver = new IntersectionObserver(
       debounce(([{ intersectionRatio, isIntersecting, target }]) => {
         if (isIntersecting) {
-          debugger;
           setGridCurrentPage((prev) => prev + 1);
           // # arguments scope 유지 되는 것 때문에 이슈 발생
           //  * dateRecordListRowCount가 업데이트 되어도 이 곳에서는 useEffect가 수행될대의 값이 기억()
@@ -321,8 +320,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         }
       }, 500),
     );
-    // setTimeout(() => {
-    // }, 1000);
     if (fetchMoreTrigger.current) {
       fetchMoreObserver.observe(fetchMoreTrigger.current);
     }

@@ -131,7 +131,6 @@ const DateRecord: React.FC<DateProps> = React.memo(
           onTouchEnd={onTouchEnd}
           onTouchMove={onTouchMove}
           ref={containerRef}
-          onClick={onClickLastDate}
         >
           <div className={styles.dateCntTitleContinaer}>
             <div className={styles.dateCnt}>
@@ -147,6 +146,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
                 key={dateRecord_id}
                 to={`/dateRecord/${dateRecord_id}`}
                 className={styles.link_detail_title}
+                onClick={onClickLastDate}
               >
                 {title}
               </Link>
@@ -156,6 +156,7 @@ const DateRecord: React.FC<DateProps> = React.memo(
             <Link
               to={`/dateRecord/${dateRecord_id}`}
               className={styles.link_detail_author}
+              onClick={onClickLastDate}
             >
               {placeList?.map((v, i) => {
                 if (i === 0) return <span key={v.id}>{v.placeName}</span>;
