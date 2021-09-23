@@ -291,6 +291,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
       gridCurrentPage === 0 || // 첫페이지 조회
       (gridCurrentPage !== 0 && gridCurrentPage < gridMaxPage) // 첫페이지 이후 조회
     ) {
+      console.log({ gridOffset, gridListNum, gridCurrentPage });
       getDateListPaginated(searchOption, {
         gridOffset,
         gridListNum,
@@ -310,6 +311,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     const fetchMoreObserver = new IntersectionObserver(
       debounce(([{ intersectionRatio, isIntersecting, target }]) => {
         if (isIntersecting) {
+          debugger;
           setGridCurrentPage((prev) => prev + 1);
           // # arguments scope 유지 되는 것 때문에 이슈 발생
           //  * dateRecordListRowCount가 업데이트 되어도 이 곳에서는 useEffect가 수행될대의 값이 기억()
@@ -603,15 +605,31 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     });
   };
   const onClickSearchButton = function () {
-    // getDateList(searchOption);
+    // setGridCurrentPage 비동기로 이뤄지기때문에 아래 연산 gridCurrentPage는 0이 아니다.
+    setGridCurrentPage(() => {
+      const gridCurrentPageZero = 0;
+      const gridOffset = gridListNum * gridCurrentPageZero;
 
-    setGridCurrentPage(0);
-    const gridOffset = gridListNum * gridCurrentPage;
-    getDateListPaginated(searchOption, {
-      gridOffset,
-      gridListNum,
-      gridCurrentPage: 0,
+      getDateListPaginated(searchOption, {
+        gridOffset,
+        gridListNum,
+        gridCurrentPage: gridCurrentPageZero,
+      });
+
+      return gridCurrentPageZero;
     });
+    // const gridOffset = gridListNum * gridCurrentPage;
+    // console.log({ gridListNum, gridCurrentPage });
+    // setTimeout(() => {
+    //   console.log('###');
+    //   console.log({ gridListNum, gridCurrentPage });
+    //   getDateListPaginated(searchOption, {
+    //     gridOffset,
+    //     gridListNum,
+    //     gridCurrentPage: 0,
+    //   });
+    // });
+    // getDateList(searchOption);
   };
   const onClickSortButton = function (type) {
     setSearchOption((option) => {
@@ -673,7 +691,6 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   const [loader, setLoader] = useState(<div></div>);
   const LoaderTemplate = <Loader></Loader>;
   useEffect(() => {
-    console.log({ loading });
     loading ? setLoader(LoaderTemplate) : setLoader(<></>);
   }, [loading]);
   return (
