@@ -265,7 +265,7 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
     dateRecordListCurrentPage,
   );
   const [gridMaxPage, setGridMaxPage] = useState<number>(0);
-  const [gridListNum, setGridListNum] = useState<number>(30);
+  const [gridListNum /* , setGridListNum */] = useState<number>(30);
   // const [gridLoading, setGridLoading] = useState(false);
   const [dateRecordListState, setDateRecordListState] = useState<
     dateRecordListExtendType[] | null
@@ -280,6 +280,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   // # 조회
   useEffect(() => {
+    console.log({
+      getDateListPaginated,
+      gridListNum,
+      gridCurrentPage,
+      gridMaxPage,
+    });
     if (
       dateRecordListState &&
       dateRecordListState.length > 0 &&
@@ -304,11 +310,12 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
   /* 그리드 - 검색조건의 전체 row 수 */
   useEffect(() => {
     setGridMaxPage(Math.ceil(dateRecordListRowCount / gridListNum));
-  }, [setGridMaxPage, dateRecordListRowCount]);
+  }, [setGridMaxPage, dateRecordListRowCount, gridListNum]);
 
   /* 그리드 - fetchMore(그리드 끝 도달시) */
   const fetchMoreTrigger = useRef<HTMLDivElement>(null);
   useEffect(() => {
+    const fetchMoreTriggerDom = fetchMoreTrigger.current;
     const fetchMoreObserver = new IntersectionObserver(
       debounce(([{ intersectionRatio, isIntersecting, target }]) => {
         if (isIntersecting) {
@@ -320,16 +327,16 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
         }
       }, 500),
     );
-    if (fetchMoreTrigger.current) {
-      fetchMoreObserver.observe(fetchMoreTrigger.current);
+    if (fetchMoreTriggerDom) {
+      fetchMoreObserver.observe(fetchMoreTriggerDom);
     }
 
     return () => {
-      if (fetchMoreTrigger && fetchMoreTrigger.current) {
-        fetchMoreObserver.unobserve(fetchMoreTrigger.current);
+      if (fetchMoreTrigger && fetchMoreTriggerDom) {
+        fetchMoreObserver.unobserve(fetchMoreTriggerDom);
       }
     };
-  }, []);
+  }, [fetchMoreTrigger]);
 
   // 리스트 객체 "dateRecordListState"로 관리
   useEffect(() => {
@@ -687,10 +694,10 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
 
   /* 로더 */
   const [loader, setLoader] = useState(<div></div>);
-  const LoaderTemplate = <Loader></Loader>;
+  const [LoaderTemplate] = useState(<Loader></Loader>);
   useEffect(() => {
     loading ? setLoader(LoaderTemplate) : setLoader(<></>);
-  }, [loading]);
+  }, [loading, setLoader, LoaderTemplate]);
   return (
     <Layout>
       {loader}
@@ -737,9 +744,8 @@ const DateRecordList: React.FC<DateRecordsProps> = ({
           <TableContainer className="TableContainer">
             <TableUl>
               {dateRecordListState?.map((dateRecord) => (
-                <TableLi>
+                <TableLi key={dateRecord.dateRecord_id}>
                   <DateRecord
-                    key={dateRecord.dateRecord_id}
                     {...dateRecord}
                     deleteRecordDate={deleteRecordDate}
                     goEdit={goEdit}

@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { message as messageDialog } from 'antd';
-import { FormOutlined } from '@ant-design/icons';
 import Layout from '../Layout';
 import { DateRecordReqType, placeListType } from '../../types';
 import styles from './DateRecordAdd.module.css';
@@ -275,7 +274,7 @@ const DateRecordAdd: React.FC<AddProps> = ({
     return () => {
       dycalendar.remove();
     };
-  }, []);
+  }, [setDateRecordLoading]);
 
   /* add button event */
   function onAddDateRecord() {
@@ -302,10 +301,10 @@ const DateRecordAdd: React.FC<AddProps> = ({
   }, [error, logout]);
 
   const [loader, setLoader] = useState(<div></div>);
-  const LoaderTemplate = <Loader></Loader>;
+  const [LoaderTemplate] = useState(<Loader></Loader>);
   useEffect(() => {
     loading ? setLoader(LoaderTemplate) : setLoader(<></>);
-  }, [loading]);
+  }, [loading, setLoader, LoaderTemplate]);
   return (
     <Layout>
       {loader}

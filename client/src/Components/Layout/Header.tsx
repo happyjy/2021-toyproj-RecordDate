@@ -209,10 +209,20 @@ const Header: React.FC = () => {
   // ..ing
   let { pathname } = useLocation();
   let headerButtonList: JSX.Element[] = [];
-  const AddDate = <Button onClick={addDate}>Add Date</Button>;
-  const EditDate = <Button onClick={editDate}>Edit Date</Button>;
+  const AddDate = (
+    <Button key="AddDate" onClick={addDate}>
+      Add Date
+    </Button>
+  );
+  const EditDate = (
+    <Button key="EditDate" onClick={editDate}>
+      Edit Date
+    </Button>
+  );
   const DeleteDate = (id) => (
-    <Button onClick={() => deleteDate(id)}>Delete Date</Button>
+    <Button key="DeleteDate" onClick={() => deleteDate(id)}>
+      Delete Date
+    </Button>
   );
   if (pathname.includes(HEADERMENU.ADDDATERECORD)) {
   } else if (pathname.includes(HEADERMENU.DATERECORD)) {
@@ -282,7 +292,8 @@ const Header: React.FC = () => {
               <br></br>
               <MenuSubTitle isActive={toggleProfile} className="MenuSubTitle">
                 {partnerInfo?.nickname && partnerInfo?.couple_status === 1 && (
-                  <span>❤️ &nbsp; {partnerInfo?.nickname}</span>
+                  // eslint-disable-next-line jsx-a11y/accessible-emoji
+                  <span role="img">❤️ &nbsp; {partnerInfo?.nickname}</span>
                 )}
               </MenuSubTitle>
             </MenuTitle>

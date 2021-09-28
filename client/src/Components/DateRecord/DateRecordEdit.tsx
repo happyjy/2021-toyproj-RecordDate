@@ -254,7 +254,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   useEffect(() => {
     setImagefile(dateRecord?.dateImageList ? dateRecord.dateImageList : []);
     setFileText(result);
-  }, []);
+  }, [setImagefile, setFileText, dateRecord, result]);
 
   // const [dateImageList, setDateImageList] = useState<any[]>(
   //   dateRecord?.dateImageList ? dateRecord.dateImageList : [],
@@ -329,10 +329,10 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   }, [error, logout]);
 
   const [loader, setLoader] = useState(<div></div>);
-  const LoaderTemplate = <Loader></Loader>;
+  const [LoaderTemplate] = useState(<Loader></Loader>);
   useEffect(() => {
     loading ? setLoader(LoaderTemplate) : setLoader(<></>);
-  }, [loading]);
+  }, [loading, setLoader, LoaderTemplate]);
 
   if (dateRecord === null) {
     return null;

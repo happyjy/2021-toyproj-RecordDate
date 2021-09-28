@@ -6,7 +6,6 @@ import {
   placeListType,
   placeType,
   dateRecordPageStatusType,
-  BookResType,
 } from '../types';
 
 export function getTokenFromState(state: RootState): string | null {

@@ -3,8 +3,6 @@ import { Row, Col, message } from 'antd';
 
 import styles from './Signin.module.css';
 import { LoginReqType, SnsLoginReqType } from '../types';
-import Axios from 'axios';
-import { axiosInst } from '../axiosConfig';
 
 interface SigninProps {
   loading: boolean;
@@ -127,6 +125,7 @@ const Signin: React.FC<SigninProps> = ({ loading, error, snsLogin, login }) => {
                 <div style={{ display: 'flex', justifyContent: 'center' }}>
                   <div id="custom-login-btn" onClick={loginWithKakao}>
                     <img
+                      alt="login"
                       src="//k.kakaocdn.net/14/dn/btqCn0WEmI3/nijroPfbpCa4at5EIsjyf0/o.jpg"
                       width="222"
                     />

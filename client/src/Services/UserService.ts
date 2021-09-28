@@ -1,21 +1,18 @@
-import axios from 'axios';
 import { axiosInst } from '../axiosConfig';
 
 import {
   getUserByEmailReqType,
   getUserResType,
-  LoginReqType,
-  LoginResType,
   reqAcceptCoupleType,
   SnsLoginReqType,
   SnsLoginResType,
 } from '../types';
 
-const USER_API_URL = 'https://api.marktube.tv/v1/me';
-const DATERECORD_API_URL = 'http://localhost:5000/api/login';
-const GETUSER_API_URL = 'http://localhost:5000/api/getUser';
-const REQCOUPLE_API_URL = 'http://localhost:5000/api/couple/request';
-const ACCEPTCOUPLE_API_URL = 'http://localhost:5000/api/couple/accept';
+// const USER_API_URL = 'https://api.marktube.tv/v1/me';
+// const DATERECORD_API_URL = 'http://localhost:5000/api/login';
+// const GETUSER_API_URL = 'http://localhost:5000/api/getUser';
+// const REQCOUPLE_API_URL = 'http://localhost:5000/api/couple/request';
+// const ACCEPTCOUPLE_API_URL = 'http://localhost:5000/api/couple/accept';
 
 export default class UserService {
   public static async snsLogin({

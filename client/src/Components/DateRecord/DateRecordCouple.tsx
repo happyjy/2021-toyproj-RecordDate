@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react';
 import Layout from '../Layout';
 import {
@@ -271,7 +272,7 @@ const DateRecordCouple: React.FC<CoupleMngtProps> = ({
 
       setSearchContainerHeight(layer + '');
     }
-  }, [userList]);
+  }, [userList, userListContainerDom, searchCoupleInputDom]);
 
   // # EVENT
   // ## EVENT - 커플 요청

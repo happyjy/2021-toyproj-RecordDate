@@ -1,3 +1,4 @@
+/* eslint-disable jsx-a11y/accessible-emoji */
 import React, { useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import styled from 'styled-components';
@@ -26,7 +27,7 @@ const Modal: React.FC = ({ children }) => {
     justify-content: center;
     z-index: 2000;
   `;
-  const LoaderItem = styled.label`
+  const LoaderItem = styled.span`
     position: relative;
     animation-name: heart;
     animation-duration: 1s;
@@ -50,7 +51,7 @@ const Modal: React.FC = ({ children }) => {
 
   const Loader = (
     <LoaderContainer className="LoaderContainer">
-      <LoaderItem>❤️</LoaderItem>
+      <LoaderItem role="img">❤️</LoaderItem>
     </LoaderContainer>
   );
   return ReactDOM.createPortal(Loader, el);

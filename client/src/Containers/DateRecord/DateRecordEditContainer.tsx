@@ -11,7 +11,6 @@ import {
   editDaterecord as editDateRecordsaga,
 } from '../../redux/modules/dateRecord';
 import DateRecordEdit from '../../Components/DateRecord/DateRecordEdit';
-import { createLogicalAnd } from 'typescript';
 
 const DateRecordEditContainer = () => {
   const { id } = useParams();
