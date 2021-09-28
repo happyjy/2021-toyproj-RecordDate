@@ -12,7 +12,7 @@ import {
   SnsLoginReqType,
 } from '../../types';
 import { getTokenFromState } from '../utils';
-import { success as booksSuccess } from './books';
+import { success as dateRecordSuccess } from './dateRecord';
 import UserService from '../../Services/UserService';
 import TokenService from '../../Services/TokenService';
 import produce from 'immer';
@@ -227,7 +227,7 @@ function* snsLoginSaga(action: SnsLoginSagaAction) {
 
 function* logoutSaga() {
   try {
-    yield put(booksSuccess(null));
+    yield put(dateRecordSuccess(null));
     yield put(pending());
     const token: string = yield select(getTokenFromState);
     yield call(UserService.logout, token);

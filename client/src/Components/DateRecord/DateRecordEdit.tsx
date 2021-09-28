@@ -11,7 +11,7 @@ import styles from './DateRecordEdit.module.css';
 import mapStyles from './map.module.css';
 import styled, { css } from 'styled-components';
 import Chips from '../ChipsComponent/ChipsComponent';
-import map from '../map';
+import map from '../Map/map';
 import useFileUpload from '../../Hooks/useFileUplaod';
 import FileUpload from '../FileUpload/FileUpload';
 import dycalendar from '../Calendar/dyCalendar';

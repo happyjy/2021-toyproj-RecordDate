@@ -19,7 +19,7 @@ const DateRecordDetailContainer = () => {
   >((state) => state.dateRecord.dateRecordList);
 
   const error = useSelector<RootState, Error | null>(
-    (state) => state.books.error,
+    (state) => state.dateRecord.error,
   );
 
   const dispatch = useDispatch();

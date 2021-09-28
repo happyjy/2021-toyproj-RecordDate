@@ -3,12 +3,10 @@ import { connectRouter, RouterState } from 'connected-react-router';
 import { History } from 'history';
 
 import dateRecord, { DateRecordState } from './dateRecord';
-import books, { BooksState } from './books';
 import auth, { AuthState } from './auth';
 
 export interface RootState {
   dateRecord: DateRecordState;
-  books: BooksState;
   auth: AuthState;
   router: Reducer<RouterState<unknown>, AnyAction>;
 }
@@ -16,7 +14,6 @@ export interface RootState {
 const rootReducer = (history: History<unknown>) =>
   combineReducers({
     dateRecord,
-    books,
     auth,
     router: connectRouter(history),
   });

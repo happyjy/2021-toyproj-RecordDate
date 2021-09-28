@@ -28,10 +28,6 @@ export function getDateRecordPageStatusFromState(
   };
 }
 
-export function getBooksFromState(state: RootState): BookResType[] | null {
-  return state.books.books;
-}
-
 export function makeDate(
   dateRecordList: dateRecordListExtendType[],
   placeListFromTable: placeType[],

@@ -1,4 +1,4 @@
-import { placeListType } from '../types';
+import { placeListType } from '../../types';
 
 export default (
   mapRef: any,
