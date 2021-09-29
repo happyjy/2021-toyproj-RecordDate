@@ -37,38 +37,6 @@ const RightHeaderContainer = styled.div`
   position: relative;
 `;
 
-// const Button1 = styled.div`
-//   /* bluemana, neonblue */
-//   border: none;
-//   background-color: var(--bluemana);
-//   text-transform: uppercase;
-//   border-radius: 1px;
-//   border-width: 2px;
-//   color: white;
-
-//   line-height: 1.5715;
-//   position: relative;
-//   display: inline-block;
-//   font-weight: 400;
-//   white-space: nowrap;
-//   text-align: center;
-//   background-image: none;
-
-//   cursor: pointer;
-
-//   height: 32px;
-//   padding: 4px 15px;
-//   font-size: 14px;
-//   transition: background-color 0.2s ease-in-out;
-
-//   &:not(:last-child) {
-//     margin-right: 10px;
-//   }
-//   &:hover {
-//     background-color: var(--neonblue);
-//   }
-// `;
-
 const ProfileContainer = styled.div`
   height: 100%;
   border-radius: 50%;
@@ -113,8 +81,6 @@ const MenuContainer = styled.div<MenuContainerType>`
     position: absolute;
     top: ${(props) => (props.isActive ? '-8px' : '7px')};
     right: 22px;
-    /* width: 20px;
-    height: 20px; */
 
     border-right: ${(props) =>
       props.isActive ? '8px rgba(255, 255, 255, 1) solid' : 'none'};
@@ -123,9 +89,6 @@ const MenuContainer = styled.div<MenuContainerType>`
     border-left: ${(props) =>
       props.isActive ? '8px rgba(255, 255, 255, 1) solid' : 'none'};
     transition: 0.5s;
-
-    /* border-color: transparent yellow transparent; */
-    /* transform: rotate(45deg); */
   }
 `;
 
@@ -189,6 +152,10 @@ const Header: React.FC = () => {
   // # button list
   const goHome = useCallback(() => {
     dispatch(push('/'));
+  }, [dispatch]);
+
+  const toDateList = useCallback(() => {
+    dispatch(push('/toDateList'));
   }, [dispatch]);
 
   const addDate = useCallback(() => {
@@ -275,6 +242,7 @@ const Header: React.FC = () => {
         </Title>
       </TitleContainer>
       <RightHeaderContainer className="RightHeaderContainer">
+        <Button onClick={toDateList}>ToDateList</Button>
         {headerButtonList}
         <ProfileContainer className="ProfileContainer">
           <ProfileImgContainer

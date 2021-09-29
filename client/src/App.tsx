@@ -10,6 +10,7 @@ import { ConnectedRouter } from 'connected-react-router';
 import DateRecordDetail from './Pages/DateRecordDetail';
 import DateRecordEdit from './Pages/DateRecordEdit';
 import DateRecordAdd from './Pages/DateRecordAdd';
+import ToDateList from './Pages/ToDateList';
 import Couple from './Pages/Couple';
 import { history } from './redux/create';
 import { HEADERMENU } from './Constants';
@@ -26,6 +27,11 @@ const App = () => (
       <Switch>
         <Route exact path="/signin" component={Signin} />
         <Route exact path="/couple" component={Couple} />
+        <Route
+          exact
+          path={'/' + HEADERMENU.TODATELIST}
+          component={ToDateList}
+        />
         <Route
           exact
           path={'/' + HEADERMENU.ADDDATERECORD}
