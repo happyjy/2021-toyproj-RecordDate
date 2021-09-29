@@ -495,7 +495,7 @@ const cycalendar = (function (global) {
   function onClick() {
     container.onclick = function (e) {
       //get event object (window.event for IE compatibility)
-      console.log('### onclick');
+      // console.log('### onclick');
       e = global.event || e;
 
       var //get target dom object reference

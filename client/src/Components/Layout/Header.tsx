@@ -19,6 +19,7 @@ import styles from './Header.module.css';
 import { deleteDaterecord as deleteDateRecordSaga } from '../../redux/modules/dateRecord';
 import { useLocation, useParams } from 'react-router';
 import { HEADERMENU } from '../../Constants';
+import Button from '../Button/Button';
 
 const TitleContainer = styled.div``;
 
@@ -36,37 +37,37 @@ const RightHeaderContainer = styled.div`
   position: relative;
 `;
 
-const Button = styled.div`
-  /* bluemana, neonblue */
-  border: none;
-  background-color: var(--bluemana);
-  text-transform: uppercase;
-  border-radius: 1px;
-  border-width: 2px;
-  color: white;
+// const Button1 = styled.div`
+//   /* bluemana, neonblue */
+//   border: none;
+//   background-color: var(--bluemana);
+//   text-transform: uppercase;
+//   border-radius: 1px;
+//   border-width: 2px;
+//   color: white;
 
-  line-height: 1.5715;
-  position: relative;
-  display: inline-block;
-  font-weight: 400;
-  white-space: nowrap;
-  text-align: center;
-  background-image: none;
+//   line-height: 1.5715;
+//   position: relative;
+//   display: inline-block;
+//   font-weight: 400;
+//   white-space: nowrap;
+//   text-align: center;
+//   background-image: none;
 
-  cursor: pointer;
+//   cursor: pointer;
 
-  height: 32px;
-  padding: 4px 15px;
-  font-size: 14px;
-  transition: background-color 0.2s ease-in-out;
+//   height: 32px;
+//   padding: 4px 15px;
+//   font-size: 14px;
+//   transition: background-color 0.2s ease-in-out;
 
-  &:not(:last-child) {
-    margin-right: 10px;
-  }
-  &:hover {
-    background-color: var(--neonblue);
-  }
-`;
+//   &:not(:last-child) {
+//     margin-right: 10px;
+//   }
+//   &:hover {
+//     background-color: var(--neonblue);
+//   }
+// `;
 
 const ProfileContainer = styled.div`
   height: 100%;
@@ -276,8 +277,6 @@ const Header: React.FC = () => {
       </TitleContainer>
       <RightHeaderContainer className="RightHeaderContainer">
         {headerButtonList}
-        {headerButtonList.forEach((headerButton) => headerButton)}
-        {/* <Button onClick={logout}>Logout</Button> */}
         <ProfileContainer className="ProfileContainer">
           <ProfileImgContainer
             onClick={onClickProfile}

@@ -379,18 +379,18 @@ const DateRecordDetail: React.FC<DetailProps> = ({
                 <Calendar className="Caldendar" id="dycalendar"></Calendar>
               </CalendarContainer>
               <TitleChipsContainer className="TitleChipsContainer">
-                <InputEl
+                {/* <InputEl
                   value={dateRecordDetailData.title}
                   type="text"
                   id="title"
                   name="title"
                   placeholder="title..."
                   readOnly
-                />
+                /> */}
+                <label>{dateRecordDetailData.title}</label>
                 <Chips placeList={dateRecordDetailData.placeList}></Chips>
               </TitleChipsContainer>
             </CalendartitleChipsContainer>
-
             <TextAreaEl
               ref={textAreaRef}
               // row={textAreaRow}
@@ -398,6 +398,7 @@ const DateRecordDetail: React.FC<DetailProps> = ({
               placeholder="Comment"
               className={styles.input}
               readOnly
+              disabled
             />
             {dateRecordDetailData.dateImageList.length > 0 && (
               <ContainerImageLayout onClick={onClickContainerImageLayout}>

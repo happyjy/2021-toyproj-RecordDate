@@ -35,7 +35,7 @@ const ChipItem = styled.div<ChipItemType>`
   margin-bottom: ${({ marginBottom }) =>
     marginBottom ? `${marginBottom}px` : 'initial'};
   display: inline-flex;
-  padding: 7px 12px;
+  padding: 5px;
   border: solid 1px #ccc;
   border-radius: 4px;
   @media (max-width: 768px) {

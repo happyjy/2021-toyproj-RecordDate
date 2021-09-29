@@ -155,7 +155,7 @@ const FileUpload: React.FC<FileUpload> = ({
       return v.idx !== parseInt(e.target.dataset.idx);
     });
     setFileText(result);
-    console.log('### onclickCloseIcon > fileText: ' + fileText);
+    // console.log('### onclickCloseIcon > fileText: ' + fileText);
 
     const resultImageFile = [...imageFile].filter((file) => {
       if (file.name) {

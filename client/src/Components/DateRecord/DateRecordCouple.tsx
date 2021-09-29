@@ -277,7 +277,7 @@ const DateRecordCouple: React.FC<CoupleMngtProps> = ({
   // # EVENT
   // ## EVENT - 커플 요청
   const onClickSearchItem = (e) => {
-    console.log('### onClickSearchItem: ', e, userList);
+    /* console.log('### onClickSearchItem: ', e, userList); */
     const clickedUserArr = userList.filter((user) => {
       return user.user_id === e.user_id;
     });

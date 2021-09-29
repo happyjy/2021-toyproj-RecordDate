@@ -48,7 +48,6 @@ const DateRecordEditContainer = () => {
     dispatch(logoutSaga());
   }, [dispatch]);
 
-  // console.log('# recordEdit > dateRecordList: ', dateRecordList);
   return (
     <DateRecordEdit
       dateRecord={dateRecordList?.find((date) => date.dateRecord_id === dateId)}

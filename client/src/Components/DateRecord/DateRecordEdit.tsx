@@ -254,11 +254,7 @@ const DateRecordEdit: React.FC<DateRecordEditProps> = ({
   useEffect(() => {
     setImagefile(dateRecord?.dateImageList ? dateRecord.dateImageList : []);
     setFileText(result);
-  }, [setImagefile, setFileText, dateRecord, result]);
-
-  // const [dateImageList, setDateImageList] = useState<any[]>(
-  //   dateRecord?.dateImageList ? dateRecord.dateImageList : [],
-  // );
+  }, []);
 
   const keypress = (e: any) => {
     if (e.key === 'Enter') {
