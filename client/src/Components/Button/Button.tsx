@@ -38,7 +38,6 @@ interface IButton {
   onClick: () => void;
 }
 const Button: React.FC<IButton> = ({ children, onClick }) => {
-  console.log({ children });
   return (
     <>
       <CustomButton onClick={onClick}>{children}</CustomButton>

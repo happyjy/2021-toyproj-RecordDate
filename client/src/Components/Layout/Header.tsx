@@ -207,7 +207,6 @@ const Header: React.FC = () => {
     [dispatch],
   );
 
-  // ..ing
   let { pathname } = useLocation();
   let headerButtonList: JSX.Element[] = [];
   const AddDate = (
@@ -221,7 +220,7 @@ const Header: React.FC = () => {
     </Button>
   );
   const DeleteDate = (id) => (
-    <Button key="DeleteDate" onClick={() => deleteDate(id)}>
+    <Button key="DeleteDate" onClick={() => deleteDate(parseInt(id))}>
       Delete Date
     </Button>
   );
